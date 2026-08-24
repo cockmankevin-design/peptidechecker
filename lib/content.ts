@@ -61,7 +61,10 @@ export function getBlogPosts(): BlogPost[] {
 export function sortVendorOffers<T extends { trustScore: number; price: string; shippingDays: string }>(
   offers: T[],
 ): T[] {
-  const num = (s: string) => parseFloat(String(s).replace(/[^0-9.]/g, "")) || 0;
+  // Read only the leading numeric value (e.g. "65" out of "$65/10mg", "1" out of "1-2 days").
+  // Stripping every non-digit and concatenating (the previous approach) turned "$65/10mg"
+  // into 6510 and "$99.99/10mg" into 99.9910, sorting the cheaper offer as more expensive.
+  const num = (s: string) => parseFloat(String(s).match(/[0-9]+(\.[0-9]+)?/)?.[0] ?? "") || 0;
   return [...offers].sort(
     (a, b) =>
       b.trustScore - a.trustScore ||
