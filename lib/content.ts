@@ -34,8 +34,14 @@ export function getVendors(): Vendor[] {
     .sort((a, b) => b.trustScore - a.trustScore);
 }
 
+/** Products, with each product's vendor offers filtered by the same 7+ trust rule as
+    getVendors(). The spec's listing rule is absolute, so this can't be left to each page
+    that reads product.vendors to remember on its own. */
 export function getProducts(): Product[] {
-  return getAllContent<Product>("products");
+  return getAllContent<Product>("products").map((product) => ({
+    ...product,
+    vendors: (product.vendors ?? []).filter((v) => v.trustScore >= 7),
+  }));
 }
 
 export function getTestResults(): TestResult[] {
