@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+/* PeptideChecker dark palette.
+   Tailwind 4 declares theme tokens here, not in a tailwind.config.ts - that file would be
+   silently ignored and every colour would fall back to Tailwind's defaults. Token names are
+   chosen so the generated utilities read as bg-brand-bg, text-brand-accent, border-brand-border,
+   font-heading, and so on. */
+@theme {
+  /* surfaces */
+  --color-brand-bg: #0a0f1c;
+  --color-brand-surface: #111827;
+  --color-brand-surface-2: #1a2332;
+  --color-brand-border: #1e2d3d;
+
+  /* accent */
+  --color-brand-accent: #00d4aa;
+  --color-brand-accent-hover: #00f0c0;
+  --color-brand-accent-dim: rgba(0, 212, 170, 0.12);
+
+  /* type */
+  --color-brand-text: #e2e8f0;
+  --color-brand-text-secondary: #7b89a1;
+  --color-brand-text-heading: #f1f5f9;
+
+  /* trust-score semantics - safe deliberately equals accent */
+  --color-brand-safe: #00d4aa;
+  --color-brand-warn: #f59e0b;
+  --color-brand-fail: #ef4444;
+
+  /* next/font injects --font-heading-src / --font-body-src from layout.tsx; pointing these
+     at variables of the same name would be self-referential and resolve to nothing. */
+  --font-heading: var(--font-heading-src), system-ui, sans-serif;
+  --font-body: var(--font-body-src), system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-brand-text antialiased;
+  }
+}
