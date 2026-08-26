@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import TrustScoreBadge from "@/components/TrustScoreBadge";
+import SampleDataBadge from "@/components/SampleDataBadge";
 import { getVendors, getTestResults, getProducts } from "@/lib/content";
 
 export async function generateStaticParams() {
@@ -34,9 +35,7 @@ export default async function VendorDetailPage({
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {vendor.sampleData && (
           <div className="mb-6 flex items-center gap-2">
-            <span className="bg-brand-warn/20 text-brand-warn text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded">
-              Sample data
-            </span>
+            <SampleDataBadge className="" />
             <p className="text-xs text-brand-warn">
               Illustrative sample data seeded during development — not a verified vendor record.
             </p>
@@ -103,11 +102,7 @@ export default async function VendorDetailPage({
                   href={`/results/${test.slug}`}
                   className="bg-brand-surface border border-brand-border rounded-xl p-5 hover:border-brand-accent/30 transition-colors relative block"
                 >
-                  {test.sampleData && (
-                    <span className="absolute top-3 right-3 bg-brand-warn/20 text-brand-warn text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded">
-                      Sample data
-                    </span>
-                  )}
+                  {test.sampleData && <SampleDataBadge />}
                   <p className="font-heading font-bold text-brand-text-heading pr-20">{test.peptide}</p>
                   <p className="text-sm text-brand-text-secondary mt-1">{test.lab}</p>
                   <div className="flex items-center gap-3 mt-3">

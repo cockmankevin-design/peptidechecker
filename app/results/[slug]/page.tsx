@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import SampleDataBadge from "@/components/SampleDataBadge";
 import { getTestResults, getVendors, getProducts } from "@/lib/content";
 
 export async function generateStaticParams() {
@@ -30,9 +31,7 @@ export default async function TestResultDetailPage({
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {result.sampleData && (
           <div className="mb-8 bg-brand-warn/10 border border-brand-warn/40 rounded-xl p-4 flex items-start gap-3">
-            <span className="bg-brand-warn/20 text-brand-warn text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded shrink-0">
-              Sample data
-            </span>
+            <SampleDataBadge className="shrink-0" />
             <p className="text-sm text-brand-warn">
               This report is placeholder sample data seeded during development. It does not represent an actual
               lab result and must not be treated as genuine.

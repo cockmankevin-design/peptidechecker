@@ -1,5 +1,6 @@
 import Link from "next/link";
 import TrustScoreBadge from "@/components/TrustScoreBadge";
+import SampleDataBadge from "@/components/SampleDataBadge";
 import { getVendors } from "@/lib/content";
 
 export default function VendorsPage() {
@@ -17,11 +18,7 @@ export default function VendorsPage() {
           {vendors.map((vendor) => (
             <Link key={vendor.slug} href={`/vendors/${vendor.slug}`} className="group">
               <div className="bg-brand-surface border border-brand-border rounded-xl p-6 hover:border-brand-accent/30 transition-colors h-full relative">
-                {vendor.sampleData && (
-                  <span className="absolute top-3 right-3 bg-brand-warn/20 text-brand-warn text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded">
-                    Sample data
-                  </span>
-                )}
+                {vendor.sampleData && <SampleDataBadge />}
                 <div className="flex items-center justify-between mb-3 pr-20">
                   <h3 className="font-heading font-bold text-brand-text-heading group-hover:text-brand-accent transition-colors">{vendor.name}</h3>
                   <TrustScoreBadge score={vendor.trustScore} />

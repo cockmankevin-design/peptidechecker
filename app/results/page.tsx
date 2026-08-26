@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SampleDataBadge from "@/components/SampleDataBadge";
 import { getTestResults } from "@/lib/content";
 
 export default function ResultsPage() {
@@ -22,11 +23,7 @@ export default function ResultsPage() {
               href={`/results/${result.slug}`}
               className="bg-brand-surface border border-brand-border rounded-xl p-5 hover:border-brand-accent/30 transition-colors relative block"
             >
-              {result.sampleData && (
-                <span className="absolute top-3 right-3 bg-brand-warn/20 text-brand-warn text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded">
-                  Sample data
-                </span>
-              )}
+              {result.sampleData && <SampleDataBadge />}
               <div className="pr-20">
                 <p className="font-heading font-bold text-brand-text-heading">{result.peptide}</p>
                 <p className="text-sm text-brand-text-secondary mt-1">{result.vendor} · {result.lab}</p>

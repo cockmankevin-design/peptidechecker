@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SampleDataBadge from "./SampleDataBadge";
 import { sortVendorOffers } from "@/lib/content";
 import type { Product } from "@/lib/types";
 
@@ -11,11 +12,7 @@ export default function ProductCard({ product }: { product: Product }) {
     <Link href={`/peptides/${product.slug}`} className="group">
       <div className="bg-brand-surface border border-brand-border rounded-xl overflow-hidden hover:border-brand-accent/30 transition-all duration-300">
         <div className="aspect-square bg-gradient-to-br from-brand-surface-2 to-brand-surface flex items-center justify-center p-6 relative">
-          {product.sampleData && (
-            <span className="absolute top-3 left-3 bg-brand-warn/20 text-brand-warn text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded">
-              Sample data
-            </span>
-          )}
+          {product.sampleData && <SampleDataBadge className="absolute top-3 left-3" />}
           <div className="w-24 h-32 bg-gradient-to-b from-gray-300 to-gray-400 rounded-lg shadow-lg relative">
             <div className="absolute inset-x-2 top-2 bottom-4 bg-white/90 rounded-sm flex items-center justify-center">
               <span className="text-[10px] font-bold text-gray-600 text-center leading-tight px-1">{product.name}</span>

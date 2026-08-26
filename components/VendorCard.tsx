@@ -1,5 +1,6 @@
 import Link from "next/link";
 import TrustScoreBadge from "./TrustScoreBadge";
+import SampleDataBadge from "./SampleDataBadge";
 import type { ProductVendor } from "@/lib/types";
 
 export default function VendorCard({
@@ -11,11 +12,7 @@ export default function VendorCard({
 }) {
   return (
     <div className="bg-brand-surface border border-brand-border rounded-xl p-5 hover:border-brand-accent/30 transition-colors relative">
-      {sampleData && (
-        <span className="absolute top-3 right-3 bg-brand-warn/20 text-brand-warn text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded">
-          Sample data
-        </span>
-      )}
+      {sampleData && <SampleDataBadge />}
       <div className="flex items-start justify-between mb-4">
         <div>
           <Link href={`/vendors/${vendor.vendorSlug}`} className="font-heading font-bold text-brand-text-heading hover:text-brand-accent transition-colors">
