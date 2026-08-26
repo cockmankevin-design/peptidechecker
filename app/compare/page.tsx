@@ -1,12 +1,19 @@
 import CompareTable from "@/components/CompareTable";
 import SampleDataBadge from "@/components/SampleDataBadge";
-import { getVendors } from "@/lib/content";
+import { getVendors, getProducts } from "@/lib/content";
 
 export default function ComparePage() {
   // getVendors() already applies the site-wide 7+ trust filter and sorts best-first, so the
   // table only ever needs to worry about display order, not eligibility.
   const vendors = getVendors();
   const hasSampleData = vendors.some((v) => v.sampleData);
+
+  // A vendor's productsCarried can reference a product slug with no content/products/*.mdx
+  // file (e.g. limitless-life lists "pt-141", which doesn't exist). app/vendors/[slug]/page.tsx
+  // already guards against this for its "Products Carried (N)" count; passing the same set of
+  // real slugs down to the table lets it apply the identical guard, so the two pages can't
+  // disagree about the same vendor's count.
+  const validProductSlugs = getProducts().map((p) => p.slug);
 
   return (
     <main className="pt-24 pb-16">
@@ -24,13 +31,14 @@ export default function ComparePage() {
           <div className="mb-8 bg-brand-warn/10 border border-brand-warn/40 rounded-xl p-4 flex items-start gap-3">
             <SampleDataBadge className="shrink-0" />
             <p className="text-sm text-brand-warn">
-              This table currently includes placeholder sample data seeded during development. Figures marked with
-              an asterisk (*) are illustrative only and do not represent verified vendor records.
+              This entire table — every vendor, every column — is currently placeholder sample data seeded during
+              development. Trust score, COA status, pricing, shipping, and product count shown below are all
+              invented figures. None of it, asterisked or not, represents a verified vendor record.
             </p>
           </div>
         )}
 
-        <CompareTable vendors={vendors} />
+        <CompareTable vendors={vendors} validProductSlugs={validProductSlugs} />
       </div>
     </main>
   );

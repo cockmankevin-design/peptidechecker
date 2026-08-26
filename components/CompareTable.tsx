@@ -6,7 +6,7 @@ import TrustScoreBadge from "./TrustScoreBadge";
 import SampleDataBadge from "./SampleDataBadge";
 import type { Vendor } from "@/lib/types";
 
-type SortKey = "name" | "trustScore" | "coaStatus" | "avgPrice" | "shippingSpeed" | "productsTested";
+type SortKey = "name" | "trustScore" | "coaStatus" | "avgPrice" | "shippingSpeed" | "productsCarried";
 type SortDirection = "asc" | "desc";
 
 const columns: { key: SortKey; label: string; numeric: boolean }[] = [
@@ -14,8 +14,8 @@ const columns: { key: SortKey; label: string; numeric: boolean }[] = [
   { key: "trustScore", label: "Trust Score", numeric: true },
   { key: "coaStatus", label: "COA Status", numeric: false },
   { key: "avgPrice", label: "Avg Price", numeric: true },
-  { key: "shippingSpeed", label: "Shipping", numeric: false },
-  { key: "productsTested", label: "Products Tested", numeric: true },
+  { key: "shippingSpeed", label: "Shipping", numeric: true },
+  { key: "productsCarried", label: "Products Carried", numeric: true },
 ];
 
 // Leading numeric value only, e.g. "$65/10mg" -> 65, "FedEx 2-Day" -> 2. Mirrors the
@@ -26,7 +26,15 @@ function leadingNumber(value: string): number {
   return parseFloat(value.match(/[0-9]+(\.[0-9]+)?/)?.[0] ?? "") || 0;
 }
 
-function valueFor(vendor: Vendor, key: SortKey): string | number {
+// productsCarried can list a slug with no matching content/products/*.mdx file (e.g.
+// limitless-life's "pt-141"). Only count slugs that actually resolve — the same guard
+// app/vendors/[slug]/page.tsx applies for its "Products Carried (N)" — so this table's
+// count can't disagree with that page's count for the same vendor.
+function carriedCount(vendor: Vendor, validSlugs: Set<string>): number {
+  return (vendor.productsCarried ?? []).filter((slug) => validSlugs.has(slug)).length;
+}
+
+function valueFor(vendor: Vendor, key: SortKey, validSlugs: Set<string>): string | number {
   switch (key) {
     case "name":
       return vendor.name;
@@ -38,18 +46,26 @@ function valueFor(vendor: Vendor, key: SortKey): string | number {
       return leadingNumber(vendor.avgPrice);
     case "shippingSpeed":
       return leadingNumber(vendor.shippingSpeed);
-    case "productsTested":
-      return vendor.productsCarried?.length ?? 0;
+    case "productsCarried":
+      return carriedCount(vendor, validSlugs);
   }
 }
 
-export default function CompareTable({ vendors }: { vendors: Vendor[] }) {
+export default function CompareTable({
+  vendors,
+  validProductSlugs,
+}: {
+  vendors: Vendor[];
+  validProductSlugs: string[];
+}) {
   // Default view honors the site's Safety > Price > Shipping hierarchy: trust score first.
   const [sortKey, setSortKey] = useState<SortKey>("trustScore");
   const [direction, setDirection] = useState<SortDirection>("desc");
 
+  const validSlugs = useMemo(() => new Set(validProductSlugs), [validProductSlugs]);
+
   const sorted = useMemo(() => {
-    const withValues = vendors.map((vendor) => ({ vendor, value: valueFor(vendor, sortKey) }));
+    const withValues = vendors.map((vendor) => ({ vendor, value: valueFor(vendor, sortKey, validSlugs) }));
     withValues.sort((a, b) => {
       if (typeof a.value === "number" && typeof b.value === "number") {
         return direction === "asc" ? a.value - b.value : b.value - a.value;
@@ -58,7 +74,7 @@ export default function CompareTable({ vendors }: { vendors: Vendor[] }) {
       return direction === "asc" ? cmp : -cmp;
     });
     return withValues.map((w) => w.vendor);
-  }, [vendors, sortKey, direction]);
+  }, [vendors, sortKey, direction, validSlugs]);
 
   function handleSort(key: SortKey, numeric: boolean) {
     if (key === sortKey) {
@@ -98,43 +114,59 @@ export default function CompareTable({ vendors }: { vendors: Vendor[] }) {
           </tr>
         </thead>
         <tbody>
-          {sorted.map((vendor) => (
-            <tr
-              key={vendor.slug}
-              className="border-b border-brand-border last:border-0 hover:bg-brand-surface transition-colors"
-            >
-              <td className="px-4 py-4">
-                <div className="flex items-center gap-2">
-                  <Link
-                    href={`/vendors/${vendor.slug}`}
-                    className="font-heading font-semibold text-brand-text-heading hover:text-brand-accent transition-colors"
-                  >
-                    {vendor.name}
-                  </Link>
-                  {vendor.sampleData && <SampleDataBadge className="shrink-0" />}
-                </div>
-              </td>
-              <td className="px-4 py-4">
-                <div className="flex items-center gap-1.5">
-                  <TrustScoreBadge score={vendor.trustScore} />
-                  {vendor.sampleData && <span className="text-brand-warn text-xs">*</span>}
-                </div>
-              </td>
-              <td className="px-4 py-4 text-brand-text">{vendor.coaStatus}</td>
-              <td className="px-4 py-4 text-brand-text font-medium whitespace-nowrap">
-                {vendor.avgPrice}
-                {vendor.sampleData ? "*" : ""}
-              </td>
-              <td className="px-4 py-4 text-brand-text whitespace-nowrap">{vendor.shippingSpeed}</td>
-              <td className="px-4 py-4 text-brand-text">{vendor.productsCarried?.length ?? 0}</td>
-            </tr>
-          ))}
+          {sorted.map((vendor) => {
+            // Every field on a sample-data row is an invented figure, not just the ones
+            // marked *. The trailing asterisk is a per-cell hint, but the table caption
+            // below (and the page-level banner above it) is what actually states the rule —
+            // unmarked cells here must never read as "verified" by omission.
+            const mark = vendor.sampleData ? "*" : "";
+            return (
+              <tr
+                key={vendor.slug}
+                className="border-b border-brand-border last:border-0 hover:bg-brand-surface transition-colors"
+              >
+                <td className="px-4 py-4">
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={`/vendors/${vendor.slug}`}
+                      className="font-heading font-semibold text-brand-text-heading hover:text-brand-accent transition-colors"
+                    >
+                      {vendor.name}
+                    </Link>
+                    {vendor.sampleData && <SampleDataBadge className="shrink-0" />}
+                  </div>
+                </td>
+                <td className="px-4 py-4">
+                  <div className="flex items-center gap-1.5">
+                    <TrustScoreBadge score={vendor.trustScore} />
+                    {vendor.sampleData && <span className="text-brand-warn text-xs">*</span>}
+                  </div>
+                </td>
+                <td className="px-4 py-4 text-brand-text">
+                  {vendor.coaStatus}
+                  {mark}
+                </td>
+                <td className="px-4 py-4 text-brand-text font-medium whitespace-nowrap">
+                  {vendor.avgPrice}
+                  {mark}
+                </td>
+                <td className="px-4 py-4 text-brand-text whitespace-nowrap">
+                  {vendor.shippingSpeed}
+                  {mark}
+                </td>
+                <td className="px-4 py-4 text-brand-text">
+                  {carriedCount(vendor, validSlugs)}
+                  {mark}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
       {hasSampleData && (
         <p className="px-4 py-3 text-[11px] text-brand-warn border-t border-brand-border bg-brand-surface-2">
-          *Illustrative sample data — trust scores, pricing, and testing figures shown are placeholder values seeded
-          during development, not verified vendor records.
+          Every figure above — including COA status, shipping, and product count, not just the numbers marked *
+          — is placeholder sample data seeded during development. None of it represents a verified vendor record.
         </p>
       )}
     </div>

@@ -47,7 +47,7 @@ export default function AboutPage() {
 
         <div className="mt-10 pt-6 border-t border-brand-border">
           <p className="text-xs text-brand-text-secondary">
-            For research purposes only. PeptideChecker does not sell peptides and does not provide medical advice.
+            PeptideChecker does not sell peptides and does not provide medical advice.
           </p>
         </div>
       </div>
