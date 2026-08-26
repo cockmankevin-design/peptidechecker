@@ -23,7 +23,7 @@ export default async function VendorDetailPage({
   const testHistory = getTestResults().filter((t) => t.vendorSlug === vendor.slug);
 
   // productsCarried can reference a product slug that has no content/products/*.mdx file
-  // (e.g. limitless-life lists "pt-141", which doesn't exist yet). Only link to products
+  // (e.g. vendor-b lists "pt-141", which doesn't exist yet). Only link to products
   // that actually resolve, so the profile never renders a broken link.
   const allProducts = getProducts();
   const carriedProducts = (vendor.productsCarried ?? [])

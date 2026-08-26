@@ -2,17 +2,17 @@ import Link from "next/link";
 
 const labs = [
   {
-    name: "Janoshik Analytical",
+    name: "Independent Lab A",
     description:
       "Slovakia-based analytical lab specializing in HPLC purity testing and mass spectrometry for the peptide research community — one of the most widely cited independent labs in the space.",
   },
   {
-    name: "Colmaric Analyticals",
+    name: "Independent Lab B",
     description:
       "US-based lab offering HPLC and LC-MS testing with public certificate lookup by lot number, so a buyer can verify a specific batch before ordering.",
   },
   {
-    name: "MZ Biolabs",
+    name: "Independent Lab C",
     description:
       "Contract lab providing mass spectrometry and purity analysis for research compounds, including endotoxin and sterility screening.",
   },

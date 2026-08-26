@@ -9,7 +9,7 @@ export default function ComparePage() {
   const hasSampleData = vendors.some((v) => v.sampleData);
 
   // A vendor's productsCarried can reference a product slug with no content/products/*.mdx
-  // file (e.g. limitless-life lists "pt-141", which doesn't exist). app/vendors/[slug]/page.tsx
+  // file (e.g. vendor-b lists "pt-141", which doesn't exist). app/vendors/[slug]/page.tsx
   // already guards against this for its "Products Carried (N)" count; passing the same set of
   // real slugs down to the table lets it apply the identical guard, so the two pages can't
   // disagree about the same vendor's count.

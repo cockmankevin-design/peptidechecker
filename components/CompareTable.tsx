@@ -27,7 +27,7 @@ function leadingNumber(value: string): number {
 }
 
 // productsCarried can list a slug with no matching content/products/*.mdx file (e.g.
-// limitless-life's "pt-141"). Only count slugs that actually resolve — the same guard
+// vendor-b's "pt-141"). Only count slugs that actually resolve — the same guard
 // app/vendors/[slug]/page.tsx applies for its "Products Carried (N)" — so this table's
 // count can't disagree with that page's count for the same vendor.
 function carriedCount(vendor: Vendor, validSlugs: Set<string>): number {
