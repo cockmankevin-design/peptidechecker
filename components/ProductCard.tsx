@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SampleDataBadge from "./SampleDataBadge";
+import PeptideVial, { VIAL_DOSE } from "./PeptideVial";
 import { sortVendorOffers } from "@/lib/content";
 import type { Product } from "@/lib/types";
 
@@ -13,12 +14,12 @@ export default function ProductCard({ product }: { product: Product }) {
       <div className="bg-brand-surface border border-brand-border rounded-xl overflow-hidden hover:border-brand-accent/30 transition-all duration-300">
         <div className="aspect-square bg-gradient-to-br from-brand-surface-2 to-brand-surface flex items-center justify-center p-6 relative">
           {product.sampleData && <SampleDataBadge className="absolute top-3 left-3" />}
-          <div className="w-24 h-32 bg-gradient-to-b from-gray-300 to-gray-400 rounded-lg shadow-lg relative">
-            <div className="absolute inset-x-2 top-2 bottom-4 bg-white/90 rounded-sm flex items-center justify-center">
-              <span className="text-[10px] font-bold text-gray-600 text-center leading-tight px-1">{product.name}</span>
-            </div>
-            <div className="absolute bottom-1 inset-x-2 h-2 bg-brand-accent/30 rounded-sm" />
-          </div>
+          <PeptideVial
+            name={product.name}
+            dose={VIAL_DOSE[product.slug]}
+            uid={product.slug}
+            className="h-full w-auto max-h-[220px] transition-transform duration-500 ease-out group-hover:-translate-y-2 group-hover:scale-[1.03] drop-shadow-[0_18px_40px_rgba(0,0,0,0.45)]"
+          />
           {purity && purity >= 99 && (
             <span className="absolute top-3 right-3 bg-brand-safe/20 text-brand-safe text-xs font-semibold px-2 py-1 rounded">
               {purity}% pure{product.sampleData ? "*" : ""}
