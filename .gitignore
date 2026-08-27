@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# wrangler build output and local deploy logs
+workers/signup/dist/
+workers/signup/*.log
+

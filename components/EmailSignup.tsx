@@ -15,7 +15,13 @@ import PeptideVial from "./PeptideVial";
    store. That is the whole point: the failure mode this replaces was a preventDefault() that
    looked exactly like a successful subscription. */
 
-const ENDPOINT = process.env.NEXT_PUBLIC_SIGNUP_ENDPOINT ?? "";
+/* The signup Worker on Kevin's own Cloudflare account - source in workers/signup. It is a
+   public URL, not a credential, so it lives here rather than in an untracked env file that a
+   fresh clone would silently lose (leaving the form disabled with no obvious reason why).
+   The env var still overrides it, for pointing a build at a different endpoint. */
+const DEFAULT_ENDPOINT = "https://peptidechecker-signup.cockmankevin.workers.dev";
+
+const ENDPOINT = process.env.NEXT_PUBLIC_SIGNUP_ENDPOINT ?? DEFAULT_ENDPOINT;
 
 type Status =
   | { kind: "idle" }
