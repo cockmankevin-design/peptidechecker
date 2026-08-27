@@ -44,3 +44,5 @@ next-env.d.ts
 workers/signup/dist/
 workers/signup/*.log
 
+workers/signup/.wrangler/
+
