@@ -1,0 +1,14 @@
+name = "peptidechecker-signup"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+account_id = "eb00cafd842d4c2dd2947ac2b88bfb65"
+
+# The exact origin allowed to POST here. Not "*" - otherwise any page on the internet could
+# use this endpoint as its own mailing list. Update this if the site moves to a custom domain.
+[vars]
+ALLOW_ORIGIN = "https://cockmankevin-design.github.io"
+
+# Created 2026-08-27. Subscribers are stored one key per address, as sub:<email>.
+[[kv_namespaces]]
+binding = "SIGNUPS"
+id = "d3c9ee18e8614c7cbdee50656a5d9a9f"
