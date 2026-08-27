@@ -31,14 +31,16 @@ export default function EmailSignup() {
     if (!ENDPOINT) return;
 
     const form = e.currentTarget;
-    const email = new FormData(form).get("email");
     setStatus({ kind: "sending" });
 
     try {
+      // Send the FormData itself, per Formspree's documented AJAX pattern - the browser
+      // sets the multipart Content-Type, and any extra fields (the honeypot below) ride
+      // along without needing to be listed here.
       const res = await fetch(ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ email }),
+        headers: { Accept: "application/json" },
+        body: new FormData(form),
       });
 
       if (res.ok) {
@@ -91,6 +93,17 @@ export default function EmailSignup() {
               disabled={!ENDPOINT || status.kind === "sending"}
               placeholder="Email address"
               className="flex-1 bg-white/90 border border-white/60 rounded-full px-5 py-3 text-sm text-[#0a0c0f] placeholder:text-[#5a6472] focus:outline-none focus:ring-2 focus:ring-[#0a0c0f]/30 disabled:opacity-60"
+            />
+            {/* Formspree's honeypot: bots fill every field they find, so anything arriving
+                with this one populated is discarded. Hidden from people and from screen
+                readers, never focusable by tab. */}
+            <input
+              type="text"
+              name="_gotcha"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hidden"
             />
             <button
               type="submit"
