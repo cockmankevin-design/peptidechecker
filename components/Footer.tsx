@@ -25,7 +25,7 @@ export default function Footer() {
               Peptide<span className="text-brand-accent">Checker</span>
             </span>
             <p className="mt-3 text-sm text-brand-text-secondary leading-relaxed">
-              Independent peptide verification. We don&apos;t sell peptides — we verify who does.
+              Independent peptide verification. We don&apos;t sell peptides — we verify who does. We earn affiliate commission from vendors we list; it never affects a score.
             </p>
           </div>
 

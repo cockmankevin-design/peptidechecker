@@ -99,6 +99,29 @@ export default function MethodologyPage() {
         </section>
 
         <section className="mt-12">
+          <h2 className="font-heading text-2xl font-bold text-brand-text-heading">How This Site Makes Money</h2>
+          <p className="mt-3 text-brand-text-secondary leading-relaxed">
+            Stating this plainly, because an independence claim is worth nothing without it:
+            PeptideChecker earns affiliate commission when a reader buys from a vendor listed here
+            &mdash; the same vendors this site scores. That is our only revenue. No vendor pays for
+            placement, for a listing, or for a review.
+          </p>
+          <p className="mt-4 text-brand-text-secondary leading-relaxed">
+            Three rules keep the commission away from the scoring. Samples are bought anonymously at
+            retail price, the way any customer would, so a vendor never knows which batch is being
+            tested. Scores are computed from the lab numbers by the formula above, and no vendor sees
+            or reviews a score before it publishes. And the commission rate is never an input &mdash;
+            a higher-paying vendor and a lower-paying one with identical lab results receive
+            identical scores.
+          </p>
+          <p className="mt-4 text-brand-text-secondary leading-relaxed">
+            If a vendor we earn commission from fails a retest, they are removed. That has a direct
+            revenue cost, and it is the point: a verification site that cannot afford to delist its
+            own earners is not a verification site.
+          </p>
+        </section>
+
+        <section className="mt-12">
           <h2 className="font-heading text-2xl font-bold text-brand-text-heading">The 7+ Rule</h2>
           <p className="mt-3 text-brand-text-secondary leading-relaxed">
             A vendor needs a trust score of 7.0 or higher to appear anywhere on PeptideChecker — in the vendor
