@@ -44,7 +44,7 @@ export default async function VendorDetailPage({
 
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-brand-accent mb-2">Vendor Profile</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">Vendor Profile</p>
             <h1 className="font-heading text-4xl font-bold text-brand-text-heading">{vendor.name}</h1>
             <p className="mt-4 text-brand-text-secondary max-w-xl leading-relaxed">{vendor.description}</p>
           </div>

@@ -24,7 +24,7 @@ export default async function PeptideDetailPage({
   return (
     <main className="pt-24 pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-brand-accent mb-2">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">
           {product.category}
         </p>
         <h1 className="font-heading text-4xl font-bold text-brand-text-heading">

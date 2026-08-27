@@ -4,7 +4,7 @@ export default function AboutPage() {
   return (
     <main className="pt-24 pb-16">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-brand-accent mb-2">About</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">About</p>
         <h1 className="font-heading text-4xl font-bold text-brand-text-heading">Why PeptideChecker Exists</h1>
 
         <div className="mt-8 space-y-6 text-brand-text-secondary leading-relaxed">

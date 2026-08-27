@@ -19,7 +19,7 @@ export default function ComparePage() {
     <main className="pt-24 pb-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <p className="text-xs font-semibold uppercase tracking-widest text-brand-accent mb-2">Compare</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">Compare</p>
           <h1 className="font-heading text-4xl font-bold text-brand-text-heading">Compare Vendors</h1>
           <p className="mt-3 text-brand-text-secondary max-w-2xl">
             Every vendor below scored 7+ on our independent trust score — no vendor pays for placement. Sorted by

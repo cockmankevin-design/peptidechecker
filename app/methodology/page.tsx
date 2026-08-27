@@ -50,7 +50,7 @@ export default function MethodologyPage() {
   return (
     <main className="pt-24 pb-16">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-brand-accent mb-2">Methodology</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">Methodology</p>
         <h1 className="font-heading text-4xl font-bold text-brand-text-heading">How We Test &amp; Score Vendors</h1>
         <p className="mt-4 text-brand-text-secondary leading-relaxed">
           Every vendor on PeptideChecker is scored using the same process, whether they&apos;re a five-year

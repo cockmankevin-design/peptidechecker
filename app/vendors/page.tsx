@@ -10,7 +10,7 @@ export default function VendorsPage() {
     <main className="pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
-          <p className="text-xs font-semibold uppercase tracking-widest text-brand-accent mb-2">Vendors</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">Vendors</p>
           <h1 className="font-heading text-4xl font-bold text-brand-text-heading">Verified Vendors</h1>
           <p className="mt-3 text-brand-text-secondary">Only vendors scoring 7+ after independent testing are listed.</p>
         </div>

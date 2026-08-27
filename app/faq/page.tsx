@@ -5,7 +5,7 @@ export default function FaqPage() {
     <main className="pt-24 pb-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
-          <p className="text-xs font-semibold uppercase tracking-widest text-brand-accent mb-2">FAQ</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">FAQ</p>
           <h1 className="font-heading text-4xl font-bold text-brand-text-heading">Frequently Asked Questions</h1>
           <p className="mt-3 text-brand-text-secondary max-w-xl">
             Everything you need to know about how PeptideChecker verifies vendors and what to expect when you order.

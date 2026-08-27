@@ -41,7 +41,7 @@ export default async function TestResultDetailPage({
 
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-brand-accent mb-2">Lab Report</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">Lab Report</p>
             <h1 className="font-heading text-4xl font-bold text-brand-text-heading">
               {result.peptide}{result.sampleData ? "*" : ""}
             </h1>
