@@ -4,26 +4,35 @@
    Tailwind 4 declares theme tokens here, not in a tailwind.config.ts - that file would be
    silently ignored and every colour would fall back to Tailwind's defaults. Token names are
    chosen so the generated utilities read as bg-brand-bg, text-brand-accent, border-brand-border,
-   font-heading, and so on. */
+   font-heading, and so on.
+
+   Retheme 2026-08-27: moved from a navy ground and mint accent to near-black with a bright
+   cyan accent and a warm gold secondary, so the lab imagery and glassware read as photographed
+   rather than tinted. Only the token VALUES changed - every page keeps working untouched. */
 @theme {
   /* surfaces */
-  --color-brand-bg: #0a0f1c;
-  --color-brand-surface: #111827;
-  --color-brand-surface-2: #1a2332;
-  --color-brand-border: #1e2d3d;
+  --color-brand-bg: #0a0c0f;
+  --color-brand-surface: #111418;
+  --color-brand-surface-2: #181c22;
+  --color-brand-border: #23282f;
 
   /* accent */
-  --color-brand-accent: #00d4aa;
-  --color-brand-accent-hover: #00f0c0;
-  --color-brand-accent-dim: rgba(0, 212, 170, 0.12);
+  --color-brand-accent: #29c5f6;
+  --color-brand-accent-hover: #5ad6ff;
+  --color-brand-accent-dim: rgba(41, 197, 246, 0.12);
+
+  /* secondary accent - the warm gold used for eyebrow labels and section marks, so the
+     page has a second voice and cyan stays reserved for actions and verified state. */
+  --color-brand-gold: #c2a15e;
+  --color-brand-gold-dim: rgba(194, 161, 94, 0.14);
 
   /* type */
-  --color-brand-text: #e2e8f0;
-  --color-brand-text-secondary: #7b89a1;
-  --color-brand-text-heading: #f1f5f9;
+  --color-brand-text: #e6eaf0;
+  --color-brand-text-secondary: #8b95a5;
+  --color-brand-text-heading: #f7f9fb;
 
   /* trust-score semantics - safe deliberately equals accent */
-  --color-brand-safe: #00d4aa;
+  --color-brand-safe: #29c5f6;
   --color-brand-warn: #f59e0b;
   --color-brand-fail: #ef4444;
 
@@ -36,5 +45,109 @@
 @layer base {
   body {
     @apply bg-brand-bg text-brand-text antialiased;
+  }
+}
+
+/* --- motion -------------------------------------------------------------
+   Kept as plain CSS keyframes rather than a JS animation library: everything
+   here is decorative and continuous, which is what the compositor is good at.
+   Transform and opacity only - animating those two never triggers layout, so
+   the vial stays smooth while the page scrolls.
+
+   Every animation below is switched off wholesale by the reduced-motion block
+   at the end of this file. Nothing here may carry meaning that is lost when
+   it stops moving. */
+
+@keyframes pc-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-1.5deg);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0) rotate(1.5deg);
+  }
+}
+
+/* A second, slower cycle on the wrapper. Two nested loops with durations that
+   do not divide evenly never repeat in step, so the drift reads as organic
+   rather than as a loop the eye can catch. */
+@keyframes pc-sway {
+  0%,
+  100% {
+    transform: translate3d(-6px, 0, 0);
+  }
+  50% {
+    transform: translate3d(6px, 0, 0);
+  }
+}
+
+@keyframes pc-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.08);
+  }
+}
+
+/* Motes rising through the beam behind the vial. */
+@keyframes pc-mote {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  10%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--pc-mote-x, 12px), -140px, 0);
+  }
+}
+
+@keyframes pc-reveal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.pc-float {
+  animation: pc-float 7s ease-in-out infinite;
+}
+
+.pc-sway {
+  animation: pc-sway 11s ease-in-out infinite;
+}
+
+.pc-glow {
+  animation: pc-glow 6s ease-in-out infinite;
+}
+
+.pc-mote {
+  animation: pc-mote var(--pc-mote-dur, 9s) linear var(--pc-mote-delay, 0s) infinite;
+}
+
+/* Entrance reveal. `backwards` holds the from-state during the delay, so a
+   staggered element cannot flash at full opacity before its turn. */
+.pc-reveal {
+  animation: pc-reveal 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pc-float,
+  .pc-sway,
+  .pc-glow,
+  .pc-mote,
+  .pc-reveal {
+    animation: none !important;
   }
 }

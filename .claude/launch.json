@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "peptidechecker-dev",
-      "runtimeExecutable": "npm",
+      "runtimeExecutable": "bun",
       "runtimeArgs": ["run", "dev", "--", "-p", "3100"],
       "port": 3100
     }
