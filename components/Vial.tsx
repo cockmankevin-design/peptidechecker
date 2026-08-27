@@ -1,9 +1,20 @@
-/* The hero's vial: a labelled PeptideVial plus its ambient lighting and motes.
+"use client";
 
-   The drawing itself lives in PeptideVial so the hero and the product cards share one vial and
-   cannot drift apart. This file owns only the atmosphere around it. */
+/* The hero's vial: a WebGL vial plus its ambient lighting and motes.
+
+   Vial3D is loaded with ssr:false because three touches `window` at import time and this site
+   is statically exported - importing it during the build would fail the export. Until it
+   loads (and if it never does) Vial3D renders the drawn PeptideVial, so the hero always has
+   something in it. */
+
+import dynamic from "next/dynamic";
 
 import PeptideVial from "./PeptideVial";
+
+const Vial3D = dynamic(() => import("./Vial3D"), {
+  ssr: false,
+  loading: () => <PeptideVial name="BPC-157" dose="10 mg" uid="hero-loading" className="w-full h-auto" />,
+});
 
 const MOTES = [
   { left: "18%", bottom: "22%", size: 3, dur: "9s", delay: "0s", drift: "14px" },
@@ -17,7 +28,6 @@ const MOTES = [
 export default function Vial({ className = "" }: { className?: string }) {
   return (
     <div className={`relative ${className}`}>
-      {/* pooled light under the vial, pulsing out of step with the float */}
       <div
         className="pc-glow absolute left-1/2 bottom-[12%] -translate-x-1/2 w-[70%] h-[22%] rounded-[100%] bg-brand-accent/30 blur-3xl"
         aria-hidden="true"
@@ -42,14 +52,9 @@ export default function Vial({ className = "" }: { className?: string }) {
         />
       ))}
 
-      <div className="pc-sway">
-        <PeptideVial
-          name="BPC-157"
-          dose="10 mg"
-          uid="hero"
-          className="pc-float w-full h-auto drop-shadow-[0_25px_60px_rgba(41,197,246,0.18)]"
-        />
-      </div>
+      {/* Fixed aspect so the canvas has a height to measure before it paints - a percentage
+          height inside an auto-height parent would resolve to zero and render nothing. */}
+      <Vial3D name="BPC-157" dose="10 mg" className="w-full aspect-[3/4.4]" />
     </div>
   );
 }
