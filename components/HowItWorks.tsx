@@ -5,21 +5,21 @@ import { asset } from "@/lib/basePath";
 const steps = [
   {
     number: "01",
-    title: "We test",
+    title: "We verify the paperwork",
     description:
-      "We buy peptides from vendors anonymously, at retail price, and send them to independent named third-party labs for HPLC and mass spectrometry analysis.",
+      "A listing only qualifies if the seller publishes a certificate of analysis from a named third-party lab. We check the document is real, says which lab ran it, and ties to a specific lot rather than being one generic PDF reused across every batch.",
   },
   {
     number: "02",
-    title: "We verify",
+    title: "We score what is checkable",
     description:
-      "Purity, COA transparency, batch consistency, pricing and shipping are weighted into one score. Below 7 out of 10 is not listed, with no exceptions.",
+      "Purity from the published results, COA transparency, consistency across lots, price and shipping, weighted into one score. Anything we cannot verify earns nothing \u2014 an unevidenced claim is not a point in a vendor\u2019s favour.",
   },
   {
     number: "03",
-    title: "You buy informed",
+    title: "You compare in one place",
     description:
-      "Every listing shows its score, the lab report behind it, and where the number came from. Fail a retest and the vendor is removed, not grandfathered in.",
+      "Every listing shows its score, links to the lab report behind it, and shows where the number came from. If a report stops checking out, the listing goes \u2014 it is not grandfathered in.",
   },
 ];
 
@@ -34,8 +34,9 @@ export default function HowItWorks() {
               Trust, transparency, results
             </h2>
             <p className="mt-4 text-brand-text-secondary leading-relaxed">
-              The same process for every vendor, whether they are a five-year incumbent or a
-              listing added last week.
+              The same checks for every seller, whether they are a five-year incumbent or a listing
+              added last week. We are not a lab &mdash; we are the filter that reads the lab reports
+              so you don&apos;t have to.
             </p>
           </div>
           {/* Generic laboratory photography - illustrative of the category, not a depiction of

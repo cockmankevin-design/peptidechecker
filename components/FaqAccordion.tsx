@@ -21,17 +21,17 @@ const faqs: FaqItem[] = [
   {
     question: "How does PeptideChecker verify vendors?",
     answer:
-      "We commission independent third-party lab testing — HPLC purity analysis and mass spec confirmation — on products from every vendor we list, then compute a trust score from purity, COA transparency, batch-to-batch consistency, pricing, and shipping reliability. See our Methodology page for the full formula.",
+      "We do not run the tests ourselves — we check the ones that already exist. A listing qualifies only if the seller publishes a certificate of analysis from a named third-party lab, and we confirm that report is real, says which lab ran it, and ties to a specific lot rather than being one generic PDF reused across every batch. The trust score then combines those published results with COA transparency, consistency across lots, price and shipping. See our Methodology page for the weightings.",
   },
   {
     question: "Do you sell peptides directly?",
     answer:
-      "No. PeptideChecker is an independent verification service. We never sell peptides ourselves, and no vendor can pay for placement — every vendor listed has scored 7 or higher out of 10 on our trust score after independent lab testing.",
+      "No, and we never will. We do not sell peptides and we do not run a lab — we read the lab reports sellers publish and rank the ones that hold up. We earn affiliate commission when you buy through a link here, which never moves a score, and no seller can pay for placement. Every listing must score 7 or higher out of 10.",
   },
   {
-    question: "What happens if a vendor fails testing?",
+    question: "What happens if a vendor's results stop checking out?",
     answer:
-      "Any vendor whose trust score drops below 7 is removed from our listings immediately. Failed or inconsistent batches are flagged on the vendor's profile, and we retest before a vendor can be reinstated.",
+      "Any listing whose score drops below 7 is removed immediately. If a certificate is withdrawn, stops being verifiable, or no longer matches the lot actually being sold, the listing is pulled and the reason is recorded on the profile rather than quietly deleted.",
   },
   {
     question: "How do I store peptides?",

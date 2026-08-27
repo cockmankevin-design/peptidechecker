@@ -4,11 +4,11 @@
 
 const badges = [
   {
-    label: "Third-party tested",
+    label: "COA verified",
     path: "M9 3h6M10 3v5.2a2 2 0 0 1-.3 1L5 18a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-4.7-8.8a2 2 0 0 1-.3-1V3",
   },
   { label: "Named labs", path: "M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6" },
-  { label: "No vendor funding", path: "M12 3l8 3v6c0 4.4-3.1 8.3-8 9-4.9-.7-8-4.6-8-9V6l8-3z" },
+  { label: "No paid placement", path: "M12 3l8 3v6c0 4.4-3.1 8.3-8 9-4.9-.7-8-4.6-8-9V6l8-3z" },
   { label: "7+ trust score required", path: "M9 12l2 2 4-4M12 3l7.5 4v5c0 4.4-3.1 8.3-7.5 9-4.4-.7-7.5-4.6-7.5-9V7L12 3z" },
 ];
 

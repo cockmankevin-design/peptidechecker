@@ -58,8 +58,9 @@ export default function Hero() {
               className="pc-reveal text-brand-text-secondary leading-relaxed"
               style={{ animationDelay: "0.4s" }}
             >
-              Every vendor here is scored from independent third-party lab testing &mdash; purity,
-              batch consistency, and COA transparency. Anything below 7 out of 10 is not listed.
+              We don&apos;t run the tests &mdash; we check that somebody credible did. Every listing
+              must publish a third-party lab report we can verify. Anything below 7 out of 10 is
+              not listed.
             </p>
             <div
               className="pc-reveal mt-8 flex items-center gap-6"

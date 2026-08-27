@@ -18,7 +18,7 @@ const body = Inter({
 export const metadata: Metadata = {
   title: "PeptideChecker — Independently Verified Peptide Sources",
   description:
-    "Independently verified peptide vendors. Third-party lab tested. No vendor funding. Safety first.",
+    "Peptide sources ranked on verified third-party lab reports, price and shipping. No paid placement.",
 };
 
 export default function RootLayout({

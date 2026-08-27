@@ -19,7 +19,7 @@ export default function PeptidesPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">All Products</p>
           <h1 className="font-heading text-4xl font-bold text-brand-text-heading">Verified Peptides</h1>
           <p className="mt-3 text-brand-text-secondary max-w-xl">
-            Every product listed has been independently tested by a named third-party lab. Sorted by safety score.
+            Every product listed publishes a third-party lab report we have checked. Sorted by safety score.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -23,17 +23,18 @@ export default function AboutPage() {
             report.
           </p>
           <p>
-            So I built the resource I wish had existed before that phone call: an independent database of vendors
-            who submit to real, named-lab testing — HPLC purity, mass spec confirmation, endotoxin screening — with
-            the certificates published where anyone can check them.
+            So I built the resource I wish had existed before that phone call: one place that gathers the
+            sellers who publish real, named-lab testing — HPLC purity, mass spec confirmation, endotoxin
+            screening — checks those certificates actually hold up, and ranks what is left.
           </p>
 
           <h2 className="font-heading text-2xl font-bold text-brand-text-heading pt-4">Our Mission</h2>
           <p>
-            PeptideChecker doesn&apos;t sell peptides, and we never will. We verify who does. Every vendor we list
-            has been independently tested and scored 7 or higher out of 10 on our trust score — no vendor can pay
-            for placement, and a vendor that fails testing is removed. Our job is to make it obvious, at a glance,
-            which vendors have earned trust and which haven&apos;t.
+            PeptideChecker doesn&apos;t sell peptides and doesn&apos;t run a lab. We read the lab reports sellers
+            publish, check they are real and lot-specific, and score what survives against price and shipping.
+            Every listing sits at 7 or higher out of 10 — no seller can pay for placement, and a listing whose
+            evidence stops checking out is removed. Our job is to make it obvious, at a glance, which sources
+            have evidence behind them and which just have claims.
           </p>
 
           <p>

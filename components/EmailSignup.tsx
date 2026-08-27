@@ -82,8 +82,7 @@ export default function EmailSignup() {
             Get new test results first
           </h2>
           <p className="mt-3 text-[#2b3038] max-w-md">
-            Updates when we publish new independent lab results and vendor reviews. No vendor
-            promotions.
+            Updates when we verify new lab reports or add a source. No vendor promotions.
           </p>
 
           <form className="mt-7 flex flex-col sm:flex-row gap-3 max-w-md" onSubmit={onSubmit}>

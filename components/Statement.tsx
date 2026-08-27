@@ -22,9 +22,9 @@ export default function Statement() {
 
       <h2 className="mt-6 font-heading text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight max-w-4xl">
         <span className="text-brand-text-heading">PeptideChecker exists because </span>
-        <span className="text-brand-text-secondary">a certificate of analysis from the seller
-        is not evidence. </span>
-        <span className="text-brand-text-heading">We buy the product ourselves and pay for the test.</span>
+        <span className="text-brand-text-secondary">a certificate of analysis nobody ever checks is
+        just a claim with a logo on it. </span>
+        <span className="text-brand-text-heading">We read them, and only list what holds up.</span>
       </h2>
 
       <div className="mt-14 grid md:grid-cols-5 gap-6">
@@ -48,8 +48,8 @@ export default function Statement() {
               Trust, transparency, results
             </h3>
             <p className="mt-2 text-sm text-brand-text-secondary max-w-md">
-              Purity, batch consistency and COA transparency, weighted into one score. The formula
-              is published, not proprietary.
+              Purity, batch consistency, COA transparency, price and shipping, weighted into one
+              score. The formula is published, not proprietary.
             </p>
             <Link
               href="/methodology"
