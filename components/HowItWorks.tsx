@@ -1,3 +1,7 @@
+import Image from "next/image";
+
+import { asset } from "@/lib/basePath";
+
 const steps = [
   {
     number: "01",
@@ -23,11 +27,29 @@ export default function HowItWorks() {
   return (
     <section className="border-y border-brand-border bg-brand-surface/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">How it works</p>
-          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-text-heading tracking-tight">
-            Trust, transparency, results
-          </h2>
+        <div className="grid lg:grid-cols-2 gap-10 items-center">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">How it works</p>
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-text-heading tracking-tight">
+              Trust, transparency, results
+            </h2>
+            <p className="mt-4 text-brand-text-secondary leading-relaxed">
+              The same process for every vendor, whether they are a five-year incumbent or a
+              listing added last week.
+            </p>
+          </div>
+          {/* Generic laboratory photography - illustrative of the category, not a depiction of
+              our own testing. */}
+          <div className="relative aspect-[4/3] lg:aspect-[3/2] rounded-2xl overflow-hidden border border-brand-border">
+            <Image
+              src={asset("/images/pipette-vial.jpg")}
+              alt=""
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-tr from-brand-bg/70 via-transparent to-transparent" />
+          </div>
         </div>
 
         <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-px bg-brand-border rounded-2xl overflow-hidden border border-brand-border">

@@ -1,8 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
 
-/* The big editorial statement below the fold. The reference layout carries lab photography
-   here; there is none licensed for this site, so the left panel is built from a drawn
-   molecular lattice instead of a stock photo standing in for a lab we do not have. */
+import { asset } from "@/lib/basePath";
+
+/* The big editorial statement below the fold.
+
+   The photography is stock (Unsplash, free for commercial use), used as category illustration
+   only. It is never captioned or framed as our facility, our equipment or our testing - the
+   same standard that forced the vendor data to be anonymised. Credits are in the footer. */
 
 const categories = [
   { label: "Recovery & repair", href: "/peptides" },
@@ -23,35 +28,21 @@ export default function Statement() {
       </h2>
 
       <div className="mt-14 grid md:grid-cols-5 gap-6">
-        {/* drawn lattice panel */}
-        <div className="md:col-span-3 relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface min-h-[280px] flex items-end p-8">
-          <svg
-            className="absolute inset-0 w-full h-full opacity-[0.22]"
-            viewBox="0 0 600 320"
-            fill="none"
-            aria-hidden="true"
-            preserveAspectRatio="xMidYMid slice"
-          >
-            <defs>
-              <linearGradient id="st-lattice" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#29c5f6" />
-                <stop offset="100%" stopColor="#c2a15e" />
-              </linearGradient>
-            </defs>
-            <g stroke="url(#st-lattice)" strokeWidth="1.2">
-              <path d="M60 240l70-40 70 40 70-40 70 40 70-40 70 40" />
-              <path d="M60 160l70-40 70 40 70-40 70 40 70-40 70 40" />
-              <path d="M130 200v-80M270 200v-80M410 200v-80M200 240v-80M340 240v-80M480 240v-80" />
-            </g>
-            <g fill="url(#st-lattice)">
-              {[60, 130, 200, 270, 340, 410, 480].map((x, i) => (
-                <circle key={`a${x}`} cx={x} cy={i % 2 ? 200 : 240} r="5" />
-              ))}
-              {[60, 130, 200, 270, 340, 410, 480].map((x, i) => (
-                <circle key={`b${x}`} cx={x} cy={i % 2 ? 120 : 160} r="5" />
-              ))}
-            </g>
-          </svg>
+        {/* Stock laboratory photography, deliberately generic. It illustrates the category, it
+            is NOT presented as our facility or our testing - the same line that forced the
+            vendor anonymisation. The caption text never claims otherwise. */}
+        <div className="md:col-span-3 relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface min-h-[340px] flex items-end p-8">
+          <Image
+            src={asset("/images/lab-analysis.jpg")}
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, 60vw"
+            className="object-cover"
+            priority={false}
+          />
+          {/* Scrim: the headline sits on top of the photo and needs guaranteed contrast at any
+              crop, so this is a gradient rather than a flat tint. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-bg via-brand-bg/75 to-brand-bg/25" />
           <div className="relative">
             <h3 className="font-heading text-2xl sm:text-3xl font-bold text-brand-text-heading">
               Trust, transparency, results
@@ -73,12 +64,20 @@ export default function Statement() {
         </div>
 
         {/* category card */}
-        <div className="md:col-span-2 rounded-2xl border border-brand-border bg-brand-surface p-8 flex flex-col">
-          <h3 className="font-heading text-2xl font-bold text-brand-text-heading">Browse by goal</h3>
-          <p className="mt-2 text-sm text-brand-text-secondary">
+        <div className="md:col-span-2 relative overflow-hidden rounded-2xl border border-brand-border bg-brand-surface p-8 flex flex-col">
+          <Image
+            src={asset("/images/microscope.jpg")}
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, 40vw"
+            className="object-cover opacity-25"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-brand-surface/70 to-brand-surface" />
+          <h3 className="relative font-heading text-2xl font-bold text-brand-text-heading">Browse by goal</h3>
+          <p className="relative mt-2 text-sm text-brand-text-secondary">
             Every listing carries its trust score and the lab report behind it.
           </p>
-          <div className="mt-auto pt-8 space-y-3">
+          <div className="relative mt-auto pt-8 space-y-3">
             {categories.map((c) => (
               <Link
                 key={c.label}

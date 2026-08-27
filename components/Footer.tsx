@@ -69,6 +69,15 @@ export default function Footer() {
             For research purposes only. Not for human consumption.
           </p>
         </div>
+
+        {/* Unsplash's licence does not require attribution, but crediting the photographers is
+            the decent thing and costs a line. Also states plainly that the photography is
+            illustrative, so no reader mistakes it for our own facility. */}
+        <p className="mt-4 text-[11px] leading-relaxed text-brand-text-secondary/70">
+          Laboratory photography is illustrative stock imagery, not a depiction of our own
+          facilities or testing. Photographs by ThisisEngineering, Ousa Chea and the CDC via
+          Unsplash.
+        </p>
       </div>
     </footer>
   );
