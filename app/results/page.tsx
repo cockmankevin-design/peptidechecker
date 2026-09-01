@@ -11,9 +11,9 @@ export default function ResultsPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">Lab Reports</p>
-          <h1 className="font-heading text-4xl font-bold text-brand-text-heading">Test Results</h1>
+          <h1 className="font-heading text-4xl font-bold text-brand-text-heading">Published Lab Reports</h1>
           <p className="mt-3 text-brand-text-secondary max-w-xl">
-            Independent third-party lab reports for every batch we track. HPLC purity, mass spec confirmation, and lot traceability.
+            Third-party lab reports published by the vendors we list, and checked by us. HPLC purity, mass spec confirmation, and lot traceability.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

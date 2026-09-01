@@ -12,7 +12,7 @@ export default function VendorsPage() {
         <div className="mb-12">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">Vendors</p>
           <h1 className="font-heading text-4xl font-bold text-brand-text-heading">Verified Vendors</h1>
-          <p className="mt-3 text-brand-text-secondary">Only vendors scoring 7+ after independent testing are listed.</p>
+          <p className="mt-3 text-brand-text-secondary">Only vendors scoring 7+ are listed. Every score is built from lab reports the vendor publishes, checked against a named lab and a specific lot.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {vendors.map((vendor) => (
