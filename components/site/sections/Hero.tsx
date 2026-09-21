@@ -5,7 +5,6 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import { Container, CTA, Eyebrow } from "@/components/site/ui";
 import { EASE_OUT_QUINT } from "@/lib/motion";
-import { asset } from "@/lib/basePath";
 
 /* Hero.
 
@@ -66,29 +65,10 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
-      {/* Background film: a vial animation, muted and looped. Reduced motion
-          gets the poster only - no autoplay. The scrims keep the headline and
-          the record card legible over the brightest frames (the white label
-          close-ups), and fade the bottom edge into the page ground. */}
-      <video
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-        poster={asset("/video/hero-vial-poster.jpg")}
-        autoPlay={!reduced}
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        aria-hidden="true"
-      >
-        <source src={asset("/video/hero-vial-960.mp4")} type="video/mp4" media="(max-width: 767px)" />
-        <source src={asset("/video/hero-vial.mp4")} type="video/mp4" />
-      </video>
+      {/* Structural ground: a ruled sheet, faded at the edges. It references a
+          record page rather than adding ambient glow. */}
       <div
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(8,9,11,0.95)_0%,rgba(8,9,11,0.88)_48%,rgba(8,9,11,0.6)_100%)]"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-bg"
+        className="grid-rule mask-fade-edges pointer-events-none absolute inset-0 opacity-[0.55]"
         aria-hidden="true"
       />
 
