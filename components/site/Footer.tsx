@@ -12,7 +12,7 @@ const COLUMNS = [
     heading: "Registry",
     links: [
       { href: "/vendors", label: "Vendor registry" },
-      { href: "/results", label: "Lab reports" },
+      { href: "/results", label: "Certificates" },
       { href: "/compare", label: "Compare sources" },
     ],
   },

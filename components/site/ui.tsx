@@ -291,3 +291,98 @@ export function DemoNotice({ children, className = "" }: { children?: ReactNode;
     </p>
   );
 }
+
+/* --------------------------------------------------------------------------
+   Inner pages
+   -------------------------------------------------------------------------- */
+
+/** The opening block of every inner page: the hero's ruled ground, an eyebrow,
+    the page's one h1 and a lede. Pages below the header use <Section>. */
+export function PageHeader({
+  eyebrow,
+  title,
+  lede,
+  children,
+}: {
+  eyebrow: string;
+  title: ReactNode;
+  lede?: ReactNode;
+  children?: ReactNode;
+}) {
+  return (
+    <header className="relative overflow-hidden border-b border-line pt-32 pb-14 sm:pt-40 sm:pb-16">
+      <div
+        className="grid-rule mask-fade-edges pointer-events-none absolute inset-0 opacity-[0.4]"
+        aria-hidden="true"
+      />
+      <Container className="relative">
+        <Reveal>
+          <Eyebrow>{eyebrow}</Eyebrow>
+        </Reveal>
+        <Reveal delay={0.06}>
+          <h1 className="mt-5 max-w-3xl text-[clamp(2.2rem,5.4vw,3.6rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-text">
+            {title}
+          </h1>
+        </Reveal>
+        {lede && (
+          <Reveal delay={0.12}>
+            <p className="mt-5 max-w-[60ch] text-[17px] leading-relaxed text-muted">{lede}</p>
+          </Reveal>
+        )}
+        {children && <Reveal delay={0.18} className="mt-8">{children}</Reveal>}
+      </Container>
+    </header>
+  );
+}
+
+const GATE_STYLE = {
+  pass: { mark: "✓", label: "Passed", cls: "border-verified/40 bg-verified-dim text-verified" },
+  fail: { mark: "✕", label: "Failed", cls: "border-delisted/40 bg-delisted-dim text-delisted" },
+  open: { mark: "–", label: "Not reached", cls: "border-line-strong text-dim" },
+} as const;
+
+/** The four gates of one certificate, in order, each with its outcome spelled
+    out - never colour alone. */
+export function GateList({
+  names,
+  gates,
+}: {
+  names: readonly string[];
+  gates: readonly ("pass" | "fail" | "open")[];
+}) {
+  return (
+    <ol className="divide-y divide-line rounded-lg border border-line bg-surface">
+      {names.map((name, i) => {
+        const g = GATE_STYLE[gates[i]];
+        return (
+          <li key={name} className="flex items-center gap-3 px-4 py-3.5">
+            <span className="w-5 font-mono text-[11px] tabular text-dim">{String(i + 1).padStart(2, "0")}</span>
+            <span
+              className={`grid h-[20px] w-[20px] shrink-0 place-items-center rounded-full border text-[11px] ${g.cls}`}
+              aria-hidden="true"
+            >
+              {g.mark}
+            </span>
+            <span className={`min-w-0 flex-1 text-[14px] ${gates[i] === "open" ? "text-dim" : "text-text"}`}>
+              {name}
+            </span>
+            <span className={`font-mono text-[10.5px] uppercase tracking-[0.1em] ${g.cls.split(" ").pop()}`}>
+              {g.label}
+            </span>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+/** Body copy for prose pages: measured width, the site's muted text. */
+export function Prose({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return (
+    <div
+      className={`max-w-[68ch] space-y-5 text-[16.5px] leading-relaxed text-muted [&_a]:text-accent [&_a:hover]:underline [&_h2]:pt-6 [&_h2]:text-[1.6rem] [&_h2]:font-semibold [&_h2]:leading-tight [&_h2]:text-text [&_h3]:pt-3 [&_h3]:text-[1.2rem] [&_h3]:font-semibold [&_h3]:text-text [&_strong]:font-semibold [&_strong]:text-text ${className}`}
+    >
+      {children}
+    </div>
+  );
+}

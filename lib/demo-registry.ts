@@ -43,11 +43,34 @@ export interface RegistryRow {
   lastReviewed: string;
   /** Present only on delisted rows: the publishable reason for removal. */
   reason?: string;
+  /** URL segment for the record page, /vendors/<slug>. */
+  slug: string;
+  /** The four gates in order: loads, names lab, names lot, matches page.
+      A failed gate ends the run, so later gates read "not reached". */
+  gates: [GateState, GateState, GateState, GateState];
+  /** Present on under-review rows: what is open and why. */
+  note?: string;
+  /** Product slugs (content/products) the audited certificates cover. */
+  products: string[];
+  /** Affiliate link. Absent on every demo row: an invented vendor has no site. */
+  url?: string;
 }
+
+export type GateState = "pass" | "fail" | "open";
+
+export const GATE_NAMES = [
+  "Certificate exists and loads",
+  "Names the issuing laboratory",
+  "Names the specific lot",
+  "Matches the product page",
+] as const;
 
 export const DEMO_REGISTRY: RegistryRow[] = [
   {
     vendor: "Ashgrove Bio",
+    slug: "ashgrove-bio",
+    gates: ["pass","pass","pass","pass"],
+    products: ["bpc-157","tb-500"],
     status: "verified",
     lot: "AG-4471-A",
     lab: "Independent Lab A",
@@ -56,6 +79,9 @@ export const DEMO_REGISTRY: RegistryRow[] = [
   },
   {
     vendor: "Bellwether Compounds",
+    slug: "bellwether-compounds",
+    gates: ["pass","pass","pass","pass"],
+    products: ["bpc-157","mots-c"],
     status: "verified",
     lot: "BW-20260711",
     lab: "Independent Lab B",
@@ -64,6 +90,9 @@ export const DEMO_REGISTRY: RegistryRow[] = [
   },
   {
     vendor: "Coldharbour Research Supply",
+    slug: "coldharbour-research-supply",
+    gates: ["pass","pass","pass","pass"],
+    products: ["tb-500","semaglutide"],
     status: "verified",
     lot: "CH-0926-14",
     lab: "Independent Lab A",
@@ -72,6 +101,10 @@ export const DEMO_REGISTRY: RegistryRow[] = [
   },
   {
     vendor: "Drayton Peptide Works",
+    slug: "drayton-peptide-works",
+    gates: ["pass","pass","pass","fail"],
+    products: ["bpc-157"],
+    note: "The certificate states 5 mg; the product page sells 10 mg. The vendor has been asked which is correct.",
     status: "review",
     lot: "DP-8802",
     lab: "Independent Lab C",
@@ -80,6 +113,10 @@ export const DEMO_REGISTRY: RegistryRow[] = [
   },
   {
     vendor: "Eastmark Bio",
+    slug: "eastmark-bio",
+    gates: ["pass","pass","fail","open"],
+    products: ["mots-c","semaglutide"],
+    note: "The certificate names a laboratory but no lot. The vendor has been asked for the lot-specific certificate.",
     status: "review",
     lot: null,
     lab: "Independent Lab B",
@@ -88,6 +125,9 @@ export const DEMO_REGISTRY: RegistryRow[] = [
   },
   {
     vendor: "Fenwick Compound Co.",
+    slug: "fenwick-compound-co",
+    gates: ["pass","fail","open","open"],
+    products: ["bpc-157","tb-500"],
     status: "delisted",
     lot: null,
     lab: null,
@@ -97,6 +137,9 @@ export const DEMO_REGISTRY: RegistryRow[] = [
   },
   {
     vendor: "Greyloch Research",
+    slug: "greyloch-research",
+    gates: ["pass","fail","open","open"],
+    products: ["semaglutide"],
     status: "delisted",
     lot: null,
     lab: null,
@@ -115,4 +158,9 @@ export function registryTally(rows: RegistryRow[] = DEMO_REGISTRY) {
     review: rows.filter((r) => r.status === "review").length,
     delisted: rows.filter((r) => r.status === "delisted").length,
   };
+}
+
+/** The record behind /vendors/<slug>. */
+export function registryRow(slug: string): RegistryRow | undefined {
+  return DEMO_REGISTRY.find((r) => r.slug === slug);
 }

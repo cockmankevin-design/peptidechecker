@@ -1,45 +1,121 @@
-import CompareTable from "@/components/CompareTable";
-import SampleDataBadge from "@/components/SampleDataBadge";
-import { getVendors, getProducts } from "@/lib/content";
+import Link from "next/link";
+
+import { Container, DemoNotice, PageHeader, Section, StatusChip } from "@/components/site/ui";
+import { DEMO_REGISTRY, GATE_NAMES } from "@/lib/demo-registry";
+
+/* Compare sources: every vendor against the same four checks, side by side.
+   The comparison is the evidence, not price or score. Desktop gets a real
+   table; phones get one card per vendor. */
+
+const CELL = {
+  pass: { mark: "✓", label: "Passed", cls: "text-verified" },
+  fail: { mark: "✕", label: "Failed", cls: "text-delisted" },
+  open: { mark: "–", label: "Not reached", cls: "text-dim" },
+} as const;
+
+const SHORT = ["Loads", "Names lab", "Names lot", "Matches page"] as const;
 
 export default function ComparePage() {
-  // getVendors() already applies the site-wide 7+ trust filter and sorts best-first, so the
-  // table only ever needs to worry about display order, not eligibility.
-  const vendors = getVendors();
-  const hasSampleData = vendors.some((v) => v.sampleData);
-
-  // A vendor's productsCarried can reference a product slug with no content/products/*.mdx
-  // file (e.g. vendor-b lists "pt-141", which doesn't exist). app/vendors/[slug]/page.tsx
-  // already guards against this for its "Products Carried (N)" count; passing the same set of
-  // real slugs down to the table lets it apply the identical guard, so the two pages can't
-  // disagree about the same vendor's count.
-  const validProductSlugs = getProducts().map((p) => p.slug);
+  const rows = DEMO_REGISTRY;
 
   return (
-    <main className="pt-24 pb-16">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">Compare</p>
-          <h1 className="font-heading text-4xl font-bold text-brand-text-heading">Compare Vendors</h1>
-          <p className="mt-3 text-brand-text-secondary max-w-2xl">
-            Every vendor below scored 7+ on our independent trust score — no vendor pays for placement. Sorted by
-            trust score by default: safety first, then price, then shipping. Click any column to re-sort.
-          </p>
-        </div>
+    <>
+      <PageHeader
+        eyebrow="Compare sources"
+        title="Every vendor, the same four checks."
+        lede="No price, no purity, no score. Just whether each vendor's certificate loads, names its laboratory, names the lot, and matches what the product page says."
+      />
+      <Section className="!pt-10 sm:!pt-14">
+        <Container>
+          <DemoNotice />
 
-        {hasSampleData && (
-          <div className="mb-8 bg-brand-warn/10 border border-brand-warn/40 rounded-xl p-4 flex items-start gap-3">
-            <SampleDataBadge className="shrink-0" />
-            <p className="text-sm text-brand-warn">
-              This entire table — every vendor, every column — is currently placeholder sample data seeded during
-              development. Trust score, COA status, pricing, shipping, and product count shown below are all
-              invented figures. None of it, asterisked or not, represents a verified vendor record.
-            </p>
+          <div
+            className="mt-8 hidden overflow-x-auto rounded-lg border border-line md:block"
+            role="region"
+            aria-label="Vendor comparison, scrollable"
+            tabIndex={0}
+          >
+            <table className="w-full min-w-[820px] border-collapse text-left">
+              <caption className="sr-only">
+                Each vendor in the registry against the four certificate checks, with its status.
+              </caption>
+              <thead>
+                <tr className="border-b border-line bg-surface">
+                  <th scope="col" className="px-5 py-3 font-mono text-[10.5px] font-normal uppercase tracking-[0.14em] text-dim">
+                    Vendor
+                  </th>
+                  {GATE_NAMES.map((g, i) => (
+                    <th
+                      key={g}
+                      scope="col"
+                      title={g}
+                      className="px-4 py-3 text-center font-mono text-[10.5px] font-normal uppercase tracking-[0.14em] text-dim"
+                    >
+                      {SHORT[i]}
+                    </th>
+                  ))}
+                  <th scope="col" className="px-5 py-3 font-mono text-[10.5px] font-normal uppercase tracking-[0.14em] text-dim">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.slug} className="border-b border-line last:border-b-0">
+                    <th scope="row" className="px-5 py-4 text-left font-normal">
+                      <Link
+                        href={`/vendors/${r.slug}`}
+                        className={
+                          r.status === "delisted"
+                            ? "text-dim line-through decoration-delisted/50 hover:text-accent"
+                            : "font-medium text-text hover:text-accent"
+                        }
+                      >
+                        {r.vendor}
+                      </Link>
+                    </th>
+                    {r.gates.map((g, i) => (
+                      <td key={i} className={`px-4 py-4 text-center font-mono text-[13px] ${CELL[g].cls}`}>
+                        <span aria-hidden="true">{CELL[g].mark}</span>
+                        <span className="sr-only">{CELL[g].label}</span>
+                      </td>
+                    ))}
+                    <td className="px-5 py-4">
+                      <StatusChip status={r.status} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
 
-        <CompareTable vendors={vendors} validProductSlugs={validProductSlugs} />
-      </div>
-    </main>
+          <ul className="mt-8 space-y-3 md:hidden">
+            {rows.map((r) => (
+              <li key={r.slug} className="rounded-lg border border-line bg-surface p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <Link href={`/vendors/${r.slug}`} className="font-medium text-text hover:text-accent">
+                    {r.vendor}
+                  </Link>
+                  <StatusChip status={r.status} />
+                </div>
+                <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5">
+                  {r.gates.map((g, i) => (
+                    <div key={i} className="flex items-center justify-between gap-2">
+                      <dt className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-dim">{SHORT[i]}</dt>
+                      <dd className={`font-mono text-[11px] uppercase ${CELL[g].cls}`}>{CELL[g].label}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-6 font-mono text-[11.5px] leading-relaxed text-dim">
+            ✓ passed · ✕ failed · – not reached. A failed check ends the run, so the checks after it are
+            never reached.
+          </p>
+        </Container>
+      </Section>
+    </>
   );
 }

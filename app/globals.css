@@ -74,33 +74,6 @@
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 
-  /* ---- TRANSITIONAL: aliases for the previous token names ----------------
-     The interior pages (vendors, results, compare, blog, methodology, about)
-     are still written against `brand-*` utilities. Dropping those names in one
-     go would leave every one of those pages rendering unstyled text on an
-     unstyled ground while the build still passed - the exact silent Tailwind 4
-     failure this project has hit before.
-
-     So they are aliased onto the new palette and the pages keep working while
-     the front end is rebuilt page by page. Delete this block once no `brand-`
-     or `font-heading`/`font-body` utility remains in the codebase. */
-  --color-brand-bg: var(--color-bg);
-  --color-brand-surface: var(--color-surface);
-  --color-brand-surface-2: var(--color-surface-2);
-  --color-brand-border: var(--color-line);
-  --color-brand-accent: var(--color-accent);
-  --color-brand-accent-hover: var(--color-accent-hover);
-  --color-brand-accent-dim: var(--color-accent-dim);
-  --color-brand-text: var(--color-text);
-  --color-brand-text-secondary: var(--color-muted);
-  --color-brand-text-heading: var(--color-text);
-  --color-brand-gold: var(--color-review);
-  --color-brand-gold-dim: var(--color-review-dim);
-  --color-brand-safe: var(--color-verified);
-  --color-brand-warn: var(--color-review);
-  --color-brand-fail: var(--color-delisted);
-  --font-heading: var(--font-sans);
-  --font-body: var(--font-sans);
 }
 
 @layer base {

@@ -22,7 +22,7 @@ import { EASE_OUT_QUINT } from "@/lib/motion";
 const LINKS = [
   { href: "/vendors", label: "Registry" },
   { href: "/methodology", label: "Methodology" },
-  { href: "/results", label: "Lab reports" },
+  { href: "/results", label: "Certificates" },
   { href: "/about", label: "About" },
 ];
 

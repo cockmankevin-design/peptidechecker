@@ -1,163 +1,102 @@
 import Link from "next/link";
 
-const recognisedLabs = [
-  {
-    name: "Independent Lab A",
-    description:
-      "Analytical lab specialising in HPLC purity testing and mass spectrometry for the peptide research community, and one of the most widely cited in the space.",
-  },
-  {
-    name: "Independent Lab B",
-    description:
-      "Offers HPLC and LC-MS testing with public certificate lookup by lot number, so a buyer can confirm a specific batch before ordering.",
-  },
-  {
-    name: "Independent Lab C",
-    description:
-      "Contract lab providing mass spectrometry and purity analysis for research compounds, including endotoxin and sterility screening.",
-  },
-];
+import { Container, PageHeader, Prose, Section, SectionHeader, StatusChip } from "@/components/site/ui";
+import WhatWeVerify from "@/components/site/sections/WhatWeVerify";
 
-const formula = [
+/* Methodology. The four gates are the homepage's own section, reused so the
+   method can never be described two ways. Around it: what we do not do, what
+   each status means, and how the commission is kept away from the verdict. */
+
+const STATUSES = [
   {
-    label: "Purity (HPLC / LC-MS)",
-    weight: "40%",
-    description: "The measured purity of the actual compound against what the label claims.",
+    status: "verified" as const,
+    body: "The certificate passed all four checks. It loads, names an independent laboratory, names the lot, and matches the product page.",
   },
   {
-    label: "COA Transparency",
-    weight: "20%",
-    description: "Whether certificates of analysis are published, lot-specific, and independently verifiable.",
+    status: "review" as const,
+    body: "A check failed or could not be completed, and the vendor has been asked to fix it. The record stays visible, with the open question stated.",
   },
   {
-    label: "Batch-to-Batch Consistency",
-    weight: "20%",
-    description: "How closely published results for the same product agree across different lots and dates.",
-  },
-  {
-    label: "Pricing",
-    weight: "10%",
-    description: "Cost relative to the category average, so a seller isn't rewarded purely for being expensive.",
-  },
-  {
-    label: "Shipping Reliability",
-    weight: "10%",
-    description: "Whether quoted delivery times hold up against what buyers actually report.",
+    status: "delisted" as const,
+    body: "The vendor could not fix it, or the certificate was withdrawn. The record is kept permanently, with the reason for removal.",
   },
 ];
 
 export default function MethodologyPage() {
   return (
-    <main className="pt-24 pb-16">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">Methodology</p>
-        <h1 className="font-heading text-4xl font-bold text-brand-text-heading">How We Verify &amp; Score Sources</h1>
-        <p className="mt-4 text-brand-text-secondary leading-relaxed">
-          Every source on PeptideChecker is scored the same way, whether it&apos;s a five-year incumbent or a
-          listing added last week. No seller pays for placement, and no seller sees or influences its own score
-          before it&apos;s published.
-        </p>
+    <>
+      <PageHeader
+        eyebrow="Methodology"
+        title="What we check, and what we refuse to do."
+        lede="Every vendor is checked the same way, whether it has sold for five years or listed last week. No vendor pays for a place, and no vendor sees its record before it is published."
+      />
 
-        <section className="mt-12">
-          <h2 className="font-heading text-2xl font-bold text-brand-text-heading">
-            What We Do &mdash; And What We Don&apos;t
-          </h2>
-          <p className="mt-3 text-brand-text-secondary leading-relaxed">
-            Stating this plainly, because it is the difference between a useful score and a marketing one:{" "}
-            <strong className="text-brand-text-heading">
-              PeptideChecker does not operate a laboratory and does not commission its own testing.
-            </strong>{" "}
-            We do not buy samples, we do not send them anywhere, and no number on this site comes from a test we
-            paid for.
-          </p>
-          <p className="mt-4 text-brand-text-secondary leading-relaxed">
-            What we do is check the evidence that already exists. Anyone can print &ldquo;third-party
-            tested&rdquo; on a product page. Far fewer publish the actual report, and fewer still publish one tied
-            to the lot you would receive. That gap is the entire job.
-          </p>
-          <p className="mt-4 text-brand-text-secondary leading-relaxed">
-            For a listing to qualify, its certificate of analysis has to survive four checks: the document must
-            actually exist and be reachable, not merely referenced; it must name the laboratory that produced it;
-            it must identify a specific lot or batch rather than being one generic PDF reused across every
-            product; and its results must match what the seller claims on the product page. A certificate that
-            fails any of these counts as no certificate at all.
-          </p>
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {recognisedLabs.map((lab) => (
-              <div key={lab.name} className="bg-brand-surface border border-brand-border rounded-xl p-5">
-                <p className="font-heading font-bold text-brand-text-heading">{lab.name}</p>
-                <p className="mt-2 text-sm text-brand-text-secondary leading-relaxed">{lab.description}</p>
-              </div>
+      <Section className="!pb-10">
+        <Container>
+          <Prose>
+            <h2>We do not test anything</h2>
+            <p>
+              <strong>PeptideChecker runs no laboratory and commissions no testing.</strong> We do not buy
+              samples, we do not send them anywhere, and no figure on this site comes from a test we paid for.
+            </p>
+            <p>
+              What we check is the evidence that already exists. Anyone can print &ldquo;third-party
+              tested&rdquo; on a product page. Far fewer publish the actual certificate, and fewer still publish
+              one tied to the lot you would receive. That gap is the entire job.
+            </p>
+          </Prose>
+        </Container>
+      </Section>
+
+      <WhatWeVerify />
+
+      <Section className="border-t border-line">
+        <Container>
+          <SectionHeader eyebrow="Statuses" title="Three outcomes, and none of them is silent." />
+          <ul className="mt-10 grid gap-4 md:grid-cols-3">
+            {STATUSES.map((s) => (
+              <li key={s.status} className="rounded-lg border border-line bg-surface p-5">
+                <StatusChip status={s.status} />
+                <p className="mt-4 text-[15px] leading-relaxed text-muted">{s.body}</p>
+              </li>
             ))}
-          </div>
-        </section>
+          </ul>
+          <p className="mt-6 max-w-[68ch] text-[14.5px] leading-relaxed text-dim">
+            A check we could not run, because a vendor&apos;s site blocked us, is recorded as not
+            checked. It is never recorded as a failure.
+          </p>
+        </Container>
+      </Section>
 
-        <section className="mt-12">
-          <h2 className="font-heading text-2xl font-bold text-brand-text-heading">The Trust Score Formula</h2>
-          <p className="mt-3 text-brand-text-secondary leading-relaxed">
-            Every trust score out of 10 is a weighted average of five factors:
-          </p>
-          <div className="mt-6 space-y-3">
-            {formula.map((f) => (
-              <div
-                key={f.label}
-                className="bg-brand-surface border border-brand-border rounded-xl p-5 flex items-center gap-4"
-              >
-                <span className="shrink-0 w-16 text-center font-heading text-lg font-bold text-brand-accent">
-                  {f.weight}
-                </span>
-                <div>
-                  <p className="font-semibold text-brand-text-heading">{f.label}</p>
-                  <p className="text-sm text-brand-text-secondary mt-1">{f.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="font-heading text-2xl font-bold text-brand-text-heading">How This Site Makes Money</h2>
-          <p className="mt-3 text-brand-text-secondary leading-relaxed">
-            Stating this plainly, because an independence claim is worth nothing without it:
-            PeptideChecker earns affiliate commission when a reader buys from a vendor listed here
-            &mdash; the same vendors this site scores. That is our only revenue. No vendor pays for
-            placement, for a listing, or for a review.
-          </p>
-          <p className="mt-4 text-brand-text-secondary leading-relaxed">
-            Three rules keep the commission away from the scoring. Every input is a published
-            document or a listed figure you can open and check yourself, so no score rests on our word
-            alone. No seller sees or reviews a score before it publishes. And the commission rate is
-            never an input &mdash; a higher-paying seller and a lower-paying one with identical evidence
-            receive identical scores.
-          </p>
-          <p className="mt-4 text-brand-text-secondary leading-relaxed">
-            If a seller we earn commission from has its evidence stop checking out, it is removed.
-            That has a direct revenue cost, and it is the point: a verification site that cannot afford
-            to delist its own earners is not a verification site.
-          </p>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="font-heading text-2xl font-bold text-brand-text-heading">The 7+ Rule</h2>
-          <p className="mt-3 text-brand-text-secondary leading-relaxed">
-            A source needs a trust score of 7.0 or higher to appear anywhere on PeptideChecker — in the
-            directory, on a product page, or in the comparison table. There is no exception and no paid placement.
-            If a score drops below 7 — a certificate withdrawn, a report that no longer matches the lot on sale
-            — the listing is removed immediately, not grandfathered in.
-          </p>
-          <p className="mt-4 text-brand-text-secondary leading-relaxed">
-            Want to see the scores for yourself? Browse every{" "}
-            <Link href="/vendors" className="text-brand-accent hover:underline">
-              verified vendor
-            </Link>{" "}
-            or check the{" "}
-            <Link href="/results" className="text-brand-accent hover:underline">
-              underlying lab reports
-            </Link>
-            .
-          </p>
-        </section>
-      </div>
-    </main>
+      <Section className="border-t border-line">
+        <Container>
+          <Prose>
+            <h2>How this site makes money</h2>
+            <p>
+              PeptideChecker earns affiliate commission when a reader buys from a vendor listed here, the same
+              vendors we publish records on. That is our only revenue. No vendor pays for a listing, a
+              position, or a softer verdict.
+            </p>
+            <p>
+              Three rules keep the commission away from the verdict. Every check is against a published
+              document you can open yourself. No vendor sees its record before it is published. And the
+              commission rate is never an input: two vendors with identical certificates get identical
+              records, whatever they pay.
+            </p>
+            <h2>Removal is immediate</h2>
+            <p>
+              If a listed vendor&apos;s certificate stops checking out, because it was withdrawn or no longer
+              matches the lot on sale, the listing moves to under review or delisted straight away. It is not
+              grandfathered in. That has a direct revenue cost, and it is the point: a verification site that
+              cannot afford to delist its own earners is not a verification site.
+            </p>
+            <p>
+              See it applied in the <Link href="/vendors">registry</Link>, or check each vendor&apos;s{" "}
+              <Link href="/results">certificate record</Link>.
+            </p>
+          </Prose>
+        </Container>
+      </Section>
+    </>
   );
 }

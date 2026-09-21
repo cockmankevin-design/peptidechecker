@@ -17,6 +17,8 @@
    on a phone is a horizontal-scroll puzzle, not a document. Both render the
    same rows from the same source; neither is a shrunken version of the other. */
 
+import Link from "next/link";
+
 import {
   Container,
   CTA,
@@ -94,6 +96,10 @@ const TD = "px-4 py-4 align-top font-mono tabular text-[13px] text-muted";
 function VendorName({ row }: { row: RegistryRow }) {
   const delisted = row.status === "delisted";
   return (
+    <Link
+      href={`/vendors/${row.slug}`}
+      className="hover:underline hover:decoration-accent/60"
+    >
     <span
       className={
         delisted
@@ -103,6 +109,7 @@ function VendorName({ row }: { row: RegistryRow }) {
     >
       {row.vendor}
     </span>
+    </Link>
   );
 }
 
@@ -110,13 +117,14 @@ function VendorName({ row }: { row: RegistryRow }) {
    Section
    -------------------------------------------------------------------------- */
 
-export default function RegistryPreview() {
+export default function RegistryPreview({ page = false }: { page?: boolean }) {
   const tally = registryTally();
   const rows = DEMO_REGISTRY;
 
   return (
-    <Section id="registry">
+    <Section id="registry" className={page ? "!pt-10 sm:!pt-14" : ""}>
       <Container>
+        {!page && (
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader
             eyebrow="Public registry"
@@ -129,8 +137,9 @@ export default function RegistryPreview() {
             </CTA>
           </Reveal>
         </div>
+        )}
 
-        <Reveal delay={0.08} className="mt-10 flex">
+        <Reveal delay={0.08} className={page ? "flex" : "mt-10 flex"}>
           <DemoNotice />
         </Reveal>
 
@@ -139,7 +148,7 @@ export default function RegistryPreview() {
         <Reveal delay={0.12}>
           <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 border-y border-line py-3 font-mono text-[11.5px]">
             <span className="tabular text-muted">
-              {tally.total} records in this preview
+              {tally.total} records{page ? "" : " in this preview"}
             </span>
             <span className="hidden h-3 w-px bg-line sm:block" aria-hidden="true" />
             <TallyItem count={tally.verified} label="verified" dot="bg-verified" />

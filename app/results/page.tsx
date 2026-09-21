@@ -1,50 +1,69 @@
 import Link from "next/link";
-import SampleDataBadge from "@/components/SampleDataBadge";
-import { getTestResults } from "@/lib/content";
 
-export default function ResultsPage() {
-  // getTestResults() already sorts newest-first by dateTested.
-  const results = getTestResults();
+import { Container, DemoNotice, PageHeader, Section, StatusChip } from "@/components/site/ui";
+import { DEMO_REGISTRY, GATE_NAMES } from "@/lib/demo-registry";
+
+/* Certificates. We run no laboratory, so this is not a page of lab results -
+   it is the audit of each vendor's own published certificate: how far it got
+   through the four checks. Newest review first. */
+
+export default function CertificatesPage() {
+  const rows = [...DEMO_REGISTRY].sort((a, b) => b.lastReviewed.localeCompare(a.lastReviewed));
 
   return (
-    <main className="pt-24 pb-16">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold mb-3">Lab Reports</p>
-          <h1 className="font-heading text-4xl font-bold text-brand-text-heading">Published Lab Reports</h1>
-          <p className="mt-3 text-brand-text-secondary max-w-xl">
-            Third-party lab reports published by the vendors we list, and checked by us. HPLC purity, mass spec confirmation, and lot traceability.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {results.map((result) => (
-            <Link
-              key={result.slug}
-              href={`/results/${result.slug}`}
-              className="bg-brand-surface border border-brand-border rounded-xl p-5 hover:border-brand-accent/30 transition-colors relative block"
-            >
-              {result.sampleData && <SampleDataBadge />}
-              <div className="pr-20">
-                <p className="font-heading font-bold text-brand-text-heading">{result.peptide}</p>
-                <p className="text-sm text-brand-text-secondary mt-1">{result.vendor} · {result.lab}</p>
-              </div>
-              <div className="flex items-center gap-3 mt-4">
-                <span
-                  className={`text-xs font-bold uppercase px-2 py-1 rounded ${
-                    result.passed ? "bg-brand-safe/15 text-brand-safe" : "bg-brand-fail/15 text-brand-fail"
-                  }`}
-                >
-                  {result.passed ? "Pass" : "Fail"}
-                </span>
-                <span className="text-sm text-brand-text font-medium">
-                  {result.hplcPurity}% purity{result.sampleData ? "*" : ""}
-                </span>
-                <span className="text-xs text-brand-text-secondary ml-auto">{result.dateTested}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </main>
+    <>
+      <PageHeader
+        eyebrow="Certificates"
+        title="The certificates, and how far each one got."
+        lede="Every vendor publishes its own certificate of analysis. We do not test anything; we check whether that document loads, names its laboratory, names the lot, and matches the product page. This is the result of that check for every record."
+      />
+      <Section className="!pt-10 sm:!pt-14">
+        <Container>
+          <DemoNotice />
+          <ul className="mt-8 grid gap-4 md:grid-cols-2">
+            {rows.map((r) => {
+              const passed = r.gates.filter((g) => g === "pass").length;
+              const failedAt = r.gates.indexOf("fail");
+              return (
+                <li key={r.slug}>
+                  <Link
+                    href={`/vendors/${r.slug}`}
+                    className="group block h-full rounded-lg border border-line bg-surface p-5 transition-colors hover:border-accent/40"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <p className="text-[15px] font-medium text-text group-hover:text-accent">{r.vendor}</p>
+                      <StatusChip status={r.status} />
+                    </div>
+                    <p className="mt-3 font-mono text-[12px] text-muted">
+                      Lot {r.lot ?? <span className="text-dim">not published</span>}
+                      <span className="text-dim"> · </span>
+                      {r.lab ?? <span className="text-dim">no laboratory named</span>}
+                    </p>
+                    {/* One cell per check, in order. */}
+                    <div className="mt-4 flex gap-1" aria-hidden="true">
+                      {r.gates.map((g, i) => (
+                        <span
+                          key={i}
+                          className={`h-1.5 flex-1 rounded-full ${
+                            g === "pass" ? "bg-verified" : g === "fail" ? "bg-delisted" : "bg-line-strong"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <div className="mt-2.5 flex flex-wrap justify-between gap-2 font-mono text-[11px] text-dim">
+                      <span>
+                        {passed} of 4 checks passed
+                        {failedAt >= 0 && <> · stopped at &ldquo;{GATE_NAMES[failedAt]}&rdquo;</>}
+                      </span>
+                      <time dateTime={r.lastReviewed}>{r.lastReviewed}</time>
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </Container>
+      </Section>
+    </>
   );
 }
