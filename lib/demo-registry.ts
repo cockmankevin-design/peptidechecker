@@ -39,7 +39,6 @@ export interface RegistryRow {
       which is itself the most common reason a listing fails. */
   lot: string | null;
   lab: string | null;
-  purity: string | null;
   lastReviewed: string;
   /** Present only on delisted rows: the publishable reason for removal. */
   reason?: string;
@@ -74,7 +73,6 @@ export const DEMO_REGISTRY: RegistryRow[] = [
     status: "verified",
     lot: "AG-4471-A",
     lab: "Independent Lab A",
-    purity: "99.4%",
     lastReviewed: "2026-08-28",
   },
   {
@@ -85,7 +83,6 @@ export const DEMO_REGISTRY: RegistryRow[] = [
     status: "verified",
     lot: "BW-20260711",
     lab: "Independent Lab B",
-    purity: "98.9%",
     lastReviewed: "2026-08-24",
   },
   {
@@ -96,7 +93,6 @@ export const DEMO_REGISTRY: RegistryRow[] = [
     status: "verified",
     lot: "CH-0926-14",
     lab: "Independent Lab A",
-    purity: "99.1%",
     lastReviewed: "2026-08-19",
   },
   {
@@ -108,7 +104,6 @@ export const DEMO_REGISTRY: RegistryRow[] = [
     status: "review",
     lot: "DP-8802",
     lab: "Independent Lab C",
-    purity: "97.6%",
     lastReviewed: "2026-08-30",
   },
   {
@@ -120,7 +115,6 @@ export const DEMO_REGISTRY: RegistryRow[] = [
     status: "review",
     lot: null,
     lab: "Independent Lab B",
-    purity: null,
     lastReviewed: "2026-08-31",
   },
   {
@@ -131,7 +125,6 @@ export const DEMO_REGISTRY: RegistryRow[] = [
     status: "delisted",
     lot: null,
     lab: null,
-    purity: null,
     lastReviewed: "2026-08-21",
     reason: "One certificate reused across the entire catalogue — no lot reference",
   },
@@ -143,7 +136,6 @@ export const DEMO_REGISTRY: RegistryRow[] = [
     status: "delisted",
     lot: null,
     lab: null,
-    purity: null,
     lastReviewed: "2026-07-30",
     reason: "Certificate withdrawn after listing; replacement names no laboratory",
   },

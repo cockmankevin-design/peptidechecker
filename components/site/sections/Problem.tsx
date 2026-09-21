@@ -45,7 +45,7 @@ const DOC_REF = "COA-2026-0731";
 const SHARED_FIELDS: ReadonlyArray<{ label: string; value: string }> = [
   { label: "Supplier", value: SOURCE.vendor },
   { label: "Compound", value: "BPC-157" },
-  { label: "Assay purity", value: SOURCE.purity ?? "—" },
+  { label: "Assay purity", value: "99.4%" }, // a field on the mock document, not a registry figure
   { label: "Method", value: "RP-HPLC / MS" },
   { label: "Report date", value: SOURCE.lastReviewed },
   { label: "Laboratory", value: SOURCE.lab ?? "—" },

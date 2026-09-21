@@ -69,7 +69,7 @@ type Phase = "listed" | "flagged" | "settled";
     such rather than as an em dash placeholder. */
 function evidenceLine(row: RegistryRow): string {
   if (!row.lot) return "No lot reference published";
-  return [`Lot ${row.lot}`, row.lab, row.purity].filter(Boolean).join(" · ");
+  return [`Lot ${row.lot}`, row.lab].filter(Boolean).join(" · ");
 }
 
 function removalLine(row: RegistryRow): string {

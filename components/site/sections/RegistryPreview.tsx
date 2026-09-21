@@ -35,7 +35,7 @@ import { DEMO_REGISTRY, registryTally, type RegistryRow } from "@/lib/demo-regis
    Absence
 
    A missing lot is not a formatting gap, it is the finding. It gets words.
-   A missing lab or purity on an already-delisted row is downstream of that,
+   A missing lab on an already-delisted row is downstream of that,
    so it gets a rule - legible to sighted readers, spoken to screen readers.
    -------------------------------------------------------------------------- */
 
@@ -168,7 +168,7 @@ export default function RegistryPreview({ page = false }: { page?: boolean }) {
             <table className="w-full min-w-[880px] border-collapse text-left">
               <caption className="sr-only">
                 Demonstration registry preview: vendor, verification status, lot reference,
-                testing laboratory, reported purity and date last reviewed. Delisted entries
+                testing laboratory and date last reviewed. Delisted entries
                 are retained and carry the reason for removal.
               </caption>
               <thead>
@@ -184,9 +184,6 @@ export default function RegistryPreview({ page = false }: { page?: boolean }) {
                   </th>
                   <th scope="col" className={TH}>
                     Lab
-                  </th>
-                  <th scope="col" className={TH}>
-                    Purity
                   </th>
                   <th scope="col" className={`${TH} pr-5`}>
                     Last reviewed
@@ -210,7 +207,6 @@ export default function RegistryPreview({ page = false }: { page?: boolean }) {
                       </td>
                       <td className={TD}>{row.lot ?? <NotPublished />}</td>
                       <td className={TD}>{row.lab ?? <Absent />}</td>
-                      <td className={TD}>{row.purity ?? <Absent />}</td>
                       <td className={`${TD} pr-5`}>
                         <time dateTime={row.lastReviewed}>{row.lastReviewed}</time>
                       </td>
@@ -218,7 +214,7 @@ export default function RegistryPreview({ page = false }: { page?: boolean }) {
 
                     {row.reason && (
                       <tr className={edge}>
-                        <td colSpan={6} className="px-4 pb-5 pl-5 pr-5 pt-0">
+                        <td colSpan={5} className="px-4 pb-5 pl-5 pr-5 pt-0">
                           <RemovalReason reason={row.reason} />
                         </td>
                       </tr>
@@ -246,7 +242,6 @@ export default function RegistryPreview({ page = false }: { page?: boolean }) {
                   <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3.5">
                     <DataField label="Lot" value={row.lot ?? <NotPublished />} />
                     <DataField label="Lab" value={row.lab ?? <Absent />} />
-                    <DataField label="Purity" value={row.purity ?? <Absent />} />
                     <DataField
                       label="Last reviewed"
                       value={<time dateTime={row.lastReviewed}>{row.lastReviewed}</time>}
