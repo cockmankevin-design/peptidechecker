@@ -46,3 +46,6 @@ workers/signup/*.log
 
 workers/signup/.wrangler/
 
+
+# Internal vendor research: unverified verdicts on named businesses. Never publish.
+research/
