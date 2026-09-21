@@ -9,6 +9,9 @@ const basePath = process.env.BASE_PATH ?? "";
 const nextConfig: NextConfig = {
   output: "export",
   basePath,
+  // Inlined into client bundles too, so asset() in "use client" components
+  // (the hero video) gets the same prefix the server render used.
+  env: { BASE_PATH: basePath },
   assetPrefix: basePath || undefined,
   trailingSlash: true, // Pages serves /vendors/ as a directory; without this the links 404
   images: {

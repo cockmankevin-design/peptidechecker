@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import { Container, CTA, Eyebrow } from "@/components/site/ui";
 import { EASE_OUT_QUINT } from "@/lib/motion";
+import { asset } from "@/lib/basePath";
 
 /* Hero.
 
@@ -71,7 +72,7 @@ export default function Hero() {
           close-ups), and fade the bottom edge into the page ground. */}
       <video
         className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-        poster="/video/hero-vial-poster.jpg"
+        poster={asset("/video/hero-vial-poster.jpg")}
         autoPlay={!reduced}
         muted
         loop
@@ -79,8 +80,8 @@ export default function Hero() {
         preload="metadata"
         aria-hidden="true"
       >
-        <source src="/video/hero-vial-960.mp4" type="video/mp4" media="(max-width: 767px)" />
-        <source src="/video/hero-vial.mp4" type="video/mp4" />
+        <source src={asset("/video/hero-vial-960.mp4")} type="video/mp4" media="(max-width: 767px)" />
+        <source src={asset("/video/hero-vial.mp4")} type="video/mp4" />
       </video>
       <div
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(8,9,11,0.95)_0%,rgba(8,9,11,0.88)_48%,rgba(8,9,11,0.6)_100%)]"
