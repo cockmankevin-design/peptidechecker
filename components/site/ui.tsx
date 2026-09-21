@@ -341,7 +341,7 @@ const GATE_STYLE = {
   open: { mark: "–", label: "Not reached", cls: "border-line-strong text-dim" },
 } as const;
 
-/** The four gates of one certificate, in order, each with its outcome spelled
+/** The seven gates of one certificate, in order, each with its outcome spelled
     out - never colour alone. */
 export function GateList({
   names,

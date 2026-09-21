@@ -1,11 +1,11 @@
 "use client";
 
-/* WHAT WE VERIFY - the four gates.
+/* WHAT WE VERIFY - the seven gates.
 
-   The structural idea is a gauntlet, not a scorecard. The four checks are laid
+   The structural idea is a gauntlet, not a scorecard. The seven checks are laid
    out as one continuous vertical chain: a hairline spine runs from the first
    numbered marker down through every gate to a single terminal node at the
-   bottom. You can only reach the end by passing through all four, and each gate
+   bottom. You can only reach the end by passing through all seven, and each gate
    carries the exact condition that ends the run. Numbering is used because the
    order is real - a certificate that does not load cannot be checked for a lab
    name - so the ordinals are earned rather than decorative.
@@ -54,15 +54,33 @@ const GATES: readonly Gate[] = [
   },
   {
     n: "03",
+    title: "The lab's own records confirm it",
+    body: "A lab name on a PDF can be copied onto a forged document. So we check the certificate against the laboratory itself: its public lookup, verification key or QR code has to resolve to this report, with the same compound and result. If the lab cannot confirm the document, nothing proves it issued it.",
+    failsOn: "key: no match · lab denies issuing",
+  },
+  {
+    n: "04",
+    title: "It was issued to this vendor",
+    body: "Every certificate names the client that sent the sample. If that line names a different company, the document describes someone else's product, borrowed to make a storefront look tested. The client on the certificate has to be the vendor selling the vial.",
+    failsOn: "client: another brand",
+  },
+  {
+    n: "05",
     title: "It names a specific lot",
     body: "A certificate with no lot number cannot be tied to anything. One generic PDF reused across a catalogue describes a batch that was tested once, somewhere, and says nothing about the vial being shipped to you. The lot on the document has to be the lot on the label.",
     failsOn: "lot: absent · one COA, many listings",
   },
   {
-    n: "04",
+    n: "06",
     title: "It matches the product page",
-    body: "The last gate is arithmetic, not chemistry. Compound, strength and date on the certificate have to agree with the listing that links to it. A 10 mg listing carrying a 5 mg report, or a current page pointing at a document from two years ago, is a mismatch whether or not anyone intended it.",
-    failsOn: "page 10 mg / COA 5 mg · date drift",
+    body: "This gate is arithmetic, not chemistry. Compound and strength on the certificate have to agree with the listing that links to it. A 10 mg listing carrying a 5 mg report is a mismatch whether or not anyone intended it.",
+    failsOn: "page 10 mg / COA 5 mg",
+  },
+  {
+    n: "07",
+    title: "It is current",
+    body: "A certificate describes one sample on one day. If it was tested more than six months ago, it almost certainly describes a lot that has already sold through, not the one being shipped now.",
+    failsOn: "tested > 6 months ago",
   },
 ];
 
@@ -91,7 +109,7 @@ export default function WhatWeVerify() {
           <div className="lg:col-span-7">
             <SectionHeader
               eyebrow="What we verify"
-              title="Four gates. A certificate clears all four, or it clears none."
+              title="Seven gates. A certificate clears all seven, or it clears none."
               lede="Every listing runs the same sequence in the same order. Each gate asks one question the document either answers or does not, and the run stops at the first no."
             />
           </div>
@@ -100,7 +118,7 @@ export default function WhatWeVerify() {
             <div className="rounded-lg border border-line bg-surface p-5">
               <Eyebrow>Pass condition</Eyebrow>
               <p className="mt-3 font-mono text-[13px] leading-relaxed text-muted">
-                <span className="text-text tabular">4 of 4.</span> No partial credit, no
+                <span className="text-text tabular">7 of 7.</span> No partial credit, no
                 averaging, no score. A failure at any gate ends the check for the whole listing.
               </p>
             </div>
@@ -148,8 +166,8 @@ export default function WhatWeVerify() {
           ))}
         </ol>
 
-        {/* Terminal node. The chain from gate 04 runs straight into it, which is
-            the whole argument: this status is downstream of all four. */}
+        {/* Terminal node. The chain from gate 07 runs straight into it, which is
+            the whole argument: this status is downstream of all seven. */}
         <Reveal delay={0.32}>
           <div className="grid grid-cols-[2.25rem_1fr] gap-x-4 sm:gap-x-6">
             <span className="flex h-9 w-9 items-center justify-center rounded-md border border-line bg-surface">
@@ -157,7 +175,7 @@ export default function WhatWeVerify() {
             </span>
             <div className="min-w-0 pt-1">
               <p className="flex flex-wrap items-center gap-x-2.5 gap-y-2 text-[15px] leading-relaxed text-text">
-                <span>Only past the fourth gate does a listing carry</span>
+                <span>Only past the seventh gate does a listing carry</span>
                 <StatusChip status="verified" />
               </p>
               <p className="mt-2 max-w-[58ch] font-mono text-[12px] leading-relaxed text-dim">
@@ -208,7 +226,7 @@ export default function WhatWeVerify() {
             <Reveal delay={0.14}>
               <p className="mt-6 max-w-[62ch] text-[15px] leading-relaxed text-muted">
                 That boundary is the feature. Reading a document a vendor has already published
-                costs minutes, so the same four gates can run across a whole catalogue, run again
+                costs minutes, so the same seven gates can run across a whole catalogue, run again
                 when a lot changes, and run again next quarter. Commissioning our own testing
                 would buy a deeper look at one vial and a far shorter list.
               </p>

@@ -3,14 +3,14 @@ import Link from "next/link";
 import { Container, PageHeader, Prose, Section, SectionHeader, StatusChip } from "@/components/site/ui";
 import WhatWeVerify from "@/components/site/sections/WhatWeVerify";
 
-/* Methodology. The four gates are the homepage's own section, reused so the
+/* Methodology. The seven gates are the homepage's own section, reused so the
    method can never be described two ways. Around it: what we do not do, what
    each status means, and how the commission is kept away from the verdict. */
 
 const STATUSES = [
   {
     status: "verified" as const,
-    body: "The certificate passed all four checks. It loads, names an independent laboratory, names the lot, and matches the product page.",
+    body: "The certificate passed all seven checks: it loads, names a laboratory that confirms it, was issued to this vendor, names the lot, matches the product page, and is recent.",
   },
   {
     status: "review" as const,

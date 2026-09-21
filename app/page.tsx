@@ -16,7 +16,7 @@ import { Hairline } from "@/components/site/ui";
      Hero          - what this is, in five seconds
      Problem       - why a certificate alone proves nothing
      Verification  - what we actually do about it (the scroll sequence)
-     WhatWeVerify  - the four gates, stated plainly
+     WhatWeVerify  - the seven gates, stated plainly
      Registry      - what the output looks like
      SayNo         - why removals are the product
      Independence  - the conflict, stated before anyone else states it

@@ -57,6 +57,13 @@ export default async function VendorRecordPage({ params }: { params: Promise<{ s
                 <DataField label="Lot" value={row.lot ?? <span className="text-dim">Not published</span>} />
                 <DataField label="Laboratory" value={row.lab ?? <span className="text-dim">Not named</span>} />
                 <DataField label="Reviewed" value={<time dateTime={row.lastReviewed}>{row.lastReviewed}</time>} />
+                <div className="col-span-2">
+                  <DataField
+                    label="Tests reported"
+                    mono={false}
+                    value={row.tests.length ? row.tests.join(" · ") : <span className="text-dim">None readable</span>}
+                  />
+                </div>
                 <DataField
                   label="Products covered"
                   mono={false}
@@ -87,7 +94,7 @@ export default async function VendorRecordPage({ params }: { params: Promise<{ s
             </div>
 
             <div>
-              <Eyebrow>The four checks, in order</Eyebrow>
+              <Eyebrow>The seven checks, in order</Eyebrow>
               <div className="mt-5">
                 <GateList names={GATE_NAMES} gates={row.gates} />
               </div>

@@ -14,7 +14,8 @@
     company. Never collapse `blocked` into `fail`. */
 export type GateResult = "pass" | "fail" | "blocked";
 
-/** The four gates from the methodology page, in the order they are applied. */
+/** The original four gates. The site now applies seven (GATE_NAMES in
+    lib/demo-registry.ts); this audit-layer type records the first four. */
 export interface CoaGates {
   /** Published and reachable. "Available on request" is a fail. */
   loads: GateResult;

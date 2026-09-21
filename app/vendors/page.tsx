@@ -10,7 +10,7 @@ export default function VendorsPage() {
       <PageHeader
         eyebrow="Public registry"
         title="Every listing, including the ones we took down."
-        lede="A vendor is listed when a published certificate can be tied to the lot actually on sale. When that link breaks, the record is marked and kept, with the reason. Open any vendor to see the four checks behind its status."
+        lede="A vendor is listed when a published certificate can be tied to the lot actually on sale. When that link breaks, the record is marked and kept, with the reason. Open any vendor to see the seven checks behind its status."
       />
       <RegistryPreview page />
     </>

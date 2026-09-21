@@ -40,7 +40,7 @@ interface FaqItem {
   a: ReactNode;
 }
 
-/** The four gates, kept in the order they are applied so the copy here cannot
+/** The seven gates, kept in the order they are applied so the copy here cannot
     drift from `CoaGates` in lib/types.ts. */
 const GATES: { label: string; detail: string }[] = [
   {
@@ -54,14 +54,29 @@ const GATES: { label: string; detail: string }[] = [
       "It identifies the issuing laboratory. An unattributed result is an assertion. In-house is not third-party, and we record which it was.",
   },
   {
-    label: "03 · Names the lot",
+    label: "03 · Lab confirms it",
+    detail:
+      "The lab's own lookup, verification key or QR code resolves to this certificate. A lab name copied onto a forged PDF fails here.",
+  },
+  {
+    label: "04 · Issued to this vendor",
+    detail:
+      "The certificate's client line names the seller. A report issued to another brand describes someone else's product.",
+  },
+  {
+    label: "05 · Names the lot",
     detail:
       "It refers to a specific lot or batch. One generic PDF reused across a whole catalogue says nothing about the vial being shipped.",
   },
   {
-    label: "04 · Matches the page",
+    label: "06 · Matches the page",
     detail:
-      "Compound, strength and date agree with what the product page claims. A certificate for a different thing is a certificate for a different thing.",
+      "Compound and strength agree with what the product page claims. A certificate for a different thing is a certificate for a different thing.",
+  },
+  {
+    label: "07 · Current",
+    detail:
+      "Tested within the last six months. An older certificate almost certainly describes a lot that has already sold through.",
   },
 ];
 
@@ -120,7 +135,7 @@ const FAQ_ITEMS: FaqItem[] = [
     a: (
       <>
         <p>
-          Four gates, applied in order to a real product’s certificate rather than to a vendor’s
+          Seven gates, applied in order to a real product’s certificate rather than to a vendor’s
           description of its own standards.
         </p>
         <ul className="mt-4 space-y-3 border-l border-line pl-4">
@@ -160,7 +175,7 @@ const FAQ_ITEMS: FaqItem[] = [
         <p>
           No. Every vendor name, lot number and figure shown in the registry on this site is
           demonstration data, invented to show the format while the first audits are verified. A
-          real vendor appears only after a real certificate has been through the four gates and
+          real vendor appears only after a real certificate has been through the seven gates and
           a second pass has confirmed the read.
         </p>
         <DemoNotice className="mt-4" />

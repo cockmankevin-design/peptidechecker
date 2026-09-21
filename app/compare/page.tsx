@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 import { Container, DemoNotice, PageHeader, Section, StatusChip } from "@/components/site/ui";
-import { DEMO_REGISTRY, GATE_NAMES } from "@/lib/demo-registry";
+import { DEMO_REGISTRY, GATE_NAMES, GATE_SHORT } from "@/lib/demo-registry";
 
-/* Compare sources: every vendor against the same four checks, side by side.
+/* Compare sources: every vendor against the same seven checks, side by side.
    The comparison is the evidence, not price or score. Desktop gets a real
    table; phones get one card per vendor. */
 
@@ -13,8 +13,6 @@ const CELL = {
   open: { mark: "–", label: "Not reached", cls: "text-dim" },
 } as const;
 
-const SHORT = ["Loads", "Names lab", "Names lot", "Matches page"] as const;
-
 export default function ComparePage() {
   const rows = DEMO_REGISTRY;
 
@@ -22,8 +20,8 @@ export default function ComparePage() {
     <>
       <PageHeader
         eyebrow="Compare sources"
-        title="Every vendor, the same four checks."
-        lede="No price, no purity, no score. Just whether each vendor's certificate loads, names its laboratory, names the lot, and matches what the product page says."
+        title="Every vendor, the same seven checks."
+        lede="No price, no purity, no score. Just whether each vendor's certificate loads, names its laboratory, is confirmed by that lab, was issued to that vendor, names the lot, matches the product page, and is recent."
       />
       <Section className="!pt-10 sm:!pt-14">
         <Container>
@@ -35,9 +33,9 @@ export default function ComparePage() {
             aria-label="Vendor comparison, scrollable"
             tabIndex={0}
           >
-            <table className="w-full min-w-[820px] border-collapse text-left">
+            <table className="w-full min-w-[980px] border-collapse text-left">
               <caption className="sr-only">
-                Each vendor in the registry against the four certificate checks, with its status.
+                Each vendor in the registry against the seven certificate checks, with its status.
               </caption>
               <thead>
                 <tr className="border-b border-line bg-surface">
@@ -51,7 +49,7 @@ export default function ComparePage() {
                       title={g}
                       className="px-4 py-3 text-center font-mono text-[10.5px] font-normal uppercase tracking-[0.14em] text-dim"
                     >
-                      {SHORT[i]}
+                      {GATE_SHORT[i]}
                     </th>
                   ))}
                   <th scope="col" className="px-5 py-3 font-mono text-[10.5px] font-normal uppercase tracking-[0.14em] text-dim">
@@ -101,7 +99,7 @@ export default function ComparePage() {
                 <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5">
                   {r.gates.map((g, i) => (
                     <div key={i} className="flex items-center justify-between gap-2">
-                      <dt className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-dim">{SHORT[i]}</dt>
+                      <dt className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-dim">{GATE_SHORT[i]}</dt>
                       <dd className={`font-mono text-[11px] uppercase ${CELL[g].cls}`}>{CELL[g].label}</dd>
                     </div>
                   ))}

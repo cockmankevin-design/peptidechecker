@@ -10,7 +10,7 @@ import { EASE_OUT_QUINT } from "@/lib/motion";
 
    The hero visual is not an illustration of the product - it IS the product,
    executing. A record assembles itself: a seller, then the lot, then the
-   certificate attaching to that lot, then the four checks running, then the
+   certificate attaching to that lot, then the seven checks running, then the
    verdict entering the public register. That sequence is the entire business
    in one object, which is why it earns the space rather than a stock graphic.
 
@@ -26,13 +26,16 @@ const STAGES = ["Seller", "Lot", "Certificate", "Verification", "Public record"]
 const CHECKS = [
   "Certificate exists and loads",
   "Names the issuing laboratory",
+  "The lab's own records confirm it",
+  "Issued to this vendor",
   "Names the specific lot",
   "Matches the product page",
+  "Tested within the last 6 months",
 ] as const;
 
 /** Milliseconds each stage holds before the next begins. Slow enough to read,
     quick enough that the whole story lands inside seven seconds. */
-const STEP_MS = 620;
+const STEP_MS = 560;
 const TOTAL_STEPS = 4 + CHECKS.length; // stages 0-3, then one tick per check, then verdict
 
 export default function Hero() {
@@ -182,7 +185,7 @@ export default function Hero() {
 
               <div className="my-4 h-px w-full bg-line" />
 
-              {/* the four gates ticking */}
+              {/* the seven gates ticking */}
               <ul className="space-y-2.5">
                 {CHECKS.map((c, i) => {
                   const done = step >= 3 + i;

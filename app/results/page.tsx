@@ -5,7 +5,7 @@ import { DEMO_REGISTRY, GATE_NAMES } from "@/lib/demo-registry";
 
 /* Certificates. We run no laboratory, so this is not a page of lab results -
    it is the audit of each vendor's own published certificate: how far it got
-   through the four checks. Newest review first. */
+   through the seven checks. Newest review first. */
 
 export default function CertificatesPage() {
   const rows = [...DEMO_REGISTRY].sort((a, b) => b.lastReviewed.localeCompare(a.lastReviewed));
@@ -15,7 +15,7 @@ export default function CertificatesPage() {
       <PageHeader
         eyebrow="Certificates"
         title="The certificates, and how far each one got."
-        lede="Every vendor publishes its own certificate of analysis. We do not test anything; we check whether that document loads, names its laboratory, names the lot, and matches the product page. This is the result of that check for every record."
+        lede="Every vendor publishes its own certificate of analysis. We do not test anything; we check whether that document loads, names its laboratory, is confirmed by that lab, was issued to that vendor, names the lot, matches the product page, and is recent. This is the result of that check for every record."
       />
       <Section className="!pt-10 sm:!pt-14">
         <Container>
@@ -52,7 +52,7 @@ export default function CertificatesPage() {
                     </div>
                     <div className="mt-2.5 flex flex-wrap justify-between gap-2 font-mono text-[11px] text-dim">
                       <span>
-                        {passed} of 4 checks passed
+                        {passed} of 7 checks passed
                         {failedAt >= 0 && <> · stopped at &ldquo;{GATE_NAMES[failedAt]}&rdquo;</>}
                       </span>
                       <time dateTime={r.lastReviewed}>{r.lastReviewed}</time>

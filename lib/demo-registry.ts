@@ -44,9 +44,12 @@ export interface RegistryRow {
   reason?: string;
   /** URL segment for the record page, /vendors/<slug>. */
   slug: string;
-  /** The four gates in order: loads, names lab, names lot, matches page.
-      A failed gate ends the run, so later gates read "not reached". */
-  gates: [GateState, GateState, GateState, GateState];
+  /** The seven gates in order (see GATE_NAMES). A failed gate ends the run,
+      so later gates read "not reached". */
+  gates: [GateState, GateState, GateState, GateState, GateState, GateState, GateState];
+  /** Which analyses the certificate actually reports. A fact about the
+      document, not a pass/fail: purity says nothing about endotoxin. */
+  tests: string[];
   /** Present on under-review rows: what is open and why. */
   note?: string;
   /** Product slugs (content/products) the audited certificates cover. */
@@ -60,15 +63,22 @@ export type GateState = "pass" | "fail" | "open";
 export const GATE_NAMES = [
   "Certificate exists and loads",
   "Names the issuing laboratory",
+  "The lab's own records confirm it",
+  "Issued to this vendor",
   "Names the specific lot",
   "Matches the product page",
+  "Tested within the last 6 months",
 ] as const;
+
+/** Short column labels for tables, same order as GATE_NAMES. */
+export const GATE_SHORT = ["Loads", "Names lab", "Lab confirms", "Issued to vendor", "Names lot", "Matches page", "Current"] as const;
 
 export const DEMO_REGISTRY: RegistryRow[] = [
   {
     vendor: "Ashgrove Bio",
     slug: "ashgrove-bio",
-    gates: ["pass","pass","pass","pass"],
+    gates: ["pass","pass","pass","pass","pass","pass","pass"],
+    tests: ["Purity (HPLC)","Identity (MS)","Endotoxin (LAL)"],
     products: ["bpc-157","tb-500"],
     status: "verified",
     lot: "AG-4471-A",
@@ -78,7 +88,8 @@ export const DEMO_REGISTRY: RegistryRow[] = [
   {
     vendor: "Bellwether Compounds",
     slug: "bellwether-compounds",
-    gates: ["pass","pass","pass","pass"],
+    gates: ["pass","pass","pass","pass","pass","pass","pass"],
+    tests: ["Purity (HPLC)","Identity (MS)"],
     products: ["bpc-157","mots-c"],
     status: "verified",
     lot: "BW-20260711",
@@ -88,9 +99,11 @@ export const DEMO_REGISTRY: RegistryRow[] = [
   {
     vendor: "Coldharbour Research Supply",
     slug: "coldharbour-research-supply",
-    gates: ["pass","pass","pass","pass"],
+    note: "The certificate is dated August 2025, more than 12 months ago. The vendor has been asked for a certificate for the lot now on sale.",
+    gates: ["pass","pass","pass","pass","pass","pass","fail"],
+    tests: ["Purity (HPLC)","Identity (MS)"],
     products: ["tb-500","semaglutide"],
-    status: "verified",
+    status: "review",
     lot: "CH-0926-14",
     lab: "Independent Lab A",
     lastReviewed: "2026-08-19",
@@ -98,7 +111,8 @@ export const DEMO_REGISTRY: RegistryRow[] = [
   {
     vendor: "Drayton Peptide Works",
     slug: "drayton-peptide-works",
-    gates: ["pass","pass","pass","fail"],
+    gates: ["pass","pass","pass","pass","pass","fail","open"],
+    tests: ["Purity (HPLC)"],
     products: ["bpc-157"],
     note: "The certificate states 5 mg; the product page sells 10 mg. The vendor has been asked which is correct.",
     status: "review",
@@ -109,9 +123,10 @@ export const DEMO_REGISTRY: RegistryRow[] = [
   {
     vendor: "Eastmark Bio",
     slug: "eastmark-bio",
-    gates: ["pass","pass","fail","open"],
+    gates: ["pass","pass","pass","fail","open","open","open"],
+    tests: ["Purity (HPLC)","Identity (MS)"],
     products: ["mots-c","semaglutide"],
-    note: "The certificate names a laboratory but no lot. The vendor has been asked for the lot-specific certificate.",
+    note: "The certificate's client line names a different company, not Eastmark Bio. The vendor has been asked for a certificate issued to it.",
     status: "review",
     lot: null,
     lab: "Independent Lab B",
@@ -120,7 +135,8 @@ export const DEMO_REGISTRY: RegistryRow[] = [
   {
     vendor: "Fenwick Compound Co.",
     slug: "fenwick-compound-co",
-    gates: ["pass","fail","open","open"],
+    gates: ["pass","fail","open","open","open","open","open"],
+    tests: [],
     products: ["bpc-157","tb-500"],
     status: "delisted",
     lot: null,
@@ -131,13 +147,14 @@ export const DEMO_REGISTRY: RegistryRow[] = [
   {
     vendor: "Greyloch Research",
     slug: "greyloch-research",
-    gates: ["pass","fail","open","open"],
+    gates: ["pass","pass","fail","open","open","open","open"],
+    tests: ["Purity (HPLC)"],
     products: ["semaglutide"],
     status: "delisted",
     lot: null,
-    lab: null,
+    lab: "Independent Lab C",
     lastReviewed: "2026-07-30",
-    reason: "Certificate withdrawn after listing; replacement names no laboratory",
+    reason: "The laboratory's own lookup returns a different compound under this certificate's verification key",
   },
 ];
 
