@@ -283,7 +283,6 @@ export default function Faq() {
         <div className="grid gap-12 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-20">
           <div className="lg:sticky lg:top-28 lg:self-start">
             <SectionHeader
-              eyebrow="Questions"
               title="The obvious objections, answered first."
               lede="What we check, what we refuse to do, and where the money comes from. If an answer here reads like a hedge, it is the wrong answer."
             />

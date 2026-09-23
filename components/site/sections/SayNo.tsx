@@ -221,17 +221,11 @@ export default function SayNo() {
 
   return (
     <Section id="say-no" className="relative isolate">
-      <div
-        aria-hidden="true"
-        className="grid-rule mask-fade-edges pointer-events-none absolute inset-0 -z-10 opacity-30"
-      />
-
       <Container>
         <div className="grid gap-y-12 lg:grid-cols-12 lg:gap-x-16 lg:gap-y-10">
           {/* -------------------------------------------------- argument */}
           <div className="lg:col-span-5 lg:row-start-1">
             <SectionHeader
-              eyebrow="Removal policy"
               title="A list that can afford to say no."
               lede="Adding a vendor to this register costs us nothing. Removing one costs us the affiliate commission that vendor earns. That asymmetry is the product."
             />

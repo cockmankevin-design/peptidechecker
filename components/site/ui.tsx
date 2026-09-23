@@ -140,7 +140,10 @@ export function SectionHeader({
   lede,
   align = "left",
 }: {
-  eyebrow: string;
+  /** Optional - only pass this when it tells the reader something the title
+      doesn't already say (a category, an audience switch). Most headings
+      don't need one; a label over every section is chrome, not content. */
+  eyebrow?: string;
   title: ReactNode;
   lede?: ReactNode;
   align?: "left" | "center";
@@ -148,21 +151,21 @@ export function SectionHeader({
   const centered = align === "center";
   return (
     <div className={centered ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
+      {/* One reveal for the whole header, not one per line - a heading and its
+          lede land as a single moment instead of a staggered checklist. */}
       <Reveal>
-        <Eyebrow>{eyebrow}</Eyebrow>
-      </Reveal>
-      <Reveal delay={0.06}>
-        <h2 className="mt-4 text-[clamp(1.75rem,4.2vw,2.75rem)] font-semibold leading-[1.12] text-text">
+        {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+        <h2
+          className={`text-[clamp(1.75rem,4.2vw,2.75rem)] font-semibold leading-[1.12] text-text ${eyebrow ? "mt-4" : ""}`}
+        >
           {title}
         </h2>
-      </Reveal>
-      {lede && (
-        <Reveal delay={0.12}>
+        {lede && (
           <p className={`mt-4 text-[17px] leading-relaxed text-muted ${centered ? "mx-auto" : ""}`}>
             {lede}
           </p>
-        </Reveal>
-      )}
+        )}
+      </Reveal>
     </div>
   );
 }
@@ -226,7 +229,10 @@ export function CTA({
     "group inline-flex items-center gap-2 rounded-lg px-5 py-3 text-[15px] font-medium transition-colors duration-200";
   const styles =
     variant === "primary"
-      ? "bg-accent text-white hover:bg-accent-hover"
+      ? // Dark text, not white: the dark-theme accent is bright enough that
+        // white text on it only clears ~2.5:1 contrast. --color-bg reads at
+        // 7.6:1 on the same fill.
+        "bg-accent text-bg hover:bg-accent-hover"
       : "border border-line-strong text-text hover:border-accent/50 hover:text-accent";
 
   return (
@@ -311,10 +317,6 @@ export function PageHeader({
 }) {
   return (
     <header className="relative overflow-hidden border-b border-line pt-32 pb-14 sm:pt-40 sm:pb-16">
-      <div
-        className="grid-rule mask-fade-edges pointer-events-none absolute inset-0 opacity-[0.4]"
-        aria-hidden="true"
-      />
       <Container className="relative">
         <Reveal>
           <Eyebrow>{eyebrow}</Eyebrow>

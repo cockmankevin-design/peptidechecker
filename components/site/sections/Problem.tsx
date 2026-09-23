@@ -159,21 +159,20 @@ function Certificate({
    Root cause
    -------------------------------------------------------------------------- */
 
-const ROOT_CAUSE: ReadonlyArray<{ n: string; claim: string; detail: string }> = [
+/* Three independent reasons, not a sequence - no numbering, so the layout
+   doesn't imply an order none of them actually has. */
+const ROOT_CAUSE: ReadonlyArray<{ claim: string; detail: string }> = [
   {
-    n: "01",
     claim: "Nothing stops a vendor publishing a certificate.",
     detail:
       "Anyone can send a sample to a laboratory and post the PDF that comes back. The document proves a test happened somewhere, to something.",
   },
   {
-    n: "02",
     claim: "No standard says what it has to contain.",
     detail:
       "There is no required format. A report can omit the lot, the date, the method, or the identity of the lab and still look finished on a product page.",
   },
   {
-    n: "03",
     claim: "No one checks it describes the bottle.",
     detail:
       "Between the sample that was tested and the vial that ships sits an unverified claim. In most cases nobody has ever put the two side by side.",
@@ -189,7 +188,6 @@ export default function Problem() {
     <Section id="problem">
       <Container>
         <SectionHeader
-          eyebrow="The problem"
           title="A genuine certificate can still tell you nothing."
           lede="Not the laboratory name, not the purity figure, not the signature block — none of it connects the document on the page to the vial in the box. Only the lot reference does that, and it is the one field a certificate can quietly leave out."
         />
@@ -253,12 +251,9 @@ export default function Problem() {
 
           <dl className="mt-8 grid gap-8 sm:grid-cols-3 sm:gap-6">
             {ROOT_CAUSE.map((item, i) => (
-              <Reveal key={item.n} delay={0.06 * i}>
+              <Reveal key={item.claim} delay={0.06 * i}>
                 <div className="border-t border-line pt-4">
-                  <span className="font-mono text-[11px] tabular text-dim">{item.n}</span>
-                  <dt className="mt-3 text-[15.5px] font-medium leading-snug text-text">
-                    {item.claim}
-                  </dt>
+                  <dt className="text-[15.5px] font-medium leading-snug text-text">{item.claim}</dt>
                   <dd className="mt-2 text-[14px] leading-relaxed text-muted">{item.detail}</dd>
                 </div>
               </Reveal>

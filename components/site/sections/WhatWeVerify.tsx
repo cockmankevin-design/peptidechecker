@@ -17,7 +17,8 @@
    Animation is <Reveal> only, staggered down the chain so the sequence reads in
    order. Reduced motion is handled inside <Reveal>. */
 
-import { Check, X } from "lucide-react";
+import { ArrowRight, Check, X } from "lucide-react";
+import Link from "next/link";
 
 import {
   Container,
@@ -185,7 +186,67 @@ export default function WhatWeVerify() {
           </div>
         </Reveal>
 
-        <Hairline className="mt-20 sm:mt-24" />
+        {/* Gate 6 made concrete. "Matches the product page" is the gate most
+            likely to stay abstract, so it gets one worked example: the actual
+            three-node path a check like this traces, named and linked rather
+            than described. Real internal link to the product page; the
+            certificate and lab are illustrative, same as the Hero record. */}
+        <Reveal delay={0.1}>
+          <div className="mt-14 rounded-lg border border-line bg-surface p-5 sm:p-6">
+            <Eyebrow>Gate 06, traced</Eyebrow>
+            <p className="mt-2 max-w-[58ch] text-[13.5px] leading-relaxed text-muted">
+              What &ldquo;matches the product page&rdquo; actually checks — three things, named
+              and followed, not taken on trust.
+            </p>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr] sm:items-center">
+              <Link
+                href="/peptides/bpc-157"
+                className="group rounded-md border border-line bg-surface-2 p-3.5 transition-colors hover:border-accent/40"
+              >
+                <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-dim">
+                  Product page
+                </p>
+                <p className="mt-1.5 text-[13.5px] text-text">BPC-157 · 10&nbsp;mg</p>
+                <p className="mt-0.5 font-mono text-[11px] text-dim group-hover:text-accent">
+                  /peptides/bpc-157
+                </p>
+              </Link>
+
+              <ArrowRight
+                className="hidden h-4 w-4 shrink-0 rotate-90 text-dim sm:block sm:rotate-0"
+                aria-hidden="true"
+              />
+
+              <div className="rounded-md border border-line bg-surface-2 p-3.5">
+                <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-dim">
+                  Certificate
+                </p>
+                <p className="mt-1.5 text-[13.5px] text-text">10&nbsp;mg · Lot AG-4471-A</p>
+                <p className="mt-0.5 font-mono text-[11px] text-dim">COA-2026-0811.pdf</p>
+              </div>
+
+              <ArrowRight
+                className="hidden h-4 w-4 shrink-0 rotate-90 text-dim sm:block sm:rotate-0"
+                aria-hidden="true"
+              />
+
+              <div className="rounded-md border border-line bg-surface-2 p-3.5">
+                <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-dim">
+                  Laboratory
+                </p>
+                <p className="mt-1.5 text-[13.5px] text-text">Independent Lab A</p>
+                <p className="mt-0.5 font-mono text-[11px] text-verified">Issuance confirmed</p>
+              </div>
+            </div>
+
+            <p className="mt-4 font-mono text-[10.5px] leading-relaxed text-dim">
+              Illustrative trace — see the <Link href="/vendors/ashgrove-bio" className="underline decoration-line-strong underline-offset-2 hover:text-accent">full record</Link>
+            </p>
+          </div>
+        </Reveal>
+
+        <Hairline className="mt-14 sm:mt-16" />
 
         {/* The boundary. Stated as a capability, because it is the reason the
             check can cover a catalogue instead of a single vial. */}

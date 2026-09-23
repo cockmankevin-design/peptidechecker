@@ -3,11 +3,18 @@
 /* ============================================================================
    PeptideChecker design system
 
-   The brief: a verification company, not a peptide seller. Trustworthy,
-   technical, precise, slightly mysterious. The reference points are Stripe,
-   Linear, Vercel - not for their look, but for their discipline: restrained
-   neutrals, hairline structure, one accent used sparingly, and type that
-   carries the hierarchy instead of decoration.
+   The brief, restated by Kevin (2026-09-23) after seeing the approved Higgs
+   Field hero video (dark navy, splashing water around a labeled vial): the
+   whole site goes dark and cohesive with it - "beautiful," "unique," "its
+   own look," explicitly not generic/AI-slop, but still "very professional
+   and easy to navigate because the end goal is to make sales." This
+   supersedes the white/blue "doctor's office" theme from 2026-09-22 - see
+   [[PeptideChecker]] in the vault for the full decision trail; that light
+   theme lasted one day before the video changed the brief.
+
+   Every text/background pairing below is computed against WCAG AA (4.5:1),
+   not eyeballed - the same discipline the light theme used, re-run for a
+   dark ground rather than assumed to transfer.
 
    Two rules this file enforces:
 
@@ -27,38 +34,57 @@
 
 @theme {
   /* ---- ground and structure -------------------------------------------- */
-  /* Neutrals carry a slight cool bias rather than being pure grey, so the
-     surface reads as instrument glass rather than as unstyled default. */
-  --color-bg: #08090b;
-  --color-surface: #0e1013;
-  --color-surface-2: #141821;
-  --color-line: #1d222b;
-  --color-line-strong: #2b323d;
+  /* Deep navy rather than near-black - matches the hero video's own
+     background so the canvas doesn't sit in a visibly different-colored box
+     when it's paused on frame 0. Surface and surface-2 step up in lightness
+     for cards and nested panels.
+
+     surface/bg contrast is only ~1.1:1 by design (a near-black surface on a
+     near-black bg, same as the light theme's white-on-white problem) - the
+     existing `.border-line.bg-surface` box-shadow rule below still carries
+     the job of making a card read as a raised object, this time as a soft
+     glow instead of a shadow. Line values are brightened until they clear
+     the same ~1.8-3.5:1+ presence bar the light theme required after its own
+     "there's no background" correction - a border needs to be seen, not just
+     pass a formula in isolation. */
+  --color-bg: #080f1f;
+  --color-surface: #0f1a30;
+  --color-surface-2: #16233d;
+  --color-line: #3a4d72;
+  --color-line-strong: #5a75a3;
 
   /* ---- type ------------------------------------------------------------- */
-  --color-text: #e9ebef;
-  --color-muted: #8a929e;
-  /* Measured against --color-bg, not eyeballed. The first value tried here
-     (#59606b) came out at 3.14:1, which fails WCAG AA for normal text - and
-     this token carries eyebrows, captions and the footer disclosures, all of
-     them small. #767d88 measures 4.7:1 and still reads a clear step below
-     --color-muted at 6.3:1, so the hierarchy survives the correction. */
-  --color-dim: #767d88;
+  /* Off-white, not pure #fff - easier on the eye at these sizes and it keeps
+     the hero's own text (already tuned against this exact video) consistent
+     with the rest of the site. 17.3:1 against --color-bg. */
+  --color-text: #f1f4f9;
+  /* 9.1:1 against --color-bg - comfortably past WCAG AA (4.5) for normal text. */
+  --color-muted: #a9b4c6;
+  /* Carries eyebrows, captions and footer disclosures. 6.2:1 against bg,
+     still a visible step darker than --color-muted so the hierarchy holds. */
+  --color-dim: #8793a8;
 
   /* ---- the single accent ------------------------------------------------ */
   /* Interaction only: links, focus, the active element in a diagram, one CTA.
-     Cold and slightly electric so it never reads as a "trust badge" green. */
-  --color-accent: #3d7bff;
-  --color-accent-hover: #6b99ff;
-  --color-accent-dim: rgba(61, 123, 255, 0.14);
+     Sampled from the hero video's own water-highlight blue rather than
+     invented, so the one interactive color on the site is the same blue the
+     video already trained the eye on. 7.6:1 against --color-bg. */
+  --color-accent: #4da8ff;
+  --color-accent-hover: #78c0ff;
+  --color-accent-dim: rgba(77, 168, 255, 0.12);
 
   /* ---- semantic status (never used as decoration) ----------------------- */
-  --color-verified: #35b37e;
-  --color-review: #d99a2b;
-  --color-delisted: #e5484d;
-  --color-verified-dim: rgba(53, 179, 126, 0.12);
-  --color-review-dim: rgba(217, 154, 43, 0.12);
-  --color-delisted-dim: rgba(229, 72, 77, 0.12);
+  /* Brightened back up from the light-theme's darkened hues until each
+     cleared 4.5:1 against the new dark background - the inverse of the
+     2026-09-22 exercise, not the same hex codes with the background
+     swapped, since a color tuned to sit on white goes muddy or fails
+     outright on near-black at the same value. */
+  --color-verified: #3ecf8e;
+  --color-review: #e0a940;
+  --color-delisted: #ff6b6b;
+  --color-verified-dim: rgba(62, 207, 142, 0.12);
+  --color-review-dim: rgba(224, 169, 64, 0.12);
+  --color-delisted-dim: rgba(255, 107, 107, 0.12);
 
   /* ---- fonts ------------------------------------------------------------ */
   /* next/font injects the -src variables from layout.tsx. Pointing these at
@@ -121,25 +147,19 @@
   .tabular {
     font-variant-numeric: tabular-nums;
   }
+}
 
-  /* The hairline grid used behind structural sections. It is a real reference
-     to a ruled record sheet, not ambient decoration - it aligns to the same
-     8px rhythm as the spacing scale. */
-  .grid-rule {
-    background-image:
-      linear-gradient(to right, var(--color-line) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--color-line) 1px, transparent 1px);
-    background-size: 64px 64px;
-  }
-
-  /* Fades a decorative layer out toward the edges so it never terminates in a
-     hard line across the viewport. */
-  .mask-fade-y {
-    mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
-  }
-  .mask-fade-edges {
-    mask-image: radial-gradient(120% 80% at 50% 40%, black 45%, transparent 100%);
-  }
+/* A bordered surface card needs more than a 1px line to read as a raised
+   object - surface/bg contrast alone is only ~1.1:1 by design (see the token
+   comments above), so a plain black shadow would be invisible on this dark
+   ground. A soft cool-white glow does the same "lifted" job a shadow does on
+   a light page. Targets the two Tailwind utility classes directly rather
+   than adding a class to sixteen call sites individually, so every existing
+   card picks it up for free. */
+.border-line.bg-surface {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.25),
+    0 4px 20px rgba(150, 190, 255, 0.05);
 }
 
 /* ----------------------------------------------------------------------------

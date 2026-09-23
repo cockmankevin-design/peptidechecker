@@ -101,7 +101,6 @@ export default function Independence() {
     <Section id="independence">
       <Container>
         <SectionHeader
-          eyebrow="Independence"
           title="We earn commission from the vendors we publish."
           lede="That is a genuine conflict, and concealing it would be the first thing wrong with a site like this. It is survivable for one reason: the commission never reaches the evidence. Each pressure on a verdict is below, next to the structure that keeps it off."
         />

@@ -127,7 +127,6 @@ export default function RegistryPreview({ page = false }: { page?: boolean }) {
         {!page && (
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader
-            eyebrow="Public registry"
             title="Every listing, including the ones we took down."
             lede="A vendor appears here when a published certificate can be tied to the lot actually being sold. When that link breaks, the entry is marked and kept — not quietly deleted. A record that vanishes the moment it becomes inconvenient is not a record."
           />

@@ -133,7 +133,7 @@ export default function Nav() {
               <Link
                 href="/vendors"
                 onClick={() => setOpen(false)}
-                className="mt-6 rounded-lg bg-accent px-5 py-3.5 text-center text-[15px] font-medium text-white"
+                className="mt-6 rounded-lg bg-accent px-5 py-3.5 text-center text-[15px] font-medium text-bg"
               >
                 Explore the registry
               </Link>
