@@ -11,11 +11,14 @@ import { asset } from "@/lib/basePath";
 
 /* Hero.
 
-   Full-bleed scroll-scrubbed vial video, replacing the flat SVG illustration
-   and the boxed dark band from the previous (light-theme) design. Kevin's
-   brief after approving the Higgs Field video (2026-09-23): the whole site
-   goes dark and cohesive with it, and the front page's scroll should be what
-   moves the vial - "scroll down and that's what moves the image."
+   Two-column layout: copy left, the scroll-scrubbed vial video right - full
+   brightness, no dark scrim over it. First pass made the video a full-bleed
+   dimmed background; Kevin's correction (2026-09-23): the bottle read as
+   faded into the background instead of the prominent, bright shot he sent as
+   reference, and he wanted it on the right rather than filling the frame
+   behind the text. This version puts it back in its own bright box, sized
+   generously and positioned right, same as the original SVG illustration's
+   slot before the video replaced it.
 
    ARCHITECTURE, matching VerificationScroll.tsx (the only other place this
    site pins a section): GSAP owns the pin and the scroll progress; it never
@@ -161,137 +164,126 @@ export default function Hero() {
     <div ref={wrapRef} className="relative">
       <div ref={pinRef}>
         <section className="relative min-h-[100svh] overflow-hidden bg-[#080f1f]">
-          {/* ---------------- background: video / scrubbed canvas ---------------- */}
-          <div className="absolute inset-0" aria-hidden="true">
-            {reduced ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={framePath(29)} alt="" className="h-full w-full object-cover" />
-            ) : (
-              <>
-                <canvas
-                  ref={canvasRef}
-                  className={`hidden h-full w-full min-[900px]:block transition-opacity duration-500 ${
-                    firstFrameReady ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-                <video
-                  className="h-full w-full object-cover min-[900px]:hidden"
-                  src={asset("/hero-vial/hero-vial.mp4")}
-                  poster={asset("/hero-vial/mobile/frame-0001.webp")}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                />
-              </>
-            )}
-          </div>
-
-          {/* readability scrim - the video is bright and busy enough (splashing
-              water, moving highlights) that copy needs real help sitting on it,
-              not just a dark tint */}
+          {/* soft depth behind everything - not over the video, which stays at
+              full brightness per Kevin's correction */}
           <div
-            className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#050a16] via-[#050a16]/75 to-transparent"
-            aria-hidden="true"
-          />
-          <div
-            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050a16] via-[#050a16]/10 to-transparent"
+            className="pointer-events-none absolute inset-0 opacity-70"
+            style={{
+              background:
+                "radial-gradient(55% 60% at 82% 20%, rgba(77, 168, 255, 0.14), transparent 70%)",
+            }}
             aria-hidden="true"
           />
 
           <Container className="relative flex min-h-[100svh] items-center py-32">
-            <div className="max-w-xl">
-              <motion.div
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-white/80 backdrop-blur-sm"
-                initial={reduced ? false : { opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: EASE_OUT_QUINT }}
-              >
-                Independent COA verification
-              </motion.div>
-
-              <motion.h1
-                className="mt-6 text-[clamp(2.6rem,6.8vw,4.4rem)] font-semibold leading-[1.03] tracking-[-0.03em] text-white"
-                initial={reduced ? false : { opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.06, ease: EASE_OUT_QUINT }}
-              >
-                A list that can afford
-                <br />
-                to say no.
-              </motion.h1>
-
-              <motion.p
-                className="mt-6 max-w-[46ch] text-[17px] leading-relaxed text-white/80"
-                initial={reduced ? false : { opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.16, ease: EASE_OUT_QUINT }}
-              >
-                Every peptide seller publishes a certificate of analysis. Almost none can show it
-                belongs to the lot in the bottle. We check that link — and we publish the sellers
-                that fail.
-              </motion.p>
-
-              <motion.div
-                className="mt-9 flex flex-wrap items-center gap-3"
-                initial={reduced ? false : { opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.24, ease: EASE_OUT_QUINT }}
-              >
-                <CTA href="/vendors">Explore the registry</CTA>
-                {/* Inline style, not the shared CTA "secondary" variant - that
-                    variant's classes are tuned for the token-driven page and
-                    Tailwind's utility precedence isn't guaranteed to let a
-                    passed-in className override them here. */}
-                <Link
-                  href="/methodology"
-                  className="group inline-flex items-center gap-2 rounded-lg px-5 py-3 text-[15px] font-medium transition-colors duration-200"
-                  style={{ border: "1px solid rgba(255,255,255,0.3)", color: "#ffffff" }}
+            <div className="grid w-full items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-10">
+              {/* ---------------- copy ---------------- */}
+              <div className="max-w-xl">
+                <motion.h1
+                  className="text-[clamp(2.6rem,6.8vw,4.4rem)] font-semibold leading-[1.03] tracking-[-0.03em] text-white"
+                  initial={reduced ? false : { opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, ease: EASE_OUT_QUINT }}
                 >
-                  How verification works
-                  <svg
-                    className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M6 3l5 5-5 5"
-                      stroke="currentColor"
-                      strokeWidth="1.75"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </Link>
-              </motion.div>
+                  We check what the
+                  <br />
+                  label can&rsquo;t tell you.
+                </motion.h1>
 
-              {/* trust badges - real facts, not vendor-style purity/shipping claims */}
+                <motion.p
+                  className="mt-6 max-w-[46ch] text-[17px] leading-relaxed text-white/80"
+                  initial={reduced ? false : { opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1, ease: EASE_OUT_QUINT }}
+                >
+                  Every peptide seller publishes a certificate of analysis. Almost none can show it
+                  belongs to the lot in the bottle. We check that link — and we publish the sellers
+                  that fail.
+                </motion.p>
+
+                <motion.div
+                  className="mt-9 flex flex-wrap items-center gap-3"
+                  initial={reduced ? false : { opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.18, ease: EASE_OUT_QUINT }}
+                >
+                  <CTA href="/vendors">Explore the registry</CTA>
+                  {/* Inline style, not the shared CTA "secondary" variant - that
+                      variant's classes are tuned for the token-driven page and
+                      Tailwind's utility precedence isn't guaranteed to let a
+                      passed-in className override them here. */}
+                  <Link
+                    href="/methodology"
+                    className="group inline-flex items-center gap-2 rounded-lg px-5 py-3 text-[15px] font-medium transition-colors duration-200"
+                    style={{ border: "1px solid rgba(255,255,255,0.3)", color: "#ffffff" }}
+                  >
+                    How verification works
+                    <svg
+                      className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M6 3l5 5-5 5"
+                        stroke="currentColor"
+                        strokeWidth="1.75"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </Link>
+                </motion.div>
+
+                {/* trust badges - real facts, not vendor-style purity/shipping claims */}
+                <motion.div
+                  className="mt-10 flex flex-wrap gap-3"
+                  initial={reduced ? false : { opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.26, ease: EASE_OUT_QUINT }}
+                >
+                  {BADGES.map((b) => (
+                    <div
+                      key={b.label}
+                      className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/[0.06] px-4 py-2.5 text-[13px] font-medium text-white/90 backdrop-blur-sm"
+                    >
+                      <b.icon className="h-4 w-4 text-[#78c0ff]" aria-hidden="true" />
+                      {b.label}
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
+
+              {/* ---------------- the vial: bright, prominent, right-aligned ---------------- */}
               <motion.div
-                className="mt-10 flex flex-wrap gap-3"
-                initial={reduced ? false : { opacity: 0, y: 12 }}
+                className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.45)] lg:aspect-[5/6]"
+                initial={reduced ? false : { opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.32, ease: EASE_OUT_QUINT }}
+                transition={{ duration: 0.7, delay: 0.15, ease: EASE_OUT_QUINT }}
               >
-                {BADGES.map((b) => (
-                  <div
-                    key={b.label}
-                    className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/[0.06] px-4 py-2.5 text-[13px] font-medium text-white/90 backdrop-blur-sm"
-                  >
-                    <b.icon className="h-4 w-4 text-[#78c0ff]" aria-hidden="true" />
-                    {b.label}
-                  </div>
-                ))}
+                {reduced ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={framePath(29)} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  <>
+                    <canvas
+                      ref={canvasRef}
+                      className={`hidden h-full w-full min-[900px]:block transition-opacity duration-500 ${
+                        firstFrameReady ? "opacity-100" : "opacity-0"
+                      }`}
+                    />
+                    <video
+                      className="h-full w-full object-cover min-[900px]:hidden"
+                      src={asset("/hero-vial/hero-vial.mp4")}
+                      poster={asset("/hero-vial/mobile/frame-0001.webp")}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
+                  </>
+                )}
               </motion.div>
-
-              <motion.p
-                className="mt-8 font-mono text-[11.5px] leading-relaxed text-white/50"
-                initial={reduced ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                We sell nothing. We run no laboratory. We commission no testing.
-              </motion.p>
             </div>
           </Container>
         </section>
