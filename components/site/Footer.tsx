@@ -9,19 +9,20 @@ import Link from "next/link";
 
 const COLUMNS = [
   {
-    heading: "Registry",
+    heading: "Directory",
     links: [
-      { href: "/vendors", label: "Vendor registry" },
-      { href: "/results", label: "Certificates" },
-      { href: "/compare", label: "Compare sources" },
+      { href: "/approved", label: "Approved medicines" },
+      { href: "/pipeline", label: "Coming soon" },
+      { href: "/get-started", label: "How to get one" },
+      { href: "/cost", label: "Cost" },
     ],
   },
   {
     heading: "How it works",
     links: [
-      { href: "/methodology", label: "Verification method" },
+      { href: "/methodology", label: "Vendor verification method" },
+      { href: "/vendors", label: "Vendor evidence" },
       { href: "/faq", label: "FAQ" },
-      { href: "/blog", label: "Writing" },
     ],
   },
   {
@@ -41,8 +42,8 @@ export default function Footer() {
           <div className="max-w-xs">
             <p className="text-[15px] font-semibold tracking-tight text-text">PeptideChecker</p>
             <p className="mt-3 text-[14px] leading-relaxed text-muted">
-              An independent verification layer. We check that a certificate of analysis is real,
-              names its laboratory, and belongs to the lot being sold.
+              An independent reference for FDA-approved peptide medicines and the legal routes to
+              get one, plus an evidence layer on the unregulated sellers people search for instead.
             </p>
           </div>
 
@@ -73,16 +74,17 @@ export default function Footer() {
               © {new Date().getFullYear()} PeptideChecker
             </p>
             <p className="font-mono text-[11px] text-dim">
-              Research use only · Not for human consumption
+              Not medical advice · Talk to a clinician about treatment
             </p>
           </div>
 
           <p className="mt-5 max-w-3xl text-[12.5px] leading-relaxed text-dim">
-            PeptideChecker does not sell, manufacture or ship peptides, operates no laboratory, and
-            commissions no testing — it verifies evidence that already exists. We earn affiliate
-            commission on referrals to listed vendors; commission never affects a verification
-            outcome, and a vendor whose evidence fails is removed regardless of revenue. Nothing
-            here is medical advice.
+            PeptideChecker publishes regulatory information. It is not medical advice, and it is
+            not a pharmacy — we do not sell, prescribe, test or handle any medicine. We earn
+            affiliate commission when a reader signs up with a licensed telehealth provider, marked
+            wherever those links appear; commission never changes a price, a fact, or an evidence
+            outcome on the unregulated-seller pages, which carry no affiliate or purchase links at
+            all.
           </p>
         </div>
       </div>

@@ -20,10 +20,10 @@ import { EASE_OUT_QUINT } from "@/lib/motion";
      56px bar is the definition of a shrunk desktop design. */
 
 const LINKS = [
-  { href: "/vendors", label: "Registry" },
-  { href: "/methodology", label: "Methodology" },
-  { href: "/results", label: "Certificates" },
-  { href: "/about", label: "About" },
+  { href: "/approved", label: "Approved" },
+  { href: "/pipeline", label: "Pipeline" },
+  { href: "/get-started", label: "How to get one" },
+  { href: "/cost", label: "Cost" },
 ];
 
 export default function Nav() {
@@ -83,10 +83,10 @@ export default function Nav() {
               </Link>
             ))}
             <Link
-              href="/vendors"
+              href="/approved"
               className="ml-3 rounded-lg border border-line-strong px-4 py-2 text-[14px] font-medium text-text transition-colors hover:border-accent/50 hover:text-accent"
             >
-              Explore the registry
+              See what&rsquo;s approved
             </Link>
           </nav>
 
@@ -131,11 +131,11 @@ export default function Nav() {
                 </motion.div>
               ))}
               <Link
-                href="/vendors"
+                href="/approved"
                 onClick={() => setOpen(false)}
                 className="mt-6 rounded-lg bg-accent px-5 py-3.5 text-center text-[15px] font-medium text-bg"
               >
-                Explore the registry
+                See what&rsquo;s approved
               </Link>
             </nav>
           </motion.div>

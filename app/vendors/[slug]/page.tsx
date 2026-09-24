@@ -82,15 +82,6 @@ export default async function VendorRecordPage({ params }: { params: Promise<{ s
                   }
                 />
               </dl>
-
-              {row.url && (
-                <p className="mt-6 text-[14px] text-muted">
-                  <a href={row.url} target="_blank" rel="sponsored noopener noreferrer" className="text-accent hover:underline">
-                    Visit {row.vendor}
-                  </a>{" "}
-                  <span className="font-mono text-[11px] text-dim">Affiliate link</span>
-                </p>
-              )}
             </div>
 
             <div>

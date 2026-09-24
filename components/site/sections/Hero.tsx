@@ -37,9 +37,9 @@ import { asset } from "@/lib/basePath";
    bar resize, which is exactly the jank the brief rules out. */
 
 const BADGES = [
-  { label: "Four gates checked", icon: ShieldCheck },
-  { label: "Zero product sold", icon: PackageX },
-  { label: "Every result public", icon: Eye },
+  { label: "Every date FDA-sourced", icon: ShieldCheck },
+  { label: "We sell nothing", icon: PackageX },
+  { label: "Commission disclosed", icon: Eye },
 ] as const;
 
 // Must match public/hero-vial/manifest.json ("frames.target_count").
@@ -236,9 +236,9 @@ export default function Hero() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.1, ease: EASE_OUT_QUINT }}
                 >
-                  Every peptide seller publishes a certificate of analysis. Almost none can show it
-                  belongs to the lot in the bottle. We check that link — and we publish the sellers
-                  that fail.
+                  Twelve peptide medicines carry FDA approval today. Several more are waiting on a
+                  decision. Everything else being sold online is neither, whatever the label says —
+                  and we check every date and application number ourselves.
                 </motion.p>
 
                 <motion.div
@@ -247,17 +247,17 @@ export default function Hero() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.18, ease: EASE_OUT_QUINT }}
                 >
-                  <CTA href="/vendors">Explore the registry</CTA>
+                  <CTA href="/approved">See what&rsquo;s approved</CTA>
                   {/* Inline style, not the shared CTA "secondary" variant - that
                       variant's classes are tuned for the token-driven page and
                       Tailwind's utility precedence isn't guaranteed to let a
                       passed-in className override them here. */}
                   <Link
-                    href="/methodology"
+                    href="/cost"
                     className="group inline-flex items-center gap-2 rounded-lg px-5 py-3 text-[15px] font-medium transition-colors duration-200"
                     style={{ border: "1px solid rgba(255,255,255,0.3)", color: "#ffffff" }}
                   >
-                    How verification works
+                    What it costs
                     <svg
                       className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
                       viewBox="0 0 16 16"

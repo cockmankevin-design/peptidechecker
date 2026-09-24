@@ -54,8 +54,6 @@ export interface RegistryRow {
   note?: string;
   /** Product slugs (content/products) the audited certificates cover. */
   products: string[];
-  /** Affiliate link. Absent on every demo row: an invented vendor has no site. */
-  url?: string;
 }
 
 export type GateState = "pass" | "fail" | "open";
