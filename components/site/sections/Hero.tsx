@@ -11,21 +11,18 @@ import { asset } from "@/lib/basePath";
 
 /* Hero.
 
-   Copy left, the scroll-scrubbed vial video fills the right side of the
-   screen edge-to-edge, full height, full brightness - no dark scrim, no
-   boxed card. Went through two corrections to land here (2026-09-23):
-   first pass made the video a full-bleed dimmed background behind the copy,
-   which read as faded; second pass boxed it into a small rounded square on
-   the right, which Kevin liked the position of but called too tight - "it
-   could still fit the page better," not confined to a card. This version
-   keeps the right-side position from pass two but lets the panel take the
-   full height and a real share of the width, bleeding past the Container
-   that holds the copy rather than sitting inside it.
-
-   Below 900px there isn't room for a side-by-side split, so the video drops
-   back to a normal in-flow block above the copy instead of an absolutely
-   positioned panel - stacking two full-bleed layers on a phone screen would
-   put the video behind or on top of the text with no good resolution.
+   The scroll-scrubbed vial video fills the ENTIRE hero screen, full
+   brightness, copy overlaid on top - the animation IS the design here, not
+   an illustration next to it. Three corrections to land here (2026-09-23):
+   pass one made the video a full-bleed background but darkened it with a
+   wide scrim for text legibility, which read as faded; pass two reacted to
+   that by boxing the video into a right-side panel, which Kevin then said
+   was "still half the page" - he wanted the full screen back, just without
+   the fading. This version keeps the full-bleed video from pass one but
+   replaces the wide scrim with a single small, localized radial scrim
+   sitting only behind the copy block, the same technique already banked in
+   the Scroll-Cinema notes for keeping text readable over bright, busy
+   footage without darkening the shot itself.
 
    ARCHITECTURE, matching VerificationScroll.tsx (the only other place this
    site pins a section): GSAP owns the pin and the scroll progress; it never
@@ -171,24 +168,8 @@ export default function Hero() {
     <div ref={wrapRef} className="relative">
       <div ref={pinRef}>
         <section className="relative min-h-[100svh] overflow-hidden bg-[#080f1f]">
-          {/* soft depth behind everything - not over the video, which stays at
-              full brightness per Kevin's correction */}
-          <div
-            className="pointer-events-none absolute inset-0 opacity-70"
-            style={{
-              background:
-                "radial-gradient(55% 60% at 82% 20%, rgba(77, 168, 255, 0.14), transparent 70%)",
-            }}
-            aria-hidden="true"
-          />
-
-          {/* ---------------- the vial: full height, right side of the screen ---------------- */}
-          <motion.div
-            className="relative h-[46vh] w-full min-[900px]:absolute min-[900px]:inset-y-0 min-[900px]:right-0 min-[900px]:h-full min-[900px]:w-[58%]"
-            initial={reduced ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, ease: EASE_OUT_QUINT }}
-          >
+          {/* ---------------- the vial: full screen, full brightness ---------------- */}
+          <div className="absolute inset-0" aria-hidden="true">
             {reduced ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={framePath(29)} alt="" className="h-full w-full object-cover" />
@@ -211,11 +192,33 @@ export default function Hero() {
                 />
               </>
             )}
-          </motion.div>
+          </div>
 
-          <Container className="relative flex min-h-[54vh] items-center py-16 min-[900px]:min-h-[100svh] min-[900px]:py-32">
+          {/* local scrim, sized to the copy block only - not a wide overlay,
+              so the rest of the frame stays at full brightness. Mobile stacks
+              the headline, buttons and badges into one tall column, so its
+              scrim is a top-down gradient covering that whole column; desktop
+              has room to keep it a small radial patch behind just the text. */}
+          <div
+            className="pointer-events-none absolute inset-0 min-[900px]:hidden"
+            style={{
+              background:
+                "linear-gradient(to bottom, rgba(3, 8, 20, 0.82) 0%, rgba(3, 8, 20, 0.6) 55%, rgba(3, 8, 20, 0.15) 78%, transparent 92%)",
+            }}
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute inset-0 hidden min-[900px]:block"
+            style={{
+              background:
+                "radial-gradient(60% 55% at 22% 42%, rgba(3, 8, 20, 0.72) 0%, rgba(3, 8, 20, 0.35) 45%, transparent 72%)",
+            }}
+            aria-hidden="true"
+          />
+
+          <Container className="relative flex min-h-[100svh] items-center py-32">
             {/* ---------------- copy ---------------- */}
-            <div className="w-full min-[900px]:max-w-md">
+            <div className="w-full max-w-md">
                 <motion.h1
                   className="text-[clamp(2.6rem,6.8vw,4.4rem)] font-semibold leading-[1.03] tracking-[-0.03em] text-white"
                   initial={reduced ? false : { opacity: 0, y: 14 }}
