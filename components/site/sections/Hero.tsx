@@ -11,14 +11,21 @@ import { asset } from "@/lib/basePath";
 
 /* Hero.
 
-   Two-column layout: copy left, the scroll-scrubbed vial video right - full
-   brightness, no dark scrim over it. First pass made the video a full-bleed
-   dimmed background; Kevin's correction (2026-09-23): the bottle read as
-   faded into the background instead of the prominent, bright shot he sent as
-   reference, and he wanted it on the right rather than filling the frame
-   behind the text. This version puts it back in its own bright box, sized
-   generously and positioned right, same as the original SVG illustration's
-   slot before the video replaced it.
+   Copy left, the scroll-scrubbed vial video fills the right side of the
+   screen edge-to-edge, full height, full brightness - no dark scrim, no
+   boxed card. Went through two corrections to land here (2026-09-23):
+   first pass made the video a full-bleed dimmed background behind the copy,
+   which read as faded; second pass boxed it into a small rounded square on
+   the right, which Kevin liked the position of but called too tight - "it
+   could still fit the page better," not confined to a card. This version
+   keeps the right-side position from pass two but lets the panel take the
+   full height and a real share of the width, bleeding past the Container
+   that holds the copy rather than sitting inside it.
+
+   Below 900px there isn't room for a side-by-side split, so the video drops
+   back to a normal in-flow block above the copy instead of an absolutely
+   positioned panel - stacking two full-bleed layers on a phone screen would
+   put the video behind or on top of the text with no good resolution.
 
    ARCHITECTURE, matching VerificationScroll.tsx (the only other place this
    site pins a section): GSAP owns the pin and the scroll progress; it never
@@ -175,10 +182,40 @@ export default function Hero() {
             aria-hidden="true"
           />
 
-          <Container className="relative flex min-h-[100svh] items-center py-32">
-            <div className="grid w-full items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-10">
-              {/* ---------------- copy ---------------- */}
-              <div className="max-w-xl">
+          {/* ---------------- the vial: full height, right side of the screen ---------------- */}
+          <motion.div
+            className="relative h-[46vh] w-full min-[900px]:absolute min-[900px]:inset-y-0 min-[900px]:right-0 min-[900px]:h-full min-[900px]:w-[58%]"
+            initial={reduced ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, ease: EASE_OUT_QUINT }}
+          >
+            {reduced ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={framePath(29)} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <>
+                <canvas
+                  ref={canvasRef}
+                  className={`hidden h-full w-full min-[900px]:block transition-opacity duration-500 ${
+                    firstFrameReady ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+                <video
+                  className="h-full w-full object-cover min-[900px]:hidden"
+                  src={asset("/hero-vial/hero-vial.mp4")}
+                  poster={asset("/hero-vial/mobile/frame-0001.webp")}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              </>
+            )}
+          </motion.div>
+
+          <Container className="relative flex min-h-[54vh] items-center py-16 min-[900px]:min-h-[100svh] min-[900px]:py-32">
+            {/* ---------------- copy ---------------- */}
+            <div className="w-full min-[900px]:max-w-md">
                 <motion.h1
                   className="text-[clamp(2.6rem,6.8vw,4.4rem)] font-semibold leading-[1.03] tracking-[-0.03em] text-white"
                   initial={reduced ? false : { opacity: 0, y: 14 }}
@@ -252,38 +289,6 @@ export default function Hero() {
                     </div>
                   ))}
                 </motion.div>
-              </div>
-
-              {/* ---------------- the vial: bright, prominent, right-aligned ---------------- */}
-              <motion.div
-                className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.45)] lg:aspect-[5/6]"
-                initial={reduced ? false : { opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.15, ease: EASE_OUT_QUINT }}
-              >
-                {reduced ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={framePath(29)} alt="" className="h-full w-full object-cover" />
-                ) : (
-                  <>
-                    <canvas
-                      ref={canvasRef}
-                      className={`hidden h-full w-full min-[900px]:block transition-opacity duration-500 ${
-                        firstFrameReady ? "opacity-100" : "opacity-0"
-                      }`}
-                    />
-                    <video
-                      className="h-full w-full object-cover min-[900px]:hidden"
-                      src={asset("/hero-vial/hero-vial.mp4")}
-                      poster={asset("/hero-vial/mobile/frame-0001.webp")}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                    />
-                  </>
-                )}
-              </motion.div>
             </div>
           </Container>
         </section>
