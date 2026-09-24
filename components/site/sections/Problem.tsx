@@ -70,7 +70,7 @@ function Field({
         emphasised ? "bg-surface-2" : ""
       }`}
     >
-      <dt className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-dim">{label}</dt>
+      <dt className="text-[10.5px] uppercase tracking-[0.12em] text-dim">{label}</dt>
       <dd className="text-[13.5px] leading-snug sm:text-right">{children}</dd>
     </div>
   );
@@ -99,8 +99,8 @@ function Certificate({
   return (
     <div>
       <div className="flex items-baseline gap-3">
-        <span className="font-mono text-[11px] tabular text-dim">{index}</span>
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">{caption}</p>
+        <span className="text-[11px] tabular text-dim">{index}</span>
+        <p className="text-[11px] uppercase tracking-[0.16em] text-muted">{caption}</p>
       </div>
       <p className="mt-2 text-[14px] leading-relaxed text-dim">{captionNote}</p>
 
@@ -108,23 +108,23 @@ function Certificate({
           what the problem looks like. */}
       <div className="mt-4 overflow-hidden rounded-lg border border-line bg-surface">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line px-5 py-3.5">
-          <p className="font-mono text-[11.5px] uppercase tracking-[0.14em] text-text">
+          <p className="text-[11.5px] uppercase tracking-[0.14em] text-text">
             Certificate of Analysis
           </p>
-          <p className="font-mono text-[11px] tabular text-dim">{DOC_REF}</p>
+          <p className="text-[11px] tabular text-dim">{DOC_REF}</p>
         </div>
 
         <dl className="divide-y divide-line">
           {SHARED_FIELDS.map((field) => (
             <Field key={field.label} label={field.label}>
-              <span className="font-mono tabular text-text">{field.value}</span>
+              <span className="tabular text-text">{field.value}</span>
             </Field>
           ))}
 
           <Field label="Lot reference" emphasised>
             {lot ? (
               <>
-                <span className="font-mono tabular text-verified">{lot}</span>
+                <span className="tabular text-verified">{lot}</span>
                 <span className="mt-1 block text-[12px] text-dim">
                   Printed on the vial. Checked against the vendor&rsquo;s own lot record.
                 </span>
@@ -136,7 +136,7 @@ function Certificate({
                     aria-hidden="true"
                     className="inline-block h-[10px] w-20 border-b border-dashed border-line-strong"
                   />
-                  <span className="font-mono text-review">not stated</span>
+                  <span className="text-review">not stated</span>
                 </span>
                 <span className="mt-1 block text-[12px] text-dim">
                   Nothing in the document names the vial it describes.
