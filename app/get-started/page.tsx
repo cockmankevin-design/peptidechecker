@@ -31,8 +31,9 @@ export default function GetStartedPage() {
       <Section className="!pt-10 sm:!pt-14">
         <Container>
           <p className="rounded-md border border-line bg-surface-2 px-4 py-3 font-mono text-[11.5px] leading-relaxed text-dim">
-            We earn a commission if you sign up with some of the providers below. It never changes
-            what we publish, and every provider we know of is shown, not only the ones that pay.
+            No provider below pays us anything, and we are not in any affiliate programme. If that
+            changes this notice will say so and name who pays us. Either way every provider we know
+            of is shown, not only the ones that would pay.
           </p>
 
           <Prose className="mt-8">

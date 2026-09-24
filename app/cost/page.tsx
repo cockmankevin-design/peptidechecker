@@ -39,14 +39,14 @@ const COMPARISON = [
     insurance: "Plan dependent",
     directPay: "$299 to $449/mo, refill within 45 days",
     telehealth: "$149/mo",
-    cheapest: "LillyDirect, confirm price first",
+    cheapest: "LillyDirect direct",
   },
   {
     medicine: "Mounjaro",
     insurance: "Plan dependent",
-    directPay: "TODO - confirm on lillydirect.lilly.com",
+    directPay: "$499/mo, every dose",
     telehealth: "$149/mo",
-    cheapest: "TODO",
+    cheapest: "LillyDirect direct",
   },
 ] as const;
 
@@ -88,13 +88,15 @@ export default function CostPage() {
                 pill $149 to $299 by dose; Ozempic $349/mo ($499 at 2 mg).
               </p>
               <p className="mt-2 text-[14.5px] leading-relaxed text-muted">
-                <strong className="text-text">LillyDirect:</strong> Zepbound self-pay vials $299 to
-                $449 by dose within a 45-day refill window; prices rise outside that window.
-                Self-pay only, no insurance applies.
+                <strong className="text-text">LillyDirect:</strong> Zepbound self-pay $299 (2.5 mg),
+                $399 (5 mg), $449 (7.5 mg through 15 mg) when refilled within 45 days. Miss that
+                window and the higher doses revert to $499 (7.5 mg) and $699 (10 mg, 12.5 mg and
+                15 mg). Mounjaro is a flat $499 a month at every dose. Self-pay only, no insurance
+                applies, and Lilly defines a month as 28 days.
               </p>
               <p className="mt-3 font-mono text-[11px] text-dim">
-                Sources: novocare.com and Lilly&rsquo;s Feb 2026 price announcement, read 2026-09-23 -
-                confirm Zepbound on lillydirect.lilly.com before relying on it
+                Sources: novocare.com read 2026-09-23; lilly.com/lillydirect/zepbound and
+                /mounjaro read 2026-09-24
               </p>
             </div>
 
@@ -145,8 +147,15 @@ export default function CostPage() {
                 The ordinary route, and worth pricing: a manufacturer self-pay price plus a normal
                 prescription can beat a telehealth bundle once the membership fee is counted.
               </p>
-              <p className="mt-3 font-mono text-[11px] text-review">
-                TODO: pharmacy cash price range from a named discount-card service, dated.
+              <p className="mt-2 text-[14.5px] leading-relaxed text-muted">
+                A discount card at a retail pharmacy is the expensive way to do this. SingleCare
+                puts Mounjaro&rsquo;s average retail price at $1,519.21 for a month of 5 mg pens and
+                its own coupon price at $874.25; GoodRx lists Mounjaro from $1,096.38. Every one of
+                those is roughly double the $499 Lilly charges direct. Discount cards earn their
+                keep on older generics, not on these.
+              </p>
+              <p className="mt-3 font-mono text-[11px] text-dim">
+                Sources: singlecare.com and goodrx.com, read 2026-09-24
               </p>
             </div>
           </div>
@@ -235,10 +244,11 @@ export default function CostPage() {
           </Prose>
 
           <p className="mt-8 rounded-md border border-line bg-surface-2 px-4 py-3 font-mono text-[11.5px] leading-relaxed text-dim">
-            We earn a commission if you sign up with some of the telehealth providers listed here.
-            It does not change the prices published above or the order they appear in, and
-            providers that pay us nothing are listed the same way. Manufacturer pricing changes
-            often - every figure here shows when it was last checked.
+            We earn nothing from anything on this page. No provider or manufacturer listed here
+            pays us, and we are not in any affiliate programme. If that changes we intend to join
+            some, and this notice will say so plainly, name who pays us, and stay on the page - it
+            will not change the prices published above or the order they appear in. Manufacturer
+            pricing changes often; every figure here shows when it was last checked.
           </p>
         </Container>
       </Section>
