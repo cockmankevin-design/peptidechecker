@@ -1,0 +1,24 @@
+1:"$Sreact.fragment"
+2:I[97809,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js","/peptidechecker/_next/static/chunks/07f_s957dm6bx.js"],"PageHeader"]
+3:I[97809,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js","/peptidechecker/_next/static/chunks/07f_s957dm6bx.js"],"Section"]
+4:I[97809,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js","/peptidechecker/_next/static/chunks/07f_s957dm6bx.js"],"Container"]
+5:I[22016,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js","/peptidechecker/_next/static/chunks/07f_s957dm6bx.js"],""]
+6:I[97367,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+b:I[97367,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js"],"ViewportBoundary"]
+c:I[97367,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js"],"MetadataBoundary"]
+d:I[27201,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js"],"IconMark"]
+f:I[39756,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js"],"default"]
+10:I[37457,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js"],"default"]
+a:X
+12:X
+12:C
+0:{"buildId":"l3gCV5bXxKstZyuLyTXiY","data":[{"rsc":["$","$1","c",{"children":[[["$","$L2",null,{"eyebrow":"Writing","title":"Notes on reading the evidence.","lede":"Guides to certificates of analysis: what a real one contains, and how a fake or reused one gives itself away."}],["$","$L3",null,{"className":"!pt-10 sm:!pt-14","children":["$","$L4",null,{"children":["$","ul",null,{"className":"grid gap-4 sm:grid-cols-2","children":[["$","li","how-to-read-a-coa",{"children":["$","$L5",null,{"href":"/blog/how-to-read-a-coa","className":"group block h-full rounded-lg border border-line bg-surface p-6 transition-colors hover:border-accent/40","children":[["$","p",null,{"className":"font-mono text-[11px] text-dim","children":[["$","time",null,{"dateTime":"2026-08-20","children":"2026-08-20"}]," · ","5 min read"]}],["$","p",null,{"className":"mt-3 text-[1.25rem] font-semibold leading-snug text-text group-hover:text-accent","children":"How to Read a Certificate of Analysis (COA)"}],["$","p",null,{"className":"mt-2 line-clamp-3 text-[14.5px] leading-relaxed text-muted","children":"A COA is your first line of defense against fake peptides. Here's exactly what to look for and what the numbers mean."}]]}]}]]}]}]}]],[["$","script","script-0",{"src":"/peptidechecker/_next/static/chunks/07f_s957dm6bx.js","async":true}]],["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"isPartial":"$@9","staleTime":"$a","varyParams":null},{"rsc":["$","$1","h",{"children":[null,["$","$Lb",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$Lc",null,{"children":["$","$7",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"PeptideChecker — Independent COA Verification"}],["$","meta","1",{"name":"description","content":"A certificate is not proof. PeptideChecker checks that a vendor's certificate of analysis is real, names its lab, and belongs to the lot actually being sold — and publishes the ones that fail."}],["$","link","2",{"rel":"icon","href":"/peptidechecker/favicon.ico?favicon.2vob68tjqpejf.ico","sizes":"256x256","type":"image/x-icon"}],["$","$Ld","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"isPartial":"$@e","staleTime":"$a","varyParams":null},{"rsc":["$","$1","c",{"children":[null,["$","$Lf",null,{"parallelRouterKey":"children","template":["$","$L10",null,{}]}]]}],"isPartial":"$@11","staleTime":"$a","varyParams":"$12"}],"isUpgradeableISRFallback":false,"a":"$@13","rootVaryParams":null,"needsRuntimeRequest":"$@14"}
+8:null
+14:true
+a:300
+a:C
+13:0
+e:"$undefined"
+11:"$undefined"
+9:"$undefined"

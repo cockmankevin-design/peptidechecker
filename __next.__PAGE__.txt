@@ -1,0 +1,23 @@
+1:"$Sreact.fragment"
+2:I[26704,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js","/peptidechecker/_next/static/chunks/1vpq0qx72dhnm.js"],"default"]
+3:I[63190,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js","/peptidechecker/_next/static/chunks/1vpq0qx72dhnm.js"],"default"]
+4:I[15865,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js","/peptidechecker/_next/static/chunks/1vpq0qx72dhnm.js"],"default"]
+5:I[47261,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js","/peptidechecker/_next/static/chunks/1vpq0qx72dhnm.js"],"default"]
+6:I[97809,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js","/peptidechecker/_next/static/chunks/1vpq0qx72dhnm.js"],"Section"]
+7:I[97809,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js","/peptidechecker/_next/static/chunks/1vpq0qx72dhnm.js"],"Container"]
+8:I[97809,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js","/peptidechecker/_next/static/chunks/1vpq0qx72dhnm.js"],"Reveal"]
+9:I[22016,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js","/peptidechecker/_next/static/chunks/1vpq0qx72dhnm.js"],""]
+a:I[97367,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js"],"OutletBoundary"]
+b:"$Sreact.suspense"
+f:I[97367,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js"],"ViewportBoundary"]
+10:I[97367,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js"],"MetadataBoundary"]
+11:I[27201,["/peptidechecker/_next/static/chunks/11cf6kao2t4e8.js","/peptidechecker/_next/static/chunks/3ieg2cjhtlv0n.js"],"IconMark"]
+e:X
+0:{"buildId":"l3gCV5bXxKstZyuLyTXiY","data":[{"rsc":["$","$1","c",{"children":[[["$","$L2",null,{}],["$","$L3",null,{}],["$","$L4",null,{}],["$","$L5",null,{}],["$","$L6",null,{"className":"border-t border-line","children":["$","$L7",null,{"children":["$","$L8",null,{"className":"flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between","children":[["$","div",null,{"children":[["$","p",null,{"className":"text-[1.35rem] font-semibold text-text","children":"Check anything here against the source."}],["$","p",null,{"className":"mt-2 max-w-xl text-[14.5px] leading-relaxed text-muted","children":"Every approval lists its FDA application number. Every pipeline date lists the announcement it came from. Every page says when it was last checked."}]]}],["$","$L9",null,{"href":"/approved","className":"inline-flex shrink-0 items-center gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-medium text-bg transition-colors duration-200 hover:bg-accent-hover","children":"Open the directory"}]]}]}]}]],[["$","script","script-0",{"src":"/peptidechecker/_next/static/chunks/1vpq0qx72dhnm.js","async":true}]],["$","$La",null,{"children":["$","$b",null,{"name":"Next.MetadataOutlet","children":"$@c"}]}]]}],"isPartial":"$@d","staleTime":"$e","varyParams":null},{"rsc":["$","$1","h",{"children":[null,["$","$Lf",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L10",null,{"children":["$","$b",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"PeptideChecker — Independent COA Verification"}],["$","meta","1",{"name":"description","content":"A certificate is not proof. PeptideChecker checks that a vendor's certificate of analysis is real, names its lab, and belongs to the lot actually being sold — and publishes the ones that fail."}],["$","link","2",{"rel":"icon","href":"/peptidechecker/favicon.ico?favicon.2vob68tjqpejf.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L11","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"isPartial":"$@12","staleTime":"$e","varyParams":null}],"isUpgradeableISRFallback":false,"a":"$@13","rootVaryParams":null,"needsRuntimeRequest":"$@14"}
+c:null
+14:true
+e:300
+e:C
+13:0
+12:"$undefined"
+d:"$undefined"
