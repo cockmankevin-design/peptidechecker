@@ -83,30 +83,31 @@ const GATES: { label: string; detail: string }[] = [
 const FAQ_ITEMS: FaqItem[] = [
   {
     id: "sell",
-    q: "Does PeptideChecker sell peptides?",
+    q: "Does PeptideChecker sell or prescribe peptide medicines?",
     a: (
       <p>
-        No, and it never will. There is no cart, no inventory and nothing to ship — we never
-        hold product at any point. Grading the thing you also sell is the conflict that made
-        this site necessary, so the two stay apart. It is the only reason a verdict here is
-        worth reading.
+        No, and it never will. There is no cart, no prescription and nothing to ship — we never
+        handle product or write a prescription at any point. We publish what the FDA has approved,
+        what is still in trials, and what each legal route costs. Whether a medicine is right for
+        you is a question for a physician, not this site.
       </p>
     ),
   },
   {
-    id: "lab",
-    q: "Do you run the lab tests?",
+    id: "verify",
+    q: "How do you verify what's approved?",
     a: (
       <>
         <p>
-          No. We operate no laboratory and commission no testing. We verify certificates that
-          vendors have already published: that the document exists, that it names an
-          independent lab, and that it belongs to the lot actually on sale.
+          Against the FDA&rsquo;s own record, under the application number you can look up
+          yourself at Drugs@FDA. Approval is granted per use, not in general, so we record what
+          each drug was actually approved to treat rather than implying one date covers
+          everything.
         </p>
         <p className="mt-3">
-          That boundary is not modesty, it is why the check scales. Reading a published
-          document costs a fraction of assaying a vial, so one market can be covered and
-          re-checked whenever a certificate changes — which is when the failures show up.
+          Pipeline entries work the same way, sourced to each company&rsquo;s own filing or trial
+          announcement rather than a reseller&rsquo;s claim. Every entry shows the date we last
+          checked it, and the site is re-checked monthly.
         </p>
       </>
     ),
@@ -117,26 +118,32 @@ const FAQ_ITEMS: FaqItem[] = [
     a: (
       <>
         <p>
-          Affiliate commission on referrals to listed vendors. Stated plainly, because you
-          should be able to price it into how much you trust us.
+          We intend to earn a commission when a reader signs up with a licensed telehealth
+          provider through this site.
         </p>
         <p className="mt-3">
-          Two things it does not buy. It does not move a verification outcome, and it does not
-          buy a place on the list: there is no paid placement, no sponsored row, no status for
-          sale. A vendor that pays us is removed on the same evidence as one that does not, and
-          commission is earned after a listing passes — never in exchange for passing it.
+          That is not live yet. No provider currently pays us anything, and every provider we
+          know of is compared the same way whether or not it ever does. Once it starts, commission
+          will not move a price we publish or buy a place in a comparison — a provider that pays
+          us more appears no differently than one that pays us nothing.
         </p>
       </>
     ),
   },
   {
     id: "checked",
-    q: "What actually gets checked?",
+    q: "What actually gets checked, and what doesn't?",
     a: (
       <>
         <p>
-          Seven gates, applied in order to a real product’s certificate rather than to a vendor’s
-          description of its own standards.
+          Two different things, kept separate. The approved directory and pipeline tracker are
+          checked against primary sources: the FDA&rsquo;s own database and each company&rsquo;s
+          own announcements.
+        </p>
+        <p className="mt-3">
+          Separately, we still read the certificates that grey-market sellers publish for
+          compounds sold outside any FDA process — a smaller check now, not the main one, applying
+          seven gates in order:
         </p>
         <ul className="mt-4 space-y-3 border-l border-line pl-4">
           {GATES.map((gate) => (
@@ -149,34 +156,34 @@ const FAQ_ITEMS: FaqItem[] = [
           ))}
         </ul>
         <p className="mt-4">
-          A certificate that fails any gate counts as no certificate at all. A gate we were
-          unable to check is recorded as blocked — never quietly converted into a fail.
+          That check exists as evidence for why the legal routes are worth the extra cost, not as
+          a shopping guide — the full detail is on the methodology page.
         </p>
       </>
     ),
   },
   {
-    id: "fails",
-    q: "What happens when a vendor fails?",
+    id: "wrong",
+    q: "What happens when something here turns out to be wrong or out of date?",
     a: (
       <p>
-        The listing comes off, and the reason goes up in plain language. The record then stays:
-        a removal that quietly disappears is a delisting nobody can audit, and it lets the same
-        vendor reappear next quarter with a clean page. Anyone can be re-checked, and anyone can
-        return on new evidence. What nobody can do is have the old entry deleted.
+        It gets corrected, and the correction is dated. Regulatory status moves fast — a filing
+        gets a decision, a price changes — and a distinction we drew yesterday can be wrong today.
+        Tell us and we will fix it. Nothing is deleted quietly; when a fact changes, the
+        page&rsquo;s &ldquo;last checked&rdquo; date changes with it.
       </p>
     ),
   },
   {
     id: "real",
-    q: "Are these real vendors?",
+    q: "Is the vendor registry real?",
     a: (
       <>
         <p>
-          No. Every vendor name, lot number and figure shown in the registry on this site is
-          demonstration data, invented to show the format while the first audits are verified. A
-          real vendor appears only after a real certificate has been through the seven gates and
-          a second pass has confirmed the read.
+          No. Every vendor name, lot number and figure in the registry is demonstration data,
+          invented to show the format while the first real audits are verified. It exists to
+          support the &ldquo;why the unregulated sellers fail&rdquo; evidence, not as a shopping
+          list — there is no purchase link anywhere in it.
         </p>
         <DemoNotice className="mt-4" />
       </>
@@ -187,10 +194,10 @@ const FAQ_ITEMS: FaqItem[] = [
     q: "Is this medical advice?",
     a: (
       <p>
-        No. Nothing here is medical advice, a dosage, or a claim that any compound is safe or
-        effective. These materials are for research use only. What we verify is documentary —
-        whether a certificate is real and belongs to the lot in front of you. Whether you should
-        be taking anything at all is a question for a physician, not a registry.
+        No. Nothing here is medical advice, a dosage, or a claim that any medicine or provider is
+        right for you. What we publish is regulatory status and pricing, drawn from the
+        FDA&rsquo;s own records and each company&rsquo;s own statements. Whether you should be
+        taking anything, and from whom, is a question for a physician, not a registry.
       </p>
     ),
   },
