@@ -240,6 +240,29 @@ export function StatusChip({ status, className = "" }: { status: Status; classNa
   );
 }
 
+/** A KPI-style stat: a bold number, a label beneath it, and an optional
+    status pill - the dashboard-tile pattern used wherever the site surfaces
+    a derived count rather than a full record. */
+export function StatTile({
+  value,
+  label,
+  pill,
+}: {
+  value: ReactNode;
+  label: ReactNode;
+  pill?: ReactNode;
+}) {
+  return (
+    <div className="rounded-lg border border-line bg-surface p-5">
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-mono text-[1.75rem] font-semibold tabular text-text">{value}</span>
+        {pill}
+      </div>
+      <p className="mt-2 text-[13.5px] leading-relaxed text-muted">{label}</p>
+    </div>
+  );
+}
+
 /* --------------------------------------------------------------------------
    Actions
    -------------------------------------------------------------------------- */
