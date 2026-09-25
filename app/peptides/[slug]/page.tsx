@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Container, DemoNotice, Eyebrow, PageHeader, Section, StatusChip } from "@/components/site/ui";
+import { Container, DemoNotice, Eyebrow, PageHeader, Pill, Section, StatusChip } from "@/components/site/ui";
 import { getProducts } from "@/lib/content";
 import { DEMO_REGISTRY } from "@/lib/demo-registry";
 
@@ -28,8 +28,8 @@ export default async function PeptidePage({ params }: { params: Promise<{ slug: 
             <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-dim">Studied for</p>
             <ul className="mt-2.5 flex flex-wrap gap-2">
               {product.commonUses.map((u) => (
-                <li key={u} className="rounded-full border border-line-strong px-3 py-1 text-[13px] text-muted">
-                  {u}
+                <li key={u}>
+                  <Pill tone="neutral">{u}</Pill>
                 </li>
               ))}
             </ul>
