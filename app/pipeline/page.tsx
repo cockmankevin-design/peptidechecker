@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Container, PageHeader, Prose, Section } from "@/components/site/ui";
+import { Container, PageHeader, Pill, Prose, Section } from "@/components/site/ui";
 import { PIPELINE_DRUGS } from "@/lib/fda-registry";
 
 /* Coming soon - the pipeline tracker. Copy follows
@@ -74,9 +74,7 @@ export default function PipelinePage() {
                     <td className="px-5 py-4 align-top text-[14px] font-medium text-text">{d.drug}</td>
                     <td className="px-4 py-4 align-top text-[14px] text-muted">{d.company}</td>
                     <td className="px-4 py-4 align-top">
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/25 bg-accent-dim px-2.5 py-1 font-mono text-[10.5px] uppercase tracking-[0.1em] text-accent">
-                        {STATUS_LABEL[d.status]}
-                      </span>
+                      <Pill tone="accent">{STATUS_LABEL[d.status]}</Pill>
                       <p className="mt-2 max-w-[32ch] text-[12.5px] leading-relaxed text-dim">
                         {d.statusDetail}
                       </p>
@@ -100,9 +98,7 @@ export default function PipelinePage() {
               <li key={d.drug} className="rounded-lg border border-line bg-surface p-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <p className="text-[15px] font-medium text-text">{d.drug}</p>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/25 bg-accent-dim px-2.5 py-1 font-mono text-[10.5px] uppercase tracking-[0.1em] text-accent">
-                    {STATUS_LABEL[d.status]}
-                  </span>
+                  <Pill tone="accent">{STATUS_LABEL[d.status]}</Pill>
                 </div>
                 <p className="mt-1 text-[13px] text-muted">{d.company}</p>
                 <p className="mt-3 text-[13px] leading-relaxed text-muted">{d.statusDetail}</p>
