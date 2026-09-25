@@ -24,6 +24,7 @@ import {
   Container,
   Eyebrow,
   Hairline,
+  Pill,
   Reveal,
   Section,
   SectionHeader,
@@ -154,10 +155,9 @@ export default function WhatWeVerify() {
                 </p>
 
                 <p className="mt-4 flex flex-wrap items-baseline gap-x-2.5 gap-y-1 rounded-md border border-line bg-surface-2 px-3 py-2.5">
-                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-delisted">
-                    <X className="h-3 w-3" aria-hidden="true" />
+                  <Pill tone="delisted" icon={X}>
                     Fails on
-                  </span>
+                  </Pill>
                   <span className="font-mono text-[12px] leading-relaxed text-muted">
                     {gate.failsOn}
                   </span>
