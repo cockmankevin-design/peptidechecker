@@ -39,7 +39,10 @@ import { asset } from "@/lib/basePath";
 const BADGES = [
   { label: "Every date FDA-sourced", icon: ShieldCheck },
   { label: "We sell nothing", icon: PackageX },
-  { label: "Commission disclosed", icon: Eye },
+  // 2026-09-27: was "Commission disclosed", which contradicted /cost and
+  // /get-started - no affiliate programme has accepted us, so nothing pays us
+  // yet. Restore the old wording only when one actually does.
+  { label: "We take no commissions", icon: Eye },
 ] as const;
 
 // Must match public/hero-vial/manifest.json ("frames.target_count").

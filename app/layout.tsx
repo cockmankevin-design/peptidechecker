@@ -25,9 +25,9 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PeptideChecker — Independent COA Verification",
+  title: "PeptideChecker — Every FDA-Approved Peptide Medicine",
   description:
-    "A certificate is not proof. PeptideChecker checks that a vendor's certificate of analysis is real, names its lab, and belongs to the lot actually being sold — and publishes the ones that fail.",
+    "Twelve peptide medicines carry FDA approval today, and several more are awaiting a decision. Every approval date and application number here is read from Drugs@FDA and dated, so you can check it yourself. We sell nothing and prescribe nothing.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
