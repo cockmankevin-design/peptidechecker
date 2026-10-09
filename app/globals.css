@@ -34,10 +34,9 @@
 
 @theme {
   /* ---- ground and structure -------------------------------------------- */
-  /* Deep navy rather than near-black - matches the hero video's own
-     background so the canvas doesn't sit in a visibly different-colored box
-     when it's paused on frame 0. Surface and surface-2 step up in lightness
-     for cards and nested panels.
+  /* Near-black dashboard ground - a neutral platform for content and status
+     signals. Surface and surface-2 step up in lightness for cards and nested
+     panels.
 
      surface/bg contrast is only ~1.1:1 by design (a near-black surface on a
      near-black bg, same as the light theme's white-on-white problem) - the
@@ -47,11 +46,11 @@
      the same ~1.8-3.5:1+ presence bar the light theme required after its own
      "there's no background" correction - a border needs to be seen, not just
      pass a formula in isolation. */
-  --color-bg: #080f1f;
-  --color-surface: #0f1a30;
-  --color-surface-2: #16233d;
-  --color-line: #3a4d72;
-  --color-line-strong: #5a75a3;
+  --color-bg: #0a0a0c;
+  --color-surface: #141418;
+  --color-surface-2: #1c1c22;
+  --color-line: #40404a;
+  --color-line-strong: #68686f;
 
   /* ---- type ------------------------------------------------------------- */
   /* Off-white, not pure #fff - easier on the eye at these sizes and it keeps

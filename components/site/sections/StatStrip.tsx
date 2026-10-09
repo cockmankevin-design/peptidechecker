@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, Reveal } from "@/components/site/ui";
+import { Container, Pill, Reveal, StatTile } from "@/components/site/ui";
 import { APPROVED_DRUGS, APPROVED_LAST_CHECKED, PIPELINE_DRUGS } from "@/lib/fda-registry";
 
 /* Stat strip, directly under the hero (2026-09-24 pivot build).
@@ -8,7 +8,10 @@ import { APPROVED_DRUGS, APPROVED_LAST_CHECKED, PIPELINE_DRUGS } from "@/lib/fda
    Numbers are derived from lib/fda-registry.ts, never hardcoded, so they
    cannot drift from the rows printed on /approved and /pipeline. The
    discontinued-drug count is the site's best single proof of care: lists
-   people copy from each other still carry a drug that's gone. */
+   people copy from each other still carry a drug that's gone.
+
+   Rendered as three KPI tiles (2026-09-24 restyle) rather than inline
+   numbers, matching the dashboard-tile pattern used site-wide. */
 
 export default function StatStrip() {
   const approvedCount = APPROVED_DRUGS.filter((d) => d.status === "approved" && d.isPeptide).length;
@@ -16,26 +19,35 @@ export default function StatStrip() {
   const pendingCount = PIPELINE_DRUGS.length;
 
   const stats = [
-    { value: approvedCount, label: "approved peptide medicines" },
-    { value: pendingCount, label: "awaiting an FDA decision" },
-    { value: discontinuedCount, label: "discontinued, still listed elsewhere as approved" },
+    {
+      value: approvedCount,
+      label: "approved peptide medicines",
+      pill: <Pill tone="verified">Live</Pill>,
+    },
+    {
+      value: pendingCount,
+      label: "awaiting an FDA decision",
+      pill: <Pill tone="review">Pending</Pill>,
+    },
+    {
+      value: discontinuedCount,
+      label: "discontinued, still listed elsewhere as approved",
+      pill: <Pill tone="delisted">Discontinued</Pill>,
+    },
   ];
 
   return (
     <div className="border-y border-line bg-surface/40">
       <Container>
         <Reveal>
-          <div className="flex flex-wrap items-center gap-x-10 gap-y-4 py-6">
+          <div className="grid gap-4 py-8 sm:grid-cols-3">
             {stats.map((s) => (
-              <div key={s.label} className="flex items-baseline gap-2">
-                <span className="font-mono text-[1.5rem] font-semibold tabular text-text">{s.value}</span>
-                <span className="text-[13.5px] text-muted">{s.label}</span>
-              </div>
+              <StatTile key={s.label} value={s.value} label={s.label} pill={s.pill} />
             ))}
-            <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-dim">
-              Last checked {APPROVED_LAST_CHECKED} against Drugs@FDA
-            </span>
           </div>
+          <p className="pb-6 font-mono text-[11px] uppercase tracking-[0.1em] text-dim">
+            Last checked {APPROVED_LAST_CHECKED} against Drugs@FDA
+          </p>
         </Reveal>
       </Container>
     </div>

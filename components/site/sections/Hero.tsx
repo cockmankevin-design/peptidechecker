@@ -4,7 +4,7 @@ import { Eye, PackageX, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 
-import { Container, CTA } from "@/components/site/ui";
+import { Container, CTA, Pill } from "@/components/site/ui";
 import { EASE_OUT_QUINT } from "@/lib/motion";
 import { asset } from "@/lib/basePath";
 
@@ -147,13 +147,9 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.26, ease: EASE_OUT_QUINT }}
           >
             {BADGES.map((b) => (
-              <div
-                key={b.label}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/[0.06] px-4 py-2.5 text-[13px] font-medium text-white/90 backdrop-blur-sm"
-              >
-                <b.icon className="h-4 w-4 text-[#78c0ff]" aria-hidden="true" />
+              <Pill key={b.label} tone="onVideo" size="md" icon={b.icon}>
                 {b.label}
-              </div>
+              </Pill>
             ))}
           </motion.div>
         </div>

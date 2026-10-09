@@ -11,7 +11,7 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 
 import { fadeUp, stagger, VIEWPORT } from "@/lib/motion";
 
@@ -171,40 +171,95 @@ export function SectionHeader({
 }
 
 /* --------------------------------------------------------------------------
-   Status
+   Pill & Status
    -------------------------------------------------------------------------- */
+
+export type PillTone = "verified" | "review" | "delisted" | "accent" | "neutral" | "onVideo";
+
+const PILL_TONE_STYLE: Record<PillTone, string> = {
+  verified: "bg-verified text-bg",
+  review: "bg-review text-bg",
+  delisted: "bg-delisted text-bg",
+  accent: "bg-accent text-bg",
+  neutral: "border border-line-strong bg-surface-2 text-muted",
+  // Sits over the hero's full-brightness video, not the site's near-black
+  // body - a solid fill would fight the footage for attention, so this stays
+  // the translucent backdrop-blur treatment instead of a filled tone.
+  onVideo: "border border-white/15 bg-white/[0.06] text-white/90 backdrop-blur-sm",
+};
+
+const PILL_SIZE_STYLE: Record<"sm" | "md", string> = {
+  sm: "gap-1.5 px-2.5 py-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.1em]",
+  md: "gap-2 px-4 py-2.5 text-[13px] font-medium",
+};
+
+/** The site's one chip/tag primitive. Every status chip, trust badge and
+    category tag renders through this, so "a tag" always means the same
+    shape and colour system regardless of which page it's on. */
+export function Pill({
+  tone,
+  size = "sm",
+  dot = false,
+  icon: Icon,
+  children,
+  className = "",
+}: {
+  tone: PillTone;
+  size?: "sm" | "md";
+  dot?: boolean;
+  icon?: ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <span
+      className={`inline-flex items-center rounded-full ${PILL_SIZE_STYLE[size]} ${PILL_TONE_STYLE[tone]} ${className}`}
+    >
+      {dot && <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />}
+      {Icon && <Icon className={size === "md" ? "h-4 w-4" : "h-3 w-3"} aria-hidden />}
+      {children}
+    </span>
+  );
+}
 
 export type Status = "verified" | "review" | "delisted";
 
-const STATUS_STYLE: Record<Status, { label: string; cls: string; dot: string }> = {
-  verified: {
-    label: "Verified",
-    cls: "text-verified bg-verified-dim border-verified/25",
-    dot: "bg-verified",
-  },
-  review: {
-    label: "Under review",
-    cls: "text-review bg-review-dim border-review/25",
-    dot: "bg-review",
-  },
-  delisted: {
-    label: "Delisted",
-    cls: "text-delisted bg-delisted-dim border-delisted/25",
-    dot: "bg-delisted",
-  },
+const STATUS_LABEL: Record<Status, string> = {
+  verified: "Verified",
+  review: "Under review",
+  delisted: "Delisted",
 };
 
 /** Status is never conveyed by colour alone - the label is always present, so
     it survives greyscale, colour blindness and a screen reader. */
 export function StatusChip({ status, className = "" }: { status: Status; className?: string }) {
-  const s = STATUS_STYLE[status];
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10.5px] uppercase tracking-[0.1em] ${s.cls} ${className}`}
-    >
-      <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} aria-hidden="true" />
-      {s.label}
-    </span>
+    <Pill tone={status} dot className={className}>
+      {STATUS_LABEL[status]}
+    </Pill>
+  );
+}
+
+/** A KPI-style stat: a bold number, a label beneath it, and an optional
+    status pill - the dashboard-tile pattern used wherever the site surfaces
+    a derived count rather than a full record. */
+export function StatTile({
+  value,
+  label,
+  pill,
+}: {
+  value: ReactNode;
+  label: ReactNode;
+  pill?: ReactNode;
+}) {
+  return (
+    <div className="rounded-lg border border-line bg-surface p-5">
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-mono text-[1.75rem] font-semibold tabular text-text">{value}</span>
+        {pill}
+      </div>
+      <p className="mt-2 text-[13.5px] leading-relaxed text-muted">{label}</p>
+    </div>
   );
 }
 
