@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PeptideChecker 3D B · Cinema</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{--ink:#02040a;--text:#eef3fb;--muted:#9aa9bf;--accent:#4d8dff;--line:rgba(120,160,255,.22)}
+  html,body{margin:0;background:var(--ink);color:var(--text);font-family:Geist,system-ui,sans-serif;overflow-x:hidden}
+  #gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0}
+  nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:5;display:flex;gap:22px;align-items:center;padding:10px 18px;border:1px solid var(--line);border-radius:99px;background:rgba(8,12,24,.45);backdrop-filter:blur(14px);font-size:13.5px;white-space:nowrap}
+  nav b{font-weight:600;margin-right:10px} nav span{color:var(--muted)}
+  main{position:relative;z-index:2}
+  section{min-height:100vh;display:flex;align-items:center;padding:0 7vw;box-sizing:border-box}
+  .glass{max-width:520px;padding:26px 28px;border:1px solid var(--line);border-radius:14px;background:rgba(6,10,22,.5);backdrop-filter:blur(16px) saturate(1.2)}
+  .eyebrow{font:500 11px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#8399bd}
+  h1{font-size:clamp(34px,5vw,58px);line-height:1.04;letter-spacing:-.025em;margin:10px 0 14px;font-weight:600}
+  h2{font-size:clamp(24px,3vw,34px);line-height:1.1;letter-spacing:-.02em;margin:8px 0 10px;font-weight:600}
+  p{color:var(--muted);line-height:1.55;margin:0;font-size:15px}
+  .btn{display:inline-block;margin-top:18px;padding:11px 18px;border-radius:9px;background:var(--accent);color:#03081a;font-weight:600;text-decoration:none;font-size:14.5px}
+  .tiles{display:flex;gap:10px;margin-top:14px}.tiles div{flex:1;padding:12px;border-radius:10px;background:rgba(31,79,209,.16);border:1px solid var(--line)}
+  .tiles b{display:block;font:600 30px 'IBM Plex Mono',monospace}.tiles span{font-size:12px;color:#aebcd2}
+  .routes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.routes div{padding:12px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:13.5px;line-height:1.35}
+  .routes small{display:block;font:500 10.5px 'IBM Plex Mono';color:#7fa4ff;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+  .right{justify-content:flex-end}
+  .note{position:fixed;right:14px;bottom:12px;z-index:5;font:11px 'IBM Plex Mono';color:#5e6f8c}
+  @media(max-width:700px){nav span{display:none}section{padding:0 18px}.right{justify-content:flex-start}.routes{grid-template-columns:1fr}.tiles{flex-direction:column}}
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<nav><b>PeptideChecker</b><span>Approved</span><span>Pipeline</span><span>How to get one</span><span>Cost</span></nav>
+<main>
+  <section><div class="glass"><div class="eyebrow">Prototype v2 · scroll down</div><h1>We check what the label can't tell you.</h1><p>Every FDA-approved peptide medicine, its real cost, and the legal way to get it.</p><a class="btn">Open the directory</a></div></section>
+  <section class="right"><div class="glass"><div class="eyebrow">Last checked 2026-09-23 against Drugs@FDA</div><h2>The numbers</h2><div class="tiles"><div><b>12</b><span>approved peptide medicines</span></div><div><b>4</b><span>awaiting an FDA decision</span></div><div><b>1</b><span>discontinued, still listed elsewhere as approved</span></div></div></div></section>
+  <section><div class="glass"><h2>Four ways in</h2><div class="routes"><div><small>Approved</small>Every approved peptide medicine, with its paperwork.</div><div><small>Pipeline</small>What is waiting on a decision.</div><div><small>How to get one</small>Four ways in, and what each one costs.</div><div><small>Cost</small>The real reason people buy from a website they found on Reddit.</div></div></div></section>
+  <section class="right"><div class="glass"><div class="eyebrow">Evidence</div><h2>&ldquo;Third-party tested&rdquo; is not the same as approved.</h2><p>Where the unregulated sellers' paperwork breaks down. No links to sellers.</p></div></section>
+  <section><div class="glass"><h2>Check anything here against the source.</h2><p>Every approval lists its FDA application number. Every pipeline date lists the announcement it came from.</p></div></section>
+</main>
+<div class="note">real-time Three.js · B · Cinema</div>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
+import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
+import {FullScreenQuad} from 'three/addons/postprocessing/Pass.js';
+
+// "supersampled cinema" variant of v2. Camera journey, chain rotation, stop-3 glow and stop-4 break-apart are v2's logic unchanged.
+// Image changes: no depth-of-field, no chromatic aberration, no grain; jittered supersampling over 4x MSAA; exact per-pixel
+// contact shading; tone mapping inside the material so anti-aliasing resolves in display space; bloom limited to the glow.
+const Q=new URLSearchParams(location.search); // A/B switches for review captures only (?ssaa=1|2|4 ?noao ?hdri ?tm=agx|aces)
+const small = innerWidth < 760;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canvas=document.getElementById('gl');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'high-performance'}); // AA happens in the scene target
+let pr=Q.has('pr')?+Q.get('pr'):Math.min(devicePixelRatio,2);
+renderer.setPixelRatio(pr);
+renderer.setSize(innerWidth,innerHeight);
+renderer.autoClear=false;renderer.setClearColor(0x000000,0);
+let W=Math.round(innerWidth*pr),H=Math.round(innerHeight*pr);
+
+const scene=new THREE.Scene();
+// background: the same deep navy radial, computed per pixel in float (a 512px canvas gradient stretched to full screen bands)
+const bg=new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShaderMaterial({depthTest:false,depthWrite:false,
+  vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,1.,1.);}`,
+  fragmentShader:`varying vec2 vUv;
+  vec3 lin(vec3 c){return pow(c,vec3(2.2));}
+  void main(){float t=clamp(length(vUv-vec2(.56,.53))/.76,0.,1.);
+    vec3 c0=vec3(16.,36.,77.)/255.,c1=vec3(7.,16.,34.)/255.,c2=vec3(2.,4.,10.)/255.;
+    vec3 c=mix(mix(c0,c1,smoothstep(0.,.45,t)),c2,smoothstep(.3,1.,t));
+    gl_FragColor=vec4(lin(c),0.);}`}));
+bg.frustumCulled=false;bg.renderOrder=-1;scene.add(bg);
+scene.fog=new THREE.FogExp2(0x040916,.028);
+
+// lighting: a studio built to match the palette (big key softbox on the key light's axis, cobalt rim strips behind),
+// so every glossy atom reflects real light shapes instead of a grey wash. ?hdri swaps in the Poly Haven studio for comparison.
+const pmrem=new THREE.PMREMGenerator(renderer);
+function studio(){const s=new THREE.Scene();
+  s.add(new THREE.Mesh(new THREE.SphereGeometry(40,48,24),new THREE.MeshBasicMaterial({color:0x050b1a,side:THREE.BackSide})));
+  const box=(w,h,col,k,x,y,z)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(col).multiplyScalar(k),side:THREE.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,0,0);s.add(m)};
+  box(15,10,0xffffff,7,12,18,16);      // key softbox, same axis as the key light (6,9,8)
+  box(9,13,0xcfdcff,1.4,-20,4,12);     // soft cool fill, left
+  box(2.2,26,0x2f6bff,7,-15,-2,-12);   // cobalt rim strip, back left (rim light side)
+  box(2.2,26,0x7aa8ff,4,17,3,-10);     // pale rim strip, back right
+  box(30,3,0xbfd0ff,.8,0,24,-4);       // faint overhead edge
+  return pmrem.fromScene(s,0).texture}
+scene.environment=studio();
+if(Q.has('hdri'))new RGBELoader().load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_09_1k.hdr',hdr=>{
+  scene.environment=pmrem.fromEquirectangular(hdr).texture;hdr.dispose();},undefined,()=>{});
+scene.environmentIntensity=1;
+const key=new THREE.DirectionalLight(0xdfe8ff,2.0);key.position.set(6,9,8);scene.add(key);
+const rim=new THREE.PointLight(0x3a78ff,90,40,1.6);rim.position.set(-8,-3,-6);if(!Q.has('nopoint'))scene.add(rim);
+const rim2=new THREE.PointLight(0x7aa8ff,40,30,1.6);rim2.position.set(10,4,-5);if(!Q.has('nopoint'))scene.add(rim2);
+
+const camera=new THREE.PerspectiveCamera(36,innerWidth/innerHeight,.1,300);
+
+// ---- a real alpha-helix peptide backbone (N, CA, C, O, H + side chains), axis along X  (geometry identical to v2)
+const S=.75, RISE=1.5, R=28, TURN=2*Math.PI/3.6;
+const EL={
+  C:{color:0x3b414b,r:.34},  N:{color:0x2f6bff,r:.32}, O:{color:0xc8463c,r:.32}, H:{color:0xeef2f8,r:.2},
+};
+const ROUGH={C:.3,N:.2,O:.2,H:.22}, N_EMIT=new THREE.Color(0x0a2a8a);
+const helixPt=(i,r,da,dz)=>{const a=i*TURN+da;return new THREE.Vector3(((i*RISE+dz)-R*RISE/2)*S, Math.sin(a)*r*S, Math.cos(a)*r*S)};
+const chain=new THREE.Group(); // transform graph only: atoms and bonds are drawn through two InstancedMeshes below
+const residues=[];
+const atoms=[],halves=[],atomAt=new Map();let curRes=0;
+function atom(el,pos,g,scale=1){const o=new THREE.Object3D();o.scale.setScalar(EL[el].r*scale);o.position.copy(pos);g.add(o);
+  atomAt.set(pos,atoms.length);atoms.push({o,el,r:EL[el].r*scale,res:curRes,emit:el==='N'?.35:0});return atoms.length-1}
+function bond(a,ea,b,eb,g,rad=.075,off=null){ // split-colour bond, half per atom
+  const mid=a.clone().lerp(b,.5);
+  [[a,mid,ea,a,b],[mid,b,eb,b,a]].forEach(([p,q,e,end,far])=>{const d=new THREE.Vector3().subVectors(q,p),o=new THREE.Object3D();
+    o.scale.set(rad,d.length(),rad);o.position.copy(p).addScaledVector(d,.5);if(off)o.position.add(off);
+    o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize());g.add(o);
+    const sh=off||new THREE.Vector3();
+    halves.push({o,el:e,rad,res:curRes,g,end:atomAt.get(end),far:atomAt.get(far),endPos:end.clone().add(sh),
+      out:new THREE.Vector3().subVectors(mid,end).normalize(),P0:p.clone().add(sh),P1:q.clone().add(sh),emit:e==='N'?.35:0})});}
+let prevC=null;
+for(let i=0;i<R;i++){
+  curRes=i;
+  const g=new THREE.Group();chain.add(g);
+  const N=helixPt(i,1.55,-.45,-.5), CA=helixPt(i,2.3,0,0), C=helixPt(i,1.65,.5,.5);
+  const radial=new THREE.Vector3(0,CA.y,CA.z).normalize();
+  const O=C.clone().add(new THREE.Vector3(1.2*S,0,0)).addScaledVector(new THREE.Vector3(0,C.y,C.z).normalize(),.35*S);
+  const H=N.clone().add(new THREE.Vector3(-.95*S,0,0)).addScaledVector(new THREE.Vector3(0,N.y,N.z).normalize(),.2*S);
+  const CB=CA.clone().addScaledVector(radial,1.5*S).add(new THREE.Vector3(.25*S,0,0));
+  const HA=CA.clone().addScaledVector(radial,-.4*S).add(new THREE.Vector3(-.6*S,.0,0)).addScaledVector(new THREE.Vector3(0,-CA.z,CA.y).normalize(),.7*S);
+  const nAtom=atom('N',N,g);atom('C',CA,g);atom('C',C,g);atom('O',O,g);atom('H',H,g);atom('C',CB,g);atom('H',HA,g);
+  bond(N,'N',CA,'C',g);bond(CA,'C',C,'C',g);bond(N,'N',H,'H',g,.055);bond(CA,'C',CB,'C',g);bond(CA,'C',HA,'H',g,.05);
+  // C=O double bond
+  const perp=new THREE.Vector3(0,-C.z,C.y).normalize().multiplyScalar(.09);
+  bond(C,'C',O,'O',g,.05,perp);bond(C,'C',O,'O',g,.05,perp.clone().negate());
+  if(prevC)bond(prevC,'C',N,'N',g);
+  // varied side chains so it reads as a real sequence
+  const kind=[0,1,2,1,3,0,2,1][i%8], tan=new THREE.Vector3(0,-radial.z,radial.y);
+  if(kind>=1){const CG=CB.clone().addScaledVector(radial,1.3*S).addScaledVector(tan,.6*S);atom('C',CG,g);bond(CB,'C',CG,'C',g);
+    if(kind===2){const OG=CG.clone().addScaledVector(radial,1.1*S).add(new THREE.Vector3(.5*S,0,0));atom('O',OG,g);bond(CG,'C',OG,'O',g);}
+    if(kind===3){const NZ=CG.clone().addScaledVector(radial,1.2*S).addScaledVector(tan,-.5*S);atom('N',NZ,g);bond(CG,'C',NZ,'N',g);
+      const H2=NZ.clone().addScaledVector(radial,.8*S);atom('H',H2,g);bond(NZ,'N',H2,'H',g,.05);}
+    const HB=CB.clone().addScaledVector(tan,-.9*S);atom('H',HB,g);bond(CB,'C',HB,'H',g,.05);}
+  prevC=C;
+  residues.push({g,nAtom,i,drift:new THREE.Vector3((Math.random()-.5)*2.4,(Math.random()-.4)*-2.2,(Math.random()-.5)*2.4),spin:(Math.random()-.5)*1.4});
+}
+const LIT=[6,10,14,18], BROKEN=[21,22,23,24,25,26];
+const GREY=new THREE.Color(0x4a4f58);
+
+// ---- contact shading data. Occluders = every atom + two spheres hugging the root of each bond. Their live world positions go
+// to a float texture each frame; each atom / bond half carries a fixed list of up to 16 neighbours that can shade it.
+const occ=[];atoms.forEach(a=>occ.push({o:a.o,r:a.r}));
+const hug=atoms.map(()=>[]);
+halves.forEach(h=>[.5,2.2].forEach(s=>{const p=new THREE.Object3D();p.position.copy(h.endPos).addScaledVector(h.out,atoms[h.end].r+s*h.rad);h.g.add(p);
+  hug[h.end].push(occ.length);occ.push({o:p,r:h.rad})}));
+chain.updateMatrixWorld(true);
+const occPos=occ.map(c=>new THREE.Vector3().setFromMatrixPosition(c.o.matrixWorld));
+const NB=16, pick=L=>{L.sort((a,b)=>b.s-a.s);const out=new Float32Array(NB).fill(-1);L.slice(0,NB).forEach((c,k)=>out[k]=c.id);return out};
+const atomNbr=atoms.map((a,i)=>{const L=hug[i].map(id=>({id,s:1e3}));
+  atoms.forEach((b,j)=>{if(j===i)return;const d=occPos[i].distanceTo(occPos[j]);if(d-a.r-b.r<.9)L.push({id:j,s:(b.r/Math.max(d-a.r,.05))**2})});
+  return pick(L)});
+const segD=(p,a,b)=>{const ab=b.clone().sub(a),t=THREE.MathUtils.clamp(p.clone().sub(a).dot(ab)/ab.lengthSq(),0,1);return p.distanceTo(a.clone().addScaledVector(ab,t))};
+const bondNbr=halves.map(h=>{const L=[{id:h.end,s:1e3},{id:h.far,s:1e2}];
+  atoms.forEach((b,j)=>{if(j===h.end||j===h.far)return;const d=segD(occPos[j],h.P0,h.P1);if(d-h.rad-b.r<.8)L.push({id:j,s:(b.r/Math.max(d-h.rad,.05))**2})});
+  return pick(L)});
+const OW=64,OH=Math.ceil(occ.length/OW),occData=new Float32Array(OW*OH*4);
+const occTex=new THREE.DataTexture(occData,OW,OH,THREE.RGBAFormat,THREE.FloatType);occTex.minFilter=occTex.magFilter=THREE.NearestFilter;
+// neighbour lists live in a static texture (4 texels = 16 ids per item; atoms first, then bond halves), so each vertex carries
+// one id instead of 16 (fat per-vertex outputs were the single biggest GPU cost on this class of hardware)
+const nItems=atoms.length+halves.length,nbrData=new Float32Array(OW*Math.ceil(nItems*4/OW)*4);
+atomNbr.forEach((l,k)=>nbrData.set(l,k*16));bondNbr.forEach((l,k)=>nbrData.set(l,(atoms.length+k)*16));
+const nbrTex=new THREE.DataTexture(nbrData,OW,nbrData.length/4/OW,THREE.RGBAFormat,THREE.FloatType);nbrTex.minFilter=nbrTex.magFilter=THREE.NearestFilter;nbrTex.needsUpdate=true;
+
+// ---- shader patches (checked: a missing hook throws instead of silently rendering the old look)
+const hook=(src,find,add,how='after')=>{if(!src.includes(find))throw new Error('shader hook missing: '+find);
+  return src.replace(find,how==='after'?find+'\n'+add:how==='before'?add+'\n'+find:add)};
+const TMO={agx:1,aces:2}[Q.get('tm')]||0;
+const TONE=`uniform float uExposure;
+vec3 tmNeutral(vec3 color){const float StartCompression=0.8-0.04;const float Desaturation=0.15;
+  float x=min(color.r,min(color.g,color.b));float offset=x<0.08?x-6.25*x*x:0.04;color-=offset;
+  float peak=max(color.r,max(color.g,color.b));if(peak<StartCompression)return color;
+  float d=1.-StartCompression;float newPeak=1.-d*d/(peak+d-StartCompression);color*=newPeak/peak;
+  float g=1.-1./(Desaturation*(peak-newPeak)+1.);return mix(color,vec3(newPeak),g);}
+vec3 tmAgXc(vec3 x){vec3 x2=x*x;vec3 x4=x2*x2;return 15.5*x4*x2-40.14*x4*x+31.96*x4-6.868*x2*x+0.4298*x2+0.1191*x-0.00232;}
+vec3 tmAgX(vec3 color){
+  const mat3 toR=mat3(vec3(0.6274,0.0691,0.0164),vec3(0.3293,0.9195,0.0880),vec3(0.0433,0.0113,0.8956));
+  const mat3 fromR=mat3(vec3(1.6605,-0.1246,-0.0182),vec3(-0.5876,1.1329,-0.1006),vec3(-0.0728,-0.0083,1.1187));
+  const mat3 ins=mat3(vec3(0.856627153315983,0.137318972929847,0.11189821299995),vec3(0.0951212405381588,0.761241990602591,0.0767994186031903),vec3(0.0482516061458583,0.101439036467562,0.811302368396859));
+  const mat3 outs=mat3(vec3(1.1271005818144368,-0.1413297634984383,-0.14132976349843826),vec3(-0.11060664309660323,1.157823702216272,-0.11060664309660294),vec3(-0.016493938717834573,-0.016493938717834257,1.2519364065950405));
+  color=ins*(toR*color);color=clamp((log2(max(color,1e-10))+12.47393)/16.5,0.,1.);color=outs*tmAgXc(color);
+  return clamp(fromR*pow(max(vec3(0.),color),vec3(2.2)),0.,1.);}
+vec3 tmRRT(vec3 v){vec3 a=v*(v+0.0245786)-0.000090537;vec3 b=v*(0.983729*v+0.4329510)+0.238081;return a/b;}
+vec3 tmACES(vec3 color){const mat3 i=mat3(vec3(0.59719,0.07600,0.02840),vec3(0.35458,0.90834,0.13383),vec3(0.04823,0.01566,0.83777));
+  const mat3 o=mat3(vec3(1.60475,-0.10208,-0.00327),vec3(-0.53108,1.10813,-0.07276),vec3(-0.07367,-0.00605,1.07602));
+  return clamp(o*tmRRT(i*(color/0.6)),0.,1.);}
+vec3 toDisplay(vec3 c){c*=uExposure;
+#if TMO==1
+  return tmAgX(c);
+#elif TMO==2
+  return tmACES(c);
+#else
+  return tmNeutral(c);
+#endif
+}`;
+const U={uExposure:{value:1},tOcc:{value:occTex},tNbr:{value:nbrTex},uCamWorld:{value:camera.matrixWorld},uNEmit:{value:new THREE.Vector3(N_EMIT.r,N_EMIT.g,N_EMIT.b)},
+  uKey:{value:key.position.clone().normalize()},uShK:{value:5},uAO:{value:1.25},uAODirect:{value:.55}};
+function patchTone(sh,alpha){Object.assign(sh.uniforms,U);
+  sh.fragmentShader=hook(sh.fragmentShader,'#include <common>',TONE);
+  sh.fragmentShader=hook(sh.fragmentShader,'#include <tonemapping_fragment>','gl_FragColor.rgb=toDisplay(gl_FragColor.rgb);','replace');
+  sh.fragmentShader=hook(sh.fragmentShader,'#include <dithering_fragment>','gl_FragColor.a='+alpha+';');}
+
+// atoms + bonds: one physical material, per-instance colour / roughness / clearcoat / emissive, exact contact shading
+const molMat=new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:1,metalness:0,clearcoat:Q.has('nocoat')?0:1,clearcoatRoughness:.045});
+molMat.defines.TMO=TMO;if(Q.has('noao'))molMat.defines.NO_CONTACT='';
+molMat.onBeforeCompile=sh=>{
+  // per instance: aLook = (emissive intensity, roughness, clearcoat, -), aId = item id into the neighbour texture
+  sh.vertexShader=hook(sh.vertexShader,'#include <common>','attribute vec4 aLook;attribute float aId;varying vec4 vLook;varying float vId;');
+  sh.vertexShader=hook(sh.vertexShader,'#include <project_vertex>','vLook=aLook;vId=aId;');
+  patchTone(sh,'smoothstep(.12,.75,uNEmit.b*vLook.x)'); // alpha = glow mask: only the lit residues feed the bloom
+  let f=sh.fragmentShader;
+  f=hook(f,'#include <common>',`varying vec4 vLook;varying float vId;
+uniform highp sampler2D tOcc,tNbr;uniform mat4 uCamWorld;uniform vec3 uKey,uNEmit;uniform float uShK,uAO,uAODirect;
+// sphere ambient occlusion, exact incl. horizon clipping (Quilez)
+float cOcc(vec3 p,vec3 n,vec4 s){vec3 di=s.xyz-p;float l=length(di);float nl=dot(n,di)/l;float h=max(l/s.w,1.001);float hn=h*nl;
+  if(hn<=-1.)return 0.;                                    // wholly below the horizon
+  float h2=h*h;if(hn>=1.||h>8.)return max(0.,nl)/h2;        // wholly above (or far): exact closed form
+  float k2=1.-hn*hn;float a=clamp(-nl*sqrt((h2-1.)/max(1.-nl*nl,1e-4)),-1.,1.);
+  return clamp(((nl*acos(a)-sqrt(k2*(h2-1.)))/h2+atan(sqrt(k2/(h2-1.))))/3.14159265,0.,1.);}
+// soft shadow of a sphere toward the key light (penumbra from the angular gap)
+float cShd(vec3 ro,vec3 rd,vec4 s){vec3 oc=ro-s.xyz;float b=dot(oc,rd);float c=dot(oc,oc)-s.w*s.w;float h=b*b-c;
+  float d=sqrt(max(0.,s.w*s.w-h))-s.w;float t=-b-sqrt(max(h,0.));return t<0.?1.:smoothstep(0.,1.,uShK*d/t);}
+void cAcc(float id,vec3 p,vec3 n,inout float ao,inout float sh){if(id<0.)return;int ii=int(id+.5);vec4 s=texelFetch(tOcc,ivec2(ii&63,ii>>6),0);
+  ao*=1.-cOcc(p,n,s);sh*=cShd(p,uKey,s);}`);
+  f=hook(f,'vec3 totalEmissiveRadiance = emissive;','vec3 totalEmissiveRadiance = uNEmit*vLook.x;','replace');
+  f=hook(f,'#include <roughnessmap_fragment>','roughnessFactor=vLook.y;');
+  f=hook(f,'#include <lights_physical_fragment>',hook(THREE.ShaderChunk.lights_physical_fragment,'material.clearcoat = clearcoat;','material.clearcoat = clearcoat*vLook.z;','replace'),'replace');
+  f=hook(f,'#include <normal_fragment_maps>',`float cAO=1.,cKey=1.;
+#ifndef NO_CONTACT
+{vec3 cN=normalize((vec4(normal,0.)*viewMatrix).xyz),cP=(uCamWorld*vec4(-vViewPosition,1.)).xyz;int base=int(vId+.5)*4;
+ for(int q=0;q<4;q++){int t=base+q;vec4 ids=texelFetch(tNbr,ivec2(t&63,t>>6),0);if(ids.x<0.)break;
+   cAcc(ids.x,cP,cN,cAO,cKey);cAcc(ids.y,cP,cN,cAO,cKey);cAcc(ids.z,cP,cN,cAO,cKey);cAcc(ids.w,cP,cN,cAO,cKey);}
+ cAO=pow(cAO,uAO);}
+#endif`);
+  f=hook(f,'#include <lights_fragment_begin>',hook(THREE.ShaderChunk.lights_fragment_begin,'getDirectionalLightInfo( directionalLight, directLight );','directLight.color*=cKey;'),'replace');
+  f=hook(f,'#include <aomap_fragment>',`reflectedLight.indirectDiffuse*=cAO;
+{float dNV=saturate(dot(geometryNormal,geometryViewDir));
+ reflectedLight.indirectSpecular*=computeSpecularOcclusion(dNV,cAO,material.roughness);
+
+#ifdef USE_CLEARCOAT
+ clearcoatSpecularIndirect*=computeSpecularOcclusion(saturate(dot(geometryClearcoatNormal,geometryViewDir)),cAO,material.clearcoatRoughness);
+#endif
+}
+reflectedLight.directDiffuse*=mix(1.,cAO,uAODirect);`,'replace');
+  sh.fragmentShader=f;};
+
+// Atoms are re-bucketed every frame into four sphere tessellations by on-screen radius, so triangles stay several pixels wide
+// (sub-pixel triangles made the GPU shade each 2x2 pixel quad many times) and silhouettes stay within ~0.3 px of a true circle.
+// Every bucket and the bonds are sorted near-to-far so hidden surfaces are rejected before shading.
+const NA=atoms.length,NH=halves.length;
+const LOD=[{seg:16,rpx:10},{seg:28,rpx:36},{seg:52,rpx:120},{seg:100,rpx:1e9}];
+const tmpC=new THREE.Color();
+function setEmit(D,k,v){D.look[k*4]=v}
+function paint(D,k,grey){const x=D.list[k];tmpC.set(grey?GREY:EL[x.el].color);D.col[k*3]=tmpC.r;D.col[k*3+1]=tmpC.g;D.col[k*3+2]=tmpC.b;
+  D.look[k*4]=grey?0:x.emit;D.look[k*4+1]=grey?.7:ROUGH[x.el];D.look[k*4+2]=grey?0:1}
+const master=(list,id0)=>{const n=list.length,D={list,id0,col:new Float32Array(n*3),look:new Float32Array(n*4)};list.forEach((x,k)=>paint(D,k,false));return D};
+const AD=master(atoms,0), BD=master(halves,atoms.length);
+const BASIC=Q.has('basic')?new THREE.MeshBasicMaterial({color:0xffffff}):Q.has('plainphys')?new THREE.MeshPhysicalMaterial({roughness:.25,clearcoat:1,clearcoatRoughness:.05})
+  :Q.has('plainstd')?new THREE.MeshStandardMaterial({roughness:.25}):null;
+const bucket=(geo,max,order)=>{const IM=new THREE.InstancedMesh(geo,BASIC||molMat,max),I=a=>new THREE.InstancedBufferAttribute(new Float32Array(max*a),a);
+  IM.instanceColor=I(3);const B={IM,col:IM.instanceColor,look:I(4),id:I(1)};geo.setAttribute('aLook',B.look);geo.setAttribute('aId',B.id);
+  [IM.instanceMatrix,B.col,B.look,B.id].forEach(a=>a.setUsage(THREE.DynamicDrawUsage));
+  IM.frustumCulled=false;IM.renderOrder=order;IM.count=0;scene.add(IM);return B};
+const atomB=LOD.map((l,j)=>bucket(new THREE.SphereGeometry(1,l.seg,Math.round(l.seg*.625)),NA,LOD.length-1-j)); // finest (nearest) first
+const bondB=bucket(new THREE.CylinderGeometry(1,1,1,20,1),NH,LOD.length);
+function fill(B,D,order){const m=B.IM.instanceMatrix.array,c=B.col.array,l=B.look.array,d=B.id.array;
+  order.forEach((k,j)=>{m.set(D.list[k].o.matrixWorld.elements,j*16);c.set(D.col.subarray(k*3,k*3+3),j*3);l.set(D.look.subarray(k*4,k*4+4),j*4);d[j]=D.id0+k});
+  B.IM.count=order.length;[B.IM.instanceMatrix,B.col,B.look,B.id].forEach(a=>a.needsUpdate=true)}
+const byRes=residues.map(()=>({a:[],h:[]}));atoms.forEach((x,k)=>byRes[x.res].a.push(k));halves.forEach((x,k)=>byRes[x.res].h.push(k));
+function setGrey(r,on){if(r.grey===on)return;r.grey=on;byRes[r.i].a.forEach(k=>paint(AD,k,on));byRes[r.i].h.forEach(k=>paint(BD,k,on))}
+const aDist=new Float32Array(NA),hDist=new Float32Array(NH),aIdx=[...Array(NA).keys()],hIdx=[...Array(NH).keys()],lodLists=LOD.map(()=>[]);
+function syncChain(){chain.updateMatrixWorld(true);const cp=camera.position,pxU=H/2/Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
+  for(let k=0;k<NA;k++){const e=atoms[k].o.matrixWorld.elements;aDist[k]=Math.hypot(e[12]-cp.x,e[13]-cp.y,e[14]-cp.z)}
+  for(let k=0;k<NH;k++){const e=halves[k].o.matrixWorld.elements;hDist[k]=Math.hypot(e[12]-cp.x,e[13]-cp.y,e[14]-cp.z)}
+  aIdx.sort((a,b)=>aDist[a]-aDist[b]);hIdx.sort((a,b)=>hDist[a]-hDist[b]);
+  lodLists.forEach(l=>l.length=0);
+  for(const k of aIdx){const rpx=atoms[k].r*pxU/Math.max(aDist[k],.01);let j=0;while(rpx>LOD[j].rpx)j++;lodLists[j].push(k)}
+  atomB.forEach((B,j)=>fill(B,AD,lodLists[j]));fill(bondB,BD,hIdx);
+  for(let k=0;k<occ.length;k++){const e=occ[k].o.matrixWorld.elements;occData[k*4]=e[12];occData[k*4+1]=e[13];occData[k*4+2]=e[14];occData[k*4+3]=occ[k].r}
+  occTex.needsUpdate=true}
+
+// ---- depth: a second molecule far behind. Kept sharp (no blur) but sunk into the atmosphere so it reads as distance.
+{const n=240,mat=new THREE.MeshStandardMaterial({color:0x2a4fa8,roughness:.4,emissive:0x0b2466,emissiveIntensity:.45});
+ mat.defines.TMO=TMO;mat.onBeforeCompile=sh=>patchTone(sh,'0.');
+ const im=new THREE.InstancedMesh(new THREE.SphereGeometry(1,16,10),mat,n); // ~10-18 px on screen: 16 segments is sub-pixel exact
+ const m=new THREE.Matrix4();for(let k=0;k<n;k++){const a=k*.62,x=(k/n-.5)*70;m.compose(new THREE.Vector3(x,Math.sin(a)*2.2+6,Math.cos(a)*2.2-26),new THREE.Quaternion(),new THREE.Vector3(.38,.38,.38));im.setMatrixAt(k,m)}
+ im.rotation.z=-.12;scene.add(im);self.__far=im;}
+
+// ---- dust + soft light shafts. Dust is now fine, crisp motes that fade near the lens (v2 grew them into big soft discs).
+const keepAlpha={blending:THREE.CustomBlending,blendSrc:THREE.SrcAlphaFactor,blendDst:THREE.OneFactor,blendSrcAlpha:THREE.ZeroFactor,blendDstAlpha:THREE.OneFactor};
+const dustCount=small?500:1100,dp=new Float32Array(dustCount*3),ds=new Float32Array(dustCount);
+for(let k=0;k<dustCount;k++){dp[k*3]=(Math.random()-.5)*70;dp[k*3+1]=(Math.random()-.5)*40;dp[k*3+2]=(Math.random()-.5)*50-4;ds[k]=Math.random()}
+const dustG=new THREE.BufferGeometry();dustG.setAttribute('position',new THREE.BufferAttribute(dp,3));dustG.setAttribute('seed',new THREE.BufferAttribute(ds,1));
+const dustM=new THREE.ShaderMaterial({transparent:true,depthWrite:false,...keepAlpha,uniforms:{t:{value:0},px:{value:pr}},
+  vertexShader:`attribute float seed;uniform float t;uniform float px;varying float a;void main(){vec3 p=position;p.y+=sin(t*.2+seed*30.)*.6;p.x+=cos(t*.15+seed*20.)*.4;
+    vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;float d=-mv.z;gl_PointSize=clamp(px*(1.2+seed*2.2)*(14./d),px*1.2,px*3.2);
+    a=(.25+.6*seed)*smoothstep(60.,10.,d)*smoothstep(2.5,7.,d);}`,
+  fragmentShader:`varying float a;void main(){float r=length(gl_PointCoord-.5)*2.;float s=1.-smoothstep(.5,1.,r);gl_FragColor=vec4(.6,.75,1.,s*a*.5);}`});
+scene.add(new THREE.Points(dustG,dustM));
+const shaftTex=(()=>{const c=document.createElement('canvas');c.width=64;c.height=512;const x=c.getContext('2d');const g=x.createLinearGradient(0,0,64,0);
+  g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(.5,'rgba(120,170,255,1)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,64,512);
+  const v=x.createLinearGradient(0,0,0,512);v.addColorStop(0,'rgba(0,0,0,1)');v.addColorStop(.3,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,1)');x.globalCompositeOperation='destination-out';x.fillStyle=v;x.fillRect(0,0,64,512);
+  return new THREE.CanvasTexture(c)})();
+const shafts=[];for(let k=0;k<5;k++){const m=new THREE.Mesh(new THREE.PlaneGeometry(6+k*2,60),new THREE.MeshBasicMaterial({map:shaftTex,transparent:true,opacity:.05+k*.01,...keepAlpha,depthWrite:false}));
+  m.position.set(-18+k*10,6,-22-k*3);m.rotation.z=.42;scene.add(m);shafts.push(m)}
+
+// ---- image pipeline: scene -> 4x MSAA sRGB8 target (already tone-mapped, so edges resolve in display space)
+//      -> when settled, N jittered renders averaged in a float target (supersampling) -> glow-only bloom -> vignette + 1-LSB dither
+const rtMS=new THREE.WebGLRenderTarget(W,H,Q.get('rt')==='half'?{samples:4,type:THREE.HalfFloatType}:{samples:+(Q.get('msaa')??4),type:THREE.UnsignedByteType,colorSpace:THREE.SRGBColorSpace});
+const rtAcc=new THREE.WebGLRenderTarget(W,H,{type:THREE.HalfFloatType,depthBuffer:false});
+const VS=`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}`;
+const accQ=new FullScreenQuad(new THREE.ShaderMaterial({uniforms:{t:{value:null},w:{value:1}},vertexShader:VS,depthTest:false,depthWrite:false,transparent:true,
+  blending:THREE.CustomBlending,blendSrc:THREE.OneFactor,blendDst:THREE.OneFactor,blendSrcAlpha:THREE.OneFactor,blendDstAlpha:THREE.OneFactor,
+  fragmentShader:`uniform sampler2D t;uniform float w;varying vec2 vUv;void main(){gl_FragColor=texture2D(t,vUv)*w;}`}));
+class GlowBloom extends UnrealBloomPass{
+  constructor(w,h){super(new THREE.Vector2(w,h),.5,.35,0);
+    this.materialHighPassFilter=new THREE.ShaderMaterial({uniforms:{tDiffuse:{value:null},uSpec:{value:.92}},vertexShader:VS,
+      fragmentShader:`uniform sampler2D tDiffuse;uniform float uSpec;varying vec2 vUv;
+      void main(){vec4 c=texture2D(tDiffuse,vUv);float l=dot(c.rgb,vec3(.2126,.7152,.0722));gl_FragColor=vec4(c.rgb*max(c.a,.2*smoothstep(uSpec,1.,l)),1.);}`});}
+  renderFrom(renderer,tex){ // UnrealBloomPass.render minus its blend-back; returns the bloom texture for the final composite
+    renderer.setClearColor(this.clearColor,0);
+    this.materialHighPassFilter.uniforms.tDiffuse.value=tex;this.fsQuad.material=this.materialHighPassFilter;
+    renderer.setRenderTarget(this.renderTargetBright);renderer.clear();this.fsQuad.render(renderer);
+    let input=this.renderTargetBright;
+    for(let i=0;i<this.nMips;i++){const m=this.separableBlurMaterials[i];this.fsQuad.material=m;
+      m.uniforms.colorTexture.value=input.texture;m.uniforms.direction.value=UnrealBloomPass.BlurDirectionX;
+      renderer.setRenderTarget(this.renderTargetsHorizontal[i]);renderer.clear();this.fsQuad.render(renderer);
+      m.uniforms.colorTexture.value=this.renderTargetsHorizontal[i].texture;m.uniforms.direction.value=UnrealBloomPass.BlurDirectionY;
+      renderer.setRenderTarget(this.renderTargetsVertical[i]);renderer.clear();this.fsQuad.render(renderer);input=this.renderTargetsVertical[i];}
+    const u=this.compositeMaterial.uniforms;u.bloomStrength.value=this.strength;u.bloomRadius.value=this.radius;u.bloomTintColors.value=this.bloomTintColors;
+    this.fsQuad.material=this.compositeMaterial;renderer.setRenderTarget(this.renderTargetsHorizontal[0]);renderer.clear();this.fsQuad.render(renderer);
+    return this.renderTargetsHorizontal[0].texture}}
+const bloom=new GlowBloom(W,H);
+const outQ=new FullScreenQuad(new THREE.ShaderMaterial({uniforms:{tScene:{value:null},tBloom:{value:null}},vertexShader:VS,depthTest:false,depthWrite:false,
+  fragmentShader:`uniform sampler2D tScene,tBloom;varying vec2 vUv;
+  vec3 oetf(vec3 c){return mix(c*12.92,1.055*pow(c,vec3(1./2.4))-.055,step(.0031308,c));}
+  float hash(vec2 p){vec3 q=fract(vec3(p.xyx)*.1031);q+=dot(q,q.yzx+33.33);return fract((q.x+q.y)*q.z);}
+  void main(){vec3 c=texture2D(tScene,vUv).rgb+texture2D(tBloom,vUv).rgb;
+    vec2 q=vUv-.5;c*=mix(1.,.38,smoothstep(.12,.6,dot(q,q)));            // vignette (v2 strength, applied in linear light)
+    c=oetf(clamp(c,0.,1.));
+    c+=(hash(gl_FragCoord.xy)+hash(gl_FragCoord.xy+71.3)-1.)/255.;       // static sub-LSB dither: kills banding, invisible as grain
+    gl_FragColor=vec4(c,1.);}`}));
+
+// jitter patterns in pixels (rotated grids); combined with the 4x MSAA pattern inside each render
+const JIT={1:[[0,0]],2:[[.25,.25],[-.25,-.25]],4:[[-.125,-.375],[.375,-.125],[-.375,.125],[.125,.375]]};
+function renderFrame(n){
+  if(n===1){renderer.setRenderTarget(rtMS);renderer.clear();renderer.render(scene,camera);}
+  else{for(let s=0;s<n;s++){const j=JIT[n][s];camera.setViewOffset(W,H,j[0],j[1],W,H);
+      renderer.setRenderTarget(rtMS);renderer.clear();renderer.render(scene,camera);
+      accQ.material.uniforms.t.value=rtMS.texture;accQ.material.uniforms.w.value=1/n;renderer.setRenderTarget(rtAcc);if(s===0)renderer.clear();accQ.render(renderer);}
+    camera.clearViewOffset();}
+  const src=n===1?rtMS.texture:rtAcc.texture;
+  outQ.material.uniforms.tScene.value=src;outQ.material.uniforms.tBloom.value=bloom.renderFrom(renderer,src);
+  renderer.setRenderTarget(null);outQ.render(renderer);}
+
+// quality governor: supersample only when the camera has settled, step down if this machine cannot hold ~55+ fps
+const LEVELS=[1,2,4],forced=Q.has('ssaa');
+let lvl=forced?Math.max(0,LEVELS.indexOf(+Q.get('ssaa'))):(small?0:2),ema=16.7,slow=0,lastNow=0;const bootT=performance.now();
+const q=self.__q={};
+function govern(now,moving){const dt=lastNow?now-lastNow:16.7;lastNow=now;
+  if(dt>250||forced||now-bootT<1500)return;ema+=(dt-ema)*.08; // ignore shader-compile / asset-load hitches
+  if(ema>18.2){slow+=dt;
+    if(!moving&&lvl>0&&slow>500){lvl--;slow=0;ema=16.7}
+    else if(lvl===0&&slow>1500&&pr>1){pr=Math.max(1,pr-.25);slow=0;ema=16.7;resize()}}
+  else slow=0;}
+
+// ---- camera journey (unchanged from v1)
+const stops=[[[0,1.5,24],[0,0,0]],[[-9,.6,4.6],[-9.5,0,0]],[[2,3.5,11],[2,0,0]],[[9.5,1.5,8],[9,-.5,0]],[[0,5,34],[0,0,0]]];
+const V=a=>new THREE.Vector3(...a), ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+let target=0,prog=0;
+addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;target=max>0?scrollY/max:0},{passive:true});
+const mouse=new THREE.Vector2();addEventListener('pointermove',e=>mouse.set(e.clientX/innerWidth-.5,e.clientY/innerHeight-.5));
+const clock=new THREE.Clock(),P=new THREE.Vector3(),L=new THREE.Vector3();
+function tick(now=performance.now()){const t=clock.getElapsedTime();
+  prog+=(target-prog)*.06;
+  const f=prog*(stops.length-1),i=Math.min(Math.floor(f),stops.length-2),k=ease(f-i);
+  P.lerpVectors(V(stops[i][0]),V(stops[i+1][0]),k);L.lerpVectors(V(stops[i][1]),V(stops[i+1][1]),k);
+  camera.position.copy(P).add(new THREE.Vector3(mouse.x*1.2,-mouse.y*.8,0));camera.lookAt(L);
+  if(!reduce)chain.rotation.x=t*.1;
+  const w3=Math.max(0,1-Math.abs(f-2)), b4=Math.max(0,1-Math.abs(f-3)*1.1);
+  residues.forEach(r=>{r.glow=.35+(LIT.includes(r.i)?w3*4:0);
+    if(BROKEN.includes(r.i)){r.g.position.copy(r.drift).multiplyScalar(b4*1.7);r.g.rotation.z=b4*r.spin*.5;setGrey(r,b4>.05)}
+    setEmit(AD,r.nAtom,r.grey?0:r.glow)});
+  const c0=performance.now();syncChain();const c1=performance.now();
+  if(!reduce){shafts.forEach((s,n)=>s.material.opacity=(.045+n*.01)*(.75+.25*Math.sin(t*.3+n)));dustM.uniforms.t.value=t;}
+  bloom.strength=.5+w3*.55;
+  const moving=Math.abs(target-prog)>1.5e-3;govern(now,moving);
+  const n=moving&&!forced?1:LEVELS[lvl];
+  const c2=performance.now();renderFrame(n);const c3=performance.now();q.cpuSync=+(c1-c0).toFixed(2);q.cpuRender=+(c3-c2).toFixed(2);
+  q.lod=lodLists.map(l=>l.length);q.tris=atomB.reduce((t,B)=>t+B.IM.count*B.IM.geometry.index.count/3,0)+bondB.IM.count*bondB.IM.geometry.index.count/3;
+  q.ssaa=n;q.level=LEVELS[lvl];q.pixelRatio=pr;q.frameMs=+ema.toFixed(1);q.moving=moving;
+  requestAnimationFrame(tick)}
+function resize(){renderer.setPixelRatio(pr);renderer.setSize(innerWidth,innerHeight);W=Math.round(innerWidth*pr);H=Math.round(innerHeight*pr);
+  rtMS.setSize(W,H);rtAcc.setSize(W,H);bloom.setSize(W,H);dustM.uniforms.px.value=pr;camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()}
+if(Q.has('hide')){const D={atoms:atomB.map(b=>b.IM),bonds:[bondB.IM],far:[self.__far],bg:[bg],shafts,dust:[scene.children.find(o=>o.isPoints)]};
+  Q.get('hide').split(',').forEach(n=>D[n].forEach(o=>o.visible=false))}
+if(Q.has('nobloom'))bloom.renderFrom=()=>null;
+tick();
+addEventListener('resize',resize);
+// review hook: per-pass GPU time via timer queries (EXT_disjoint_timer_query_webgl2), averaged over several frames
+self.__gpu=async(n=1,frames=10)=>{const gl=renderer.getContext(),X=gl.getExtension('EXT_disjoint_timer_query_webgl2');if(!X)return null;
+  const acc={scene:0,bloom:0,out:0},pend=[];
+  const timed=(k,fn)=>{const qq=gl.createQuery();gl.beginQuery(X.TIME_ELAPSED_EXT,qq);fn();gl.endQuery(X.TIME_ELAPSED_EXT);pend.push([k,qq])};
+  for(let f=0;f<frames;f++){
+    timed('scene',()=>{if(n===1){renderer.setRenderTarget(rtMS);renderer.clear();renderer.render(scene,camera)}else{for(let s=0;s<n;s++){const j=JIT[n][s];camera.setViewOffset(W,H,j[0],j[1],W,H);
+      renderer.setRenderTarget(rtMS);renderer.clear();renderer.render(scene,camera);accQ.material.uniforms.t.value=rtMS.texture;accQ.material.uniforms.w.value=1/n;renderer.setRenderTarget(rtAcc);if(s===0)renderer.clear();accQ.render(renderer)}camera.clearViewOffset()}});
+    const src=n===1?rtMS.texture:rtAcc.texture;let bt;timed('bloom',()=>{bt=bloom.renderFrom(renderer,src)});
+    timed('out',()=>{outQ.material.uniforms.tScene.value=src;outQ.material.uniforms.tBloom.value=bt;renderer.setRenderTarget(null);outQ.render(renderer)});
+    await new Promise(r=>setTimeout(r,30));}
+  for(let tries=0;tries<200&&pend.some(([,qq])=>!gl.getQueryParameter(qq,gl.QUERY_RESULT_AVAILABLE));tries++)await new Promise(r=>setTimeout(r,20));
+  if(gl.getParameter(X.GPU_DISJOINT_EXT))return 'disjoint';
+  pend.forEach(([k,qq])=>{acc[k]+=gl.getQueryParameter(qq,gl.QUERY_RESULT)/1e6/frames;gl.deleteQuery(qq)});
+  for(const k in acc)acc[k]=+acc[k].toFixed(2);return acc};
+// review hook: synchronous GPU cost of one frame at a given supersample count (readPixels forces the GPU to finish)
+self.__bench=(n,frames=24)=>{const gl=renderer.getContext(),px=new Uint8Array(4),sync=()=>gl.readPixels(0,0,1,1,gl.RGBA,gl.UNSIGNED_BYTE,px);
+  renderFrame(n);sync();const t0=performance.now();for(let k=0;k<frames;k++)renderFrame(n);sync();return +((performance.now()-t0)/frames).toFixed(2)};
+</script>
+</body>
+</html>

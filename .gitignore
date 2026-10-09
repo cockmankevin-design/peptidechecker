@@ -49,3 +49,6 @@ workers/signup/.wrangler/
 
 # Internal vendor research: unverified verdicts on named businesses. Never publish.
 research/
+
+# brainstorm companion scratch
+/.superpowers/
