@@ -63,11 +63,31 @@ AHEAD="$(git rev-list --count origin/main..HEAD)"
   Push your source first: git push"
 
 # --- 3. Build -----------------------------------------------------------------
+# GitHub Pages serves this repo under /peptidechecker/, and next.config.ts
+# defaults BASE_PATH to "" (so local dev works). A plain build therefore ships
+# HTML that asks for /_next/... and /approved/ — every stylesheet, script and
+# nav link 404s. That is exactly what was live from 2026-09-28 to 2026-10-12.
+# An explicitly empty BASE_PATH (a future root-domain deploy) is respected.
+export BASE_PATH="${BASE_PATH-/peptidechecker}"
+# Git Bash rewrites "/peptidechecker" into "C:/Program Files/Git/peptidechecker"
+# when it hands the variable to a native program like bun. Exclude this one
+# variable from that conversion. (Not MSYS_NO_PATHCONV: that also stops the
+# /tmp worktree path below from being translated, and the deploy aborts.)
+export MSYS2_ENV_CONV_EXCL="BASE_PATH${MSYS2_ENV_CONV_EXCL:+;$MSYS2_ENV_CONV_EXCL}"
+case "$BASE_PATH" in
+  *:*) die "BASE_PATH arrived already mangled ('$BASE_PATH'). Unset it, or pass
+  it as MSYS2_ENV_CONV_EXCL=BASE_PATH BASE_PATH=/peptidechecker bun run deploy" ;;
+esac
+
 # Building from the repo root matters: `bun run build` fails with EBUSY if the
 # shell's cwd is anywhere inside out/.
-say "Building"
+say "Building with BASE_PATH='$BASE_PATH'"
 bun run build
 [ -d out ] || die "build produced no out/ directory."
+# Refuse to publish a build whose pages would not find their own assets.
+grep -q "\"$BASE_PATH/_next/static/" out/index.html \
+  || die "out/index.html does not reference '$BASE_PATH/_next/static/'.
+  The build did not pick up BASE_PATH; publishing it would break every page."
 # Recreated every build. Without it GitHub Pages runs Jekyll, which drops every
 # _next/ path and serves an unstyled site.
 touch out/.nojekyll

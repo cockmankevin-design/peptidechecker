@@ -44,6 +44,23 @@ while [ "$(date +%s)" -lt "$DEADLINE" ]; do
     "${ASSET}?cb=$(date +%s%N)" || echo "000")"
   if [ "$CODE" = "200" ]; then
     echo "LIVE — the site is serving build $BUILD_ID"
+    # The manifest above only proves the files were uploaded. It passed all
+    # through 2026-09-28..10-12 while every page was asking for /_next/... at
+    # the domain root and rendering unstyled. Check the page itself.
+    PREFIX="${URL#https://*/}"
+    HTML="$(curl -s -H 'Cache-Control: no-cache' "$URL/?cb=$(date +%s%N)")"
+    CSS="$(printf '%s' "$HTML" | grep -o "href=\"/$PREFIX/_next/static/[^\"]*\.css" | head -1 | sed 's/^href="//' || true)"
+    if [ -z "$CSS" ]; then
+      echo "BROKEN — the live homepage does not reference /$PREFIX/_next/static/*.css." >&2
+      echo "It was built without BASE_PATH; every asset and link will 404." >&2
+      exit 1
+    fi
+    CSS_CODE="$(curl -s -o /dev/null -w '%{http_code}' "https://${URL#https://}${CSS#/$PREFIX}" || echo "000")"
+    if [ "$CSS_CODE" != "200" ]; then
+      echo "BROKEN — the live stylesheet $CSS returns HTTP $CSS_CODE." >&2
+      exit 1
+    fi
+    echo "OK — the live homepage loads its stylesheet ($CSS, HTTP 200)"
     exit 0
   fi
   echo "  not yet (HTTP $CODE) ..."
