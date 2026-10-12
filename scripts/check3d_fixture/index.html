@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>check3d fixture: clean</title>
+<style>
+  body { margin: 0; font: 16px/1.5 system-ui, sans-serif; background: #030303; color: #ddd; }
+  section { min-height: 900px; padding: 24px; box-sizing: border-box; border-bottom: 1px solid #333; }
+  #spinner { width: 80px; height: 80px; background: #3b82f6; }
+</style>
+</head>
+<body>
+<section>
+  <h1>check3d fixture: clean page</h1>
+  <p>Expected: no errors of any kind.</p>
+  <div id="spinner"></div>
+</section>
+<section><h2>Section 2</h2></section>
+<section><h2>Section 3</h2></section>
+<section><h2>Section 4</h2></section>
+<script>
+  // A requestAnimationFrame loop, so the homepage fps measurement has a live animation to count.
+  const spinner = document.getElementById("spinner");
+  function frame(t) {
+    spinner.style.transform = "rotate(" + ((t / 10) % 360) + "deg)";
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+</script>
+</body>
+</html>

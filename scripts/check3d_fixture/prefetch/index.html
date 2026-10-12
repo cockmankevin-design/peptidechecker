@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>check3d fixture: prefetch</title>
+</head>
+<body>
+<h1>check3d fixture: prefetch page</h1>
+<p>Expected: nothing reported. The fetch below 404s, and check3d must ignore it.</p>
+<script>
+  // Mimics Next 16's prefetcher asking for a flat .txt file that the static export
+  // wrote as a folder. The query string must not stop it being recognised.
+  fetch("/prefetch/__next.x.__PAGE__.txt?_rsc=1");
+</script>
+</body>
+</html>

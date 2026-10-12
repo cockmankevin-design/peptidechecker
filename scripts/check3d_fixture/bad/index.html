@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/missing.css">
+<title>check3d fixture: bad</title>
+</head>
+<body>
+<h1>check3d fixture: bad page</h1>
+<p>Expected: one uncaught JS error (pageerror) and one HTTP 404 for /missing.css.</p>
+<script>
+  throw new Error("check3d fixture: deliberate uncaught error");
+</script>
+</body>
+</html>
