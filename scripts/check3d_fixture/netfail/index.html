@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>netfail</title>
+<!-- Chromium refuses port 9 outright (net::ERR_UNSAFE_PORT): the request fails with no HTTP response at all. -->
+<script src="http://127.0.0.1:9/unreachable.js"></script>
+</head>
+<body><p>A script on an unreachable host must be reported as a failed request.</p></body>
+</html>

@@ -224,6 +224,7 @@ def check_page(browser, origin, route, tag, width, height, args, out, report, ig
     )
     page = context.new_page()
     ignored.setdefault((route, tag), 0)
+    responded = set()  # URLs that got any HTTP response on this page
 
     def add(kind, text):
         report["errors"].append({"route": route, "viewport": tag, "kind": kind, "text": text})
@@ -238,6 +239,7 @@ def check_page(browser, origin, route, tag, width, height, args, out, report, ig
             add("console", msg.text)
 
     def on_response(resp):
+        responded.add(resp.url)
         if resp.status < 400:
             return
         if is_ignored_prefetch(resp.url):
@@ -246,9 +248,23 @@ def check_page(browser, origin, route, tag, width, height, args, out, report, ig
         url = resp.url[len(origin):] if resp.url.startswith(origin) else resp.url
         add("http", f"{resp.status} {url}")
 
+    def on_requestfailed(req):
+        # A request that never got a response (refused, DNS, blocked) has no
+        # status for on_response to see, and its console line is skipped above.
+        # Chromium also fires this (ERR_ABORTED) for a 4xx subresource it already
+        # answered; that one is counted by on_response, so skip it here.
+        if req.url in responded:
+            return
+        if is_ignored_prefetch(req.url):
+            ignored[(route, tag)] += 1
+            return
+        url = req.url[len(origin):] if req.url.startswith(origin) else req.url
+        add("request", f"{req.failure or 'failed'} {url}")
+
     page.on("pageerror", on_pageerror)
     page.on("console", on_console)
     page.on("response", on_response)
+    page.on("requestfailed", on_requestfailed)
     try:
         page.goto(origin + route, wait_until="load")
         page.wait_for_timeout(SETTLE_AFTER_LOAD_MS)
@@ -298,7 +314,7 @@ def run_browser(origin, routes, args, out, report, ignored):
                     report["failures"].append(f"gpu: --no-webgl but WebGL is still available ({gpu})")
             elif gpu is None:
                 report["failures"].append("gpu: WebGL is unavailable; fps must be measured on the real GPU")
-            elif "SwiftShader" in gpu:
+            elif any(s in gpu for s in ("SwiftShader", "Basic Render Driver", "llvmpipe")):
                 report["failures"].append(f"gpu: software renderer, not the real GPU ({gpu})")
 
             for i, route in enumerate(routes, 1):
@@ -315,18 +331,17 @@ def run_browser(origin, routes, args, out, report, ignored):
 def serve_and_check(serve_dir, routes, args, out, report, ignored):
     port = free_port()
     origin = f"http://127.0.0.1:{port}"
-    log = open(out / "server.log", "w", encoding="utf-8")
-    proc = subprocess.Popen(
-        [sys.executable, "-m", "http.server", str(port), "--bind", "127.0.0.1", "--directory", str(serve_dir)],
-        stdout=log, stderr=subprocess.STDOUT,
-    )
-    print(f"server: PID {proc.pid} serving {serve_dir} at {origin}/ (log: {out / 'server.log'})")
-    try:
-        wait_until_answers(proc, origin + "/")
-        run_browser(origin, routes, args, out, report, ignored)
-    finally:
-        stop_server(proc)
-        log.close()
+    with open(out / "server.log", "w", encoding="utf-8") as log:
+        proc = subprocess.Popen(
+            [sys.executable, "-m", "http.server", str(port), "--bind", "127.0.0.1", "--directory", str(serve_dir)],
+            stdout=log, stderr=subprocess.STDOUT,
+        )
+        try:  # opened immediately: nothing may run between Popen and the guard that stops it
+            print(f"server: PID {proc.pid} serving {serve_dir} at {origin}/ (log: {out / 'server.log'})")
+            wait_until_answers(proc, origin + "/")
+            run_browser(origin, routes, args, out, report, ignored)
+        finally:
+            stop_server(proc)
 
 
 # --------------------------------------------------------------------------- report
@@ -370,7 +385,7 @@ def print_summary(report, out, ignored, self_test):
 
 
 def self_test_verdict(report, ignored):
-    """The three fixture expectations. Returns True only if all hold."""
+    """The four fixture expectations. Returns True only if all hold."""
     def errors(route, tag):
         return [e for e in report["errors"] if e["route"] == route and e["viewport"] == tag]
 
@@ -398,6 +413,11 @@ def self_test_verdict(report, ignored):
     ok = "/prefetch/" in report["routes"] and all(
         not errors("/prefetch/", t) and ignored.get(("/prefetch/", t), 0) >= 1 for t in tags)
     checks.append((ok, f"/prefetch/ reports nothing (its __next.*.txt 404 was seen and ignored): {detail}"))
+
+    detail = {t: [e["text"] for e in errors("/netfail/", t) if e["kind"] == "request"] for t in tags}
+    ok = "/netfail/" in report["routes"] and all(
+        any("unreachable.js" in x for x in detail[t]) for t in tags)
+    checks.append((ok, f"/netfail/ reports the request that got no response: {detail}"))
 
     print("\n---- self-test ----")
     for ok, text in checks:
