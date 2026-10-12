@@ -9,7 +9,7 @@
 ## Global Constraints
 
 - Port the prototype verbatim: the `stops` array, cubic easing, `prog += (target-prog)*.06`, parallax, chain rotation, stop-3 LIT glow and stop-4 BROKEN grey break-apart.
-- No depth of field, film grain or chromatic aberration. Contact AO uses per-atom neighbour lists of at most 4 atoms, never a loop over all atoms.
+- No depth of field, film grain or chromatic aberration. Contact AO uses per-item neighbour lists of up to 16 (`NB = 16`), never a loop over all atoms.
 - Three.js r169 from npm (`bun add three`). Never load it from a CDN, and download no HDRI at runtime.
 - One fixed canvas, mounted once in `app/layout.tsx`, as a client component with `ssr:false`.
 - At least 55 fps at homepage stops 1 and 2 on Kevin's AMD integrated GPU (Playwright, `--use-angle=d3d11`).

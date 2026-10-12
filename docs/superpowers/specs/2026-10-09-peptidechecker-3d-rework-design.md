@@ -79,8 +79,8 @@ These are `/approved`, `/pipeline`, `/get-started`, `/cost`, `/about`, `/faq`, `
 
 The prototype's pipeline is the spec:
 
-- Instanced atoms and bonds with per-atom neighbour lists. Contact occlusion and soft key-light shadowing are
-  computed against only about four neighbours per pixel. Never loop over all atoms: the rejected "crisp studio"
+- Instanced atoms and bonds. Contact occlusion and soft key-light shadowing are computed against per-item
+  neighbour lists of up to 16 (`NB = 16`). Never loop over all atoms: the rejected "crisp studio"
   variant did that and fell to 0 fps at stop 2.
 - 4× MSAA on a half-float target.
 - Once the camera settles, jittered supersampling accumulates several frames.
