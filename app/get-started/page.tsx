@@ -79,7 +79,7 @@ export default function GetStartedPage() {
                   </a>
                 </div>
                 <p className="mt-4 border-t border-line pt-3 font-mono text-[10px] uppercase tracking-[0.1em] text-dim">
-                  Affiliate link · rel=sponsored
+                  Direct link · nobody pays us for this click
                 </p>
               </li>
             ))}

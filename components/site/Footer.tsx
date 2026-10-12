@@ -80,9 +80,10 @@ export default function Footer() {
 
           <p className="mt-5 max-w-3xl text-[12.5px] leading-relaxed text-dim">
             PeptideChecker publishes regulatory information. It is not medical advice, and it is
-            not a pharmacy — we do not sell, prescribe, test or handle any medicine. We earn
-            affiliate commission when a reader signs up with a licensed telehealth provider, marked
-            wherever those links appear; commission never changes a price, a fact, or an evidence
+            not a pharmacy — we do not sell, prescribe, test or handle any medicine. We intend to
+            earn affiliate commission when a reader signs up with a licensed telehealth provider. No
+            provider pays us yet, and any paid link will be marked; commission never changes a
+            price, a fact, or an evidence
             outcome on the unregulated-seller pages, which carry no affiliate or purchase links at
             all.
           </p>
