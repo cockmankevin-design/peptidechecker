@@ -104,7 +104,7 @@ const BOUNDARY: readonly { term: string; detail: string }[] = [
 export default function WhatWeVerify() {
   return (
     <Section id="what-we-verify">
-      <Container>
+      <Container glass>
         {/* Header, with the pass condition set beside it so the reader meets the
             all-or-nothing rule before the first gate. */}
         <div className="grid gap-y-8 lg:grid-cols-12 lg:gap-x-10">

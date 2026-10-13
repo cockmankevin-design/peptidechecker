@@ -31,7 +31,7 @@ export default function ApprovedPage() {
       />
 
       <Section className="!pt-10 sm:!pt-14">
-        <Container>
+        <Container glass>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
             Last checked {APPROVED_LAST_CHECKED} against Drugs@FDA
           </p>

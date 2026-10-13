@@ -24,7 +24,7 @@ export default function ComparePage() {
         lede="No price, no purity, no score. Just whether each vendor's certificate loads, names its laboratory, is confirmed by that lab, was issued to that vendor, names the lot, matches the product page, and is recent."
       />
       <Section className="!pt-10 sm:!pt-14">
-        <Container>
+        <Container glass>
           <DemoNotice />
 
           <div

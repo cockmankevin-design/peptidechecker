@@ -34,7 +34,7 @@ export default function MethodologyPage() {
       />
 
       <Section className="!pb-10">
-        <Container>
+        <Container glass>
           <Prose>
             <h2>FDA approvals and the pipeline</h2>
             <p>
@@ -56,7 +56,7 @@ export default function MethodologyPage() {
       </Section>
 
       <Section className="border-t border-line">
-        <Container>
+        <Container glass>
           <Prose>
             <h2>How this site makes money</h2>
             <p>
@@ -81,7 +81,7 @@ export default function MethodologyPage() {
       </Section>
 
       <Section className="border-t border-line">
-        <Container>
+        <Container glass>
           <SectionHeader
             eyebrow="Also on this site"
             title="Why the unregulated sellers fail"
@@ -93,7 +93,7 @@ export default function MethodologyPage() {
       <WhatWeVerify />
 
       <Section className="border-t border-line">
-        <Container>
+        <Container glass>
           <SectionHeader eyebrow="Statuses" title="Three outcomes, and none of them is silent." />
           <p className="mt-4 max-w-[68ch] text-[14.5px] leading-relaxed text-dim">
             These three statuses apply to the vendor registry only &mdash; a demonstration dataset while the

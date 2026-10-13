@@ -123,7 +123,7 @@ export default function RegistryPreview({ page = false }: { page?: boolean }) {
 
   return (
     <Section id="registry" className={page ? "!pt-10 sm:!pt-14" : ""}>
-      <Container>
+      <Container glass={page}>
         {!page && (
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader

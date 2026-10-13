@@ -72,7 +72,7 @@ export default async function BlogPostPage({
         }
       />
       <Section className="!pt-10 sm:!pt-14">
-        <Container>
+        <Container glass>
           <article className="max-w-[68ch]">
             <MDXRemote source={entry.content} components={mdxComponents} />
           </article>

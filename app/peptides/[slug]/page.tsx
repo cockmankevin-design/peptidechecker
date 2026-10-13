@@ -38,7 +38,7 @@ export default async function PeptidePage({ params }: { params: Promise<{ slug: 
       </PageHeader>
 
       <Section className="!pt-10 sm:!pt-14">
-        <Container>
+        <Container glass>
           <DemoNotice />
           <Eyebrow className="mt-10">Vendors in the registry for {product.name}</Eyebrow>
           {rows.length ? (

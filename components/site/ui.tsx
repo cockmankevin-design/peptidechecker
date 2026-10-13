@@ -22,12 +22,18 @@ import { fadeUp, stagger, VIEWPORT } from "@/lib/motion";
 export function Container({
   children,
   className = "",
+  glass = false,
 }: {
   children: ReactNode;
   className?: string;
+  /** Inner-page sections: the content sits on one glass panel, so no table,
+      label or paragraph ever sits on the (dimmed) molecule. */
+  glass?: boolean;
 }) {
   return (
-    <div className={`mx-auto w-full max-w-[1180px] px-5 sm:px-8 ${className}`}>{children}</div>
+    <div className={`mx-auto w-full max-w-[1180px] px-5 sm:px-8 ${className}`}>
+      {glass ? <GlassPanel className="!p-4 sm:!p-8">{children}</GlassPanel> : children}
+    </div>
   );
 }
 
@@ -411,20 +417,23 @@ export function PageHeader({
   return (
     <header className="relative overflow-hidden border-b border-line pt-32 pb-14 sm:pt-40 sm:pb-16">
       <Container className="relative">
-        <Reveal>
-          <Eyebrow>{eyebrow}</Eyebrow>
-        </Reveal>
-        <Reveal delay={0.06}>
-          <h1 className="mt-5 max-w-3xl text-[clamp(2.2rem,5.4vw,3.6rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-text">
-            {title}
-          </h1>
-        </Reveal>
-        {lede && (
-          <Reveal delay={0.12}>
-            <p className="mt-5 max-w-[60ch] text-[17px] leading-relaxed text-muted">{lede}</p>
+        {/* On glass: no inner-page text sits on the raw 3D (see the ambient veil in MoleculeCanvas). */}
+        <GlassPanel>
+          <Reveal>
+            <Eyebrow>{eyebrow}</Eyebrow>
           </Reveal>
-        )}
-        {children && <Reveal delay={0.18} className="mt-8">{children}</Reveal>}
+          <Reveal delay={0.06}>
+            <h1 className="mt-5 max-w-3xl text-[clamp(2.2rem,5.4vw,3.6rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-text">
+              {title}
+            </h1>
+          </Reveal>
+          {lede && (
+            <Reveal delay={0.12}>
+              <p className="mt-5 max-w-[60ch] text-[17px] leading-relaxed text-muted">{lede}</p>
+            </Reveal>
+          )}
+          {children && <Reveal delay={0.18} className="mt-8">{children}</Reveal>}
+        </GlassPanel>
       </Container>
     </header>
   );
@@ -471,7 +480,8 @@ export function GateList({
   );
 }
 
-/** Body copy for prose pages: measured width, the site's muted text. */
+/** Body copy for prose pages: measured width, the site's muted text. On
+    inner pages it sits inside a <Container glass> panel, never on the 3D. */
 export function Prose({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <div

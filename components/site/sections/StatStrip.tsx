@@ -22,12 +22,12 @@ export default function StatStrip() {
     {
       value: approvedCount,
       label: "approved peptide medicines",
-      pill: <Pill tone="verified">Live</Pill>,
+      pill: <Pill tone="verified">Approved</Pill>,
     },
     {
       value: pendingCount,
       label: "awaiting an FDA decision",
-      pill: <Pill tone="review">Pending</Pill>,
+      pill: <Pill tone="review">Pipeline</Pill>,
     },
     {
       value: discontinuedCount,
@@ -45,7 +45,7 @@ export default function StatStrip() {
               <StatTile key={s.label} value={s.value} label={s.label} pill={s.pill} />
             ))}
           </div>
-          <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.1em] text-dim">
+          <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.1em] text-muted">
             Last checked {APPROVED_LAST_CHECKED} against Drugs@FDA
           </p>
         </GlassPanel>

@@ -86,10 +86,22 @@ export default function MoleculeCanvas() {
 
   if (failed) return null;
   return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      style={{ position: "fixed", inset: 0, width: "100vw", height: "100vh", zIndex: 0, pointerEvents: "none", display: "block" }}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        style={{ position: "fixed", inset: 0, width: "100vw", height: "100vh", zIndex: 0, pointerEvents: "none", display: "block" }}
+      />
+      {/* The ambient veil: off the homepage the molecule stays visible but dimmed, so no inner-page text ever sits
+          on the raw 3D. Later in the DOM than the canvas at the same z-index, so it paints above the canvas and
+          below <main> (z-[1]). Fully transparent on "/", where the journey is the content. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
+          background: "var(--color-bg)", opacity: modeFor(pathname) === "ambient" ? 0.8 : 0,
+        }}
+      />
+    </>
   );
 }

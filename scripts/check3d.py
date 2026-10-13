@@ -4,11 +4,13 @@
 Builds the static export, serves out/ on a private local port, drives Chromium on
 the real GPU, screenshots every route at a desktop and a mobile viewport, steps
 the homepage through its scroll stops, measures homepage fps, and fails on any
-uncaught page error, console error or HTTP response >= 400.
+uncaught page error, console error or HTTP response >= 400. At desktop it also
+checks the contrast of every body-size text element against the pixels actually
+rendered behind it (see contrast_check) and fails anything under WCAG AA 4.5:1.
 
     py -3 scripts/check3d.py [--no-build] [--routes all|home] [--out DIR] [--min-fps N]
                              [--fps-at 0,0.25] [--stops 0,0.25,0.5,0.75,1]
-                             [--reduced-motion] [--no-webgl] [--self-test]
+                             [--reduced-motion] [--no-webgl] [--no-contrast] [--self-test]
 
 Exit 0 = pass, 1 = fail. Results land in --out (default
 .superpowers/check3d/<YYYYmmdd-HHMMSS>/): screenshots plus summary.json.
@@ -21,6 +23,7 @@ processes by name here: a previous agent did and took down unrelated services.
 """
 
 import argparse
+import io
 import json
 import os
 import shutil
@@ -35,6 +38,8 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
+import numpy as np
+from PIL import Image
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -49,6 +54,84 @@ SCROLL_PAUSE_MS = 100
 SETTLE_AFTER_SCROLL_MS = 800
 STOP_WAIT_MS = 3500  # the camera eases toward each homepage stop
 FPS_WINDOW_MS = 3000
+CONTRAST_MIN = 4.5          # WCAG AA, normal text
+CONTRAST_MAX_FONT_PX = 18   # "body size": computed font-size at or below this is checked
+CONTRAST_WORST_N = 20       # worst case = the 20th lightest (or darkest) background pixel
+CONTRAST_BAND_PX = 6        # how far outside the glyph boxes the background is sampled
+CONTRAST_SETTLE_MS = 900    # reveal entrances (Motion fadeUp) finish before a view is sampled
+
+# Contrast, step 1 (in the page). For the current viewport, return every text run
+# not yet checked that is body size, wholly inside the viewport, visible, fully
+# opaque (so not mid-entrance), not under aria-hidden, not the 3D canvas and not
+# covered by another element such as the fixed nav. A "run" is one element's own
+# direct text nodes; its glyph boxes are the client rects of a Range over those
+# nodes (one per line). Also returns the glyph boxes of all text in view, so the
+# sampler never takes a neighbour's glyphs for background. Each element is
+# measured once, in the first view that shows it whole (window.__contrastSeen).
+CONTRAST_COLLECT_JS = r"""([maxFont]) => {
+  const seen = window.__contrastSeen || (window.__contrastSeen = new WeakSet());
+  const vw = innerWidth, vh = innerHeight;
+  const runs = [], allBoxes = [];
+  // Any CSS colour (rgb, oklab, color(srgb ...)) -> [r, g, b, a 0..1], resolved by the browser itself.
+  const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+  const rgba = (c) => {
+    ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = "#000"; ctx.fillStyle = c; ctx.fillRect(0, 0, 1, 1);
+    const d = ctx.getImageData(0, 0, 1, 1).data;
+    return [d[0], d[1], d[2], d[3] / 255];
+  };
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT);
+  for (let el = walker.currentNode; el; el = walker.nextNode()) {
+    if (["CANVAS", "SCRIPT", "STYLE", "NOSCRIPT"].includes(el.tagName)) continue;
+    const texts = [...el.childNodes].filter((n) => n.nodeType === 3 && n.textContent.trim());
+    if (!texts.length) continue;
+    if (el.closest("[aria-hidden='true']")) continue;
+    const cs = getComputedStyle(el);
+    if (cs.visibility !== "visible") continue;
+    let op = 1;
+    for (let a = el; a; a = a.parentElement) op *= parseFloat(getComputedStyle(a).opacity);
+    if (op < 0.99) continue;
+    const range = document.createRange();
+    const boxes = [];
+    for (const t of texts) {
+      range.selectNodeContents(t);
+      for (const r of range.getClientRects())
+        if (r.width >= 2 && r.height >= 2) boxes.push([r.left, r.top, r.right, r.bottom]);
+    }
+    if (!boxes.length) continue;
+    if (boxes.some(([l, t, r, b]) => r > 0 && b > 0 && l < vw && t < vh)) allBoxes.push(...boxes);
+    if (seen.has(el) || !boxes.every(([l, t, r, b]) => l >= 0 && t >= 0 && r <= vw && b <= vh)) continue;
+    const fs = parseFloat(cs.fontSize);
+    if (fs > maxFont) { seen.add(el); continue; }
+    const covered = boxes.some(([l, t, r, b]) => {
+      const hit = document.elementFromPoint((l + r) / 2, (t + b) / 2);
+      return !hit || !(hit === el || el.contains(hit));
+    });
+    if (covered) continue;  // try again in a later view
+    seen.add(el);
+    // The surface the text sits on: the nearest ancestor (or itself) that paints a background or is glass.
+    let surface = null;
+    for (let a = el; a && a !== document.body; a = a.parentElement) {
+      const s = getComputedStyle(a);
+      const painted = rgba(s.backgroundColor)[3] > 0 || s.backdropFilter !== "none";
+      if (painted) {
+        const r = a.getBoundingClientRect();
+        surface = [r.left, r.top, r.right, r.bottom, Math.min(parseFloat(s.borderTopLeftRadius) || 0, r.height / 2)];
+        break;
+      }
+    }
+    const own = el.getBoundingClientRect();
+    const text =texts.map((t) => t.textContent.trim()).join(" ").replace(/\s+/g, " ").slice(0, 60);
+    const cls = typeof el.className === "string" ? el.className.trim().split(/\s+/).slice(0, 3).join(".") : "";
+    runs.push({ sel: el.tagName.toLowerCase() + (cls ? "." + cls : ""), text, color: rgba(cs.color),
+                boxes, own: [own.left, own.top, own.right, own.bottom], surface });
+  }
+  // Small decorative marks (status dots, icons, the notice triangle) are not background either.
+  for (const el of document.querySelectorAll("[aria-hidden='true'], svg")) {
+    const r = el.getBoundingClientRect();
+    if (r.width > 0 && r.width <= 48 && r.height <= 48) allBoxes.push([r.left, r.top, r.right, r.bottom]);
+  }
+  return { runs, allBoxes };
+}"""
 
 GPU_JS = """() => {
   const canvas = document.createElement("canvas");
@@ -113,6 +196,8 @@ def parse_args():
                    help="homepage scroll fractions to screenshot (default 0,0.25,0.5,0.75,1)")
     p.add_argument("--reduced-motion", action="store_true", help="emulate prefers-reduced-motion: reduce")
     p.add_argument("--no-webgl", action="store_true", help="launch with WebGL disabled and assert it is")
+    p.add_argument("--no-contrast", dest="contrast", action="store_false",
+                   help="skip the desktop text-contrast check (on by default)")
     p.add_argument("--self-test", action="store_true", help="prove the gate against scripts/check3d_fixture/")
     return p.parse_args()
 
@@ -274,6 +359,9 @@ def check_page(browser, origin, route, tag, width, height, args, out, report, ig
         name = f"{slug(route)}_{tag}.png"
         page.screenshot(path=str(out / name), full_page=True)
         report["screenshots"].append(name)
+        if tag == "d" and args.contrast and not args.self_test:
+            contrast_check(page, route, report)
+            page.evaluate("() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })")
         if route == "/":
             homepage_stops(page, tag, args, out, report)
     except Exception as exc:  # recorded against this page; the run carries on
@@ -297,6 +385,109 @@ def homepage_stops(page, tag, args, out, report):
             name = f"home_stop{k}_{tag}.png"
             page.screenshot(path=str(out / name))
             report["screenshots"].append(name)
+
+
+# --------------------------------------------------------------------------- contrast
+
+
+def rel_luminance(rgb):
+    """WCAG 2.x relative luminance of sRGB 0..255 values (last axis = r, g, b)."""
+    c = np.asarray(rgb, dtype=float) / 255.0
+    c = np.where(c <= 0.03928, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
+    return c[..., 0] * 0.2126 + c[..., 1] * 0.7152 + c[..., 2] * 0.0722
+
+
+def worst_contrast(img, run, all_boxes, scale):
+    """Contrast, step 2 (here, deterministic). The background is the screenshot's
+    pixels in a band up to CONTRAST_BAND_PX outside the run's glyph boxes, clipped
+    to the surface the text sits on (its nearest ancestor that paints a background
+    or is glass, inset by its corner radius; the element's own box when there is
+    none, i.e. text straight on the page), with every glyph box and small
+    decorative mark in view removed (grown 1px for antialiasing). If clipping
+    leaves fewer than 20 pixels the band is used unclipped. The worst
+    cases are the band's CONTRAST_WORST_N-th lightest and N-th darkest pixel by
+    luminance (so at least N pixels right beside the glyphs are that bad: one
+    bright atom behind a line of text is enough, a stray antialiased pixel is
+    not); the text colour, alpha-composited over each, is compared with both and
+    the lower WCAG ratio is the result. None if there
+    is no usable band."""
+    h, w = img.shape[:2]
+
+    def px_rect(box, pad):
+        l, t, r, b = box
+        return (max(0, int((l - pad) * scale)), max(0, int((t - pad) * scale)),
+                min(w, int(np.ceil((r + pad) * scale))), min(h, int(np.ceil((b + pad) * scale))))
+
+    band = np.zeros((h, w), dtype=bool)
+    for box in run["boxes"]:
+        x0, y0, x1, y1 = px_rect(box, CONTRAST_BAND_PX)
+        band[y0:y1, x0:x1] = True
+    for box in all_boxes:
+        x0, y0, x1, y1 = px_rect(box, 1)
+        band[y0:y1, x0:x1] = False
+    clip = np.zeros((h, w), dtype=bool)
+    if run["surface"]:
+        # Inset left and right by the corner radius so the page showing through a
+        # rounded corner is never read as the surface.
+        l, t, r, b, rad = run["surface"]
+        l, r = l + rad, r - rad
+    else:
+        l, t, r, b = run["own"]
+    # Rounded inward and inset one more pixel, so the antialiased edge of the
+    # surface is never read as the surface.
+    x0, y0 = int(np.ceil(l * scale)) + 1, int(np.ceil(t * scale)) + 1
+    x1, y1 = int(r * scale) - 1, int(b * scale) - 1
+    clip[max(0, y0):max(0, y1), max(0, x0):max(0, x1)] = True
+    mask = band & clip
+    if mask.sum() < 20:
+        mask = band
+    if mask.sum() < 20:
+        return None
+    px = img[mask].astype(float)
+    order = np.argsort(rel_luminance(px), kind="stable")
+    r, g, b, a = run["color"]  # already resolved to sRGB + alpha by the page
+    ratios = []
+    k = min(CONTRAST_WORST_N, len(order)) - 1
+    for idx in (order[k], order[len(order) - 1 - k]):  # Nth darkest, Nth lightest
+        bg = px[idx]
+        fg = np.array([r, g, b]) * a + bg * (1 - a)
+        lf, lb = float(rel_luminance(fg)), float(rel_luminance(bg))
+        ratios.append((max(lf, lb) + 0.05) / (min(lf, lb) + 0.05))
+    return min(ratios)
+
+
+def contrast_check(page, route, report):
+    """Walk the page a viewport at a time (80% steps, so a run cut by one view's
+    edge is whole in the next); in each view take a screenshot and measure every
+    body-size text run shown whole for the first time."""
+    vh = page.evaluate("() => innerHeight")
+    scale = page.evaluate("() => devicePixelRatio")
+    page.evaluate("() => { window.__contrastSeen = new WeakSet(); }")
+    checked, worst = 0, None
+    y = 0
+    while True:
+        page.evaluate("(y) => window.scrollTo({ top: y, left: 0, behavior: 'instant' })", y)
+        page.wait_for_timeout(CONTRAST_SETTLE_MS)
+        data = page.evaluate(CONTRAST_COLLECT_JS, [CONTRAST_MAX_FONT_PX])
+        if data["runs"]:
+            img = np.array(Image.open(io.BytesIO(page.screenshot())).convert("RGB"))
+            for run in data["runs"]:
+                ratio = worst_contrast(img, run, data["allBoxes"], scale)
+                if ratio is None:
+                    continue
+                checked += 1
+                if worst is None or ratio < worst[0]:
+                    worst = (ratio, run["text"])
+                if ratio < CONTRAST_MIN:
+                    report["contrast_failures"].append({"route": route, "selector": run["sel"],
+                                                        "text": run["text"], "ratio": round(ratio, 2),
+                                                        "scrollY": y})
+        if y + vh >= page.evaluate("() => document.documentElement.scrollHeight"):
+            break
+        y += max(1, int(vh * 0.8))
+    report["contrast"].append({"route": route, "checked": checked,
+                               "worst": round(worst[0], 2) if worst else None,
+                               "worst_text": worst[1] if worst else None})
 
 
 def run_browser(origin, routes, args, out, report, ignored):
@@ -323,7 +514,9 @@ def run_browser(origin, routes, args, out, report, ignored):
                     before = len(report["errors"])
                     check_page(browser, origin, route, tag, width, height, args, out, report, ignored)
                     counts.append(f"{tag}:{len(report['errors']) - before}")
-                print(f"[{i:>2}/{len(routes)}] {route:<44} errors {' '.join(counts)}")
+                c = next((x for x in report["contrast"] if x["route"] == route), None)
+                ctext = f"  contrast min {c['worst']} over {c['checked']}" if c else ""
+                print(f"[{i:>2}/{len(routes)}] {route:<44} errors {' '.join(counts)}{ctext}")
         finally:
             browser.close()
 
@@ -350,6 +543,9 @@ def serve_and_check(serve_dir, routes, args, out, report, ignored):
 def finish(report, args):
     if report["errors"]:
         report["failures"].append(f"{len(report['errors'])} page error(s), listed under errors")
+    if report["contrast_failures"]:
+        report["failures"].append(f"contrast: {len(report['contrast_failures'])} text run(s) below "
+                                  f"{CONTRAST_MIN}:1, listed under contrast_failures")
     if args.min_fps is not None:
         desktop = [r for r in report["fps"] if r["viewport"] == "d"]
         if not desktop:
@@ -378,6 +574,14 @@ def print_summary(report, out, ignored, self_test):
         print(f"  {e['route']} [{e['viewport']}] {e['kind']}: {e['text']}")
     if len(report["errors"]) > 20:
         print(f"  ... and {len(report['errors']) - 20} more in summary.json")
+    if report["mode"]["contrast"]:
+        bad = report["contrast_failures"]
+        print(f"Contrast:    {sum(c['checked'] for c in report['contrast'])} text runs on "
+              f"{len(report['contrast'])} routes, {len(bad)} below {CONTRAST_MIN}:1 -> {'FAIL' if bad else 'PASS'}")
+        for c in bad[:30]:
+            print(f"  {c['route']} {c['ratio']}:1  {c['selector']}  \"{c['text']}\"")
+        if len(bad) > 30:
+            print(f"  ... and {len(bad) - 30} more in summary.json")
     for f in report["failures"]:
         print(f"FAILURE:     {f}")
     note = " (expected in --self-test: the fixture's /bad/ page is broken on purpose)" if self_test and not report["passed"] else ""
@@ -431,7 +635,7 @@ def self_test_verdict(report, ignored):
 
 
 def main():
-    sys.stdout.reconfigure(line_buffering=True)
+    sys.stdout.reconfigure(line_buffering=True, errors="backslashreplace")
     args = parse_args()
     if args.out:
         out = Path(args.out).resolve()
@@ -441,11 +645,14 @@ def main():
 
     report = {
         "gpu": None,
-        "mode": {"reduced_motion": args.reduced_motion, "no_webgl": args.no_webgl},
+        "mode": {"reduced_motion": args.reduced_motion, "no_webgl": args.no_webgl,
+                 "contrast": args.contrast and not args.self_test},
         "routes": [],
         "screenshots": [],
         "fps": [],
         "errors": [],
+        "contrast": [],
+        "contrast_failures": [],
         "failures": [],
         "passed": False,
     }

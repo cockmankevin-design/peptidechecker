@@ -286,7 +286,7 @@ function FaqRow({ item, index }: { item: FaqItem; index: number }) {
 export default function Faq() {
   return (
     <Section id="faq" className="border-t border-line">
-      <Container>
+      <Container glass>
         <div className="grid gap-12 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-20">
           <div className="lg:sticky lg:top-28 lg:self-start">
             <SectionHeader

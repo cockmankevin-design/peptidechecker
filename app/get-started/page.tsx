@@ -29,7 +29,7 @@ export default function GetStartedPage() {
       />
 
       <Section className="!pt-10 sm:!pt-14">
-        <Container>
+        <Container glass>
           <p className="rounded-md border border-line bg-surface-2 px-4 py-3 font-mono text-[11.5px] leading-relaxed text-dim">
             No provider below pays us anything, and we are not in any affiliate programme. If that
             changes this notice will say so and name who pays us. Either way every provider we know

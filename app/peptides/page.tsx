@@ -18,7 +18,7 @@ export default function PeptidesPage() {
         lede="For each compound, the vendors in the registry whose certificate for it was checked, and how that check ended."
       />
       <Section className="!pt-10 sm:!pt-14">
-        <Container>
+        <Container glass>
           <DemoNotice />
           <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {products.map((p) => {

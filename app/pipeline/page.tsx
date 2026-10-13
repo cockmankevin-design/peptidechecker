@@ -29,7 +29,7 @@ export default function PipelinePage() {
       />
 
       <Section className="!pt-10 sm:!pt-14">
-        <Container>
+        <Container glass>
           {/* the standing warning, above the table per the brief */}
           <div className="rounded-lg border border-review/25 bg-review-dim p-5 sm:p-6">
             <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-review">

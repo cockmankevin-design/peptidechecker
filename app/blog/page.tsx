@@ -14,7 +14,7 @@ export default function BlogPage() {
         lede="Guides to certificates of analysis: what a real one contains, and how a fake or reused one gives itself away."
       />
       <Section className="!pt-10 sm:!pt-14">
-        <Container>
+        <Container glass>
           {posts.length > 0 ? (
             <ul className="grid gap-4 sm:grid-cols-2">
               {posts.map((post) => (

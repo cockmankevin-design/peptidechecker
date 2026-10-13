@@ -18,7 +18,7 @@ export default function CertificatesPage() {
         lede="Every vendor publishes its own certificate of analysis. We do not test anything; we check whether that document loads, names its laboratory, is confirmed by that lab, was issued to that vendor, names the lot, matches the product page, and is recent. This is the result of that check for every record."
       />
       <Section className="!pt-10 sm:!pt-14">
-        <Container>
+        <Container glass>
           <DemoNotice />
           <ul className="mt-8 grid gap-4 md:grid-cols-2">
             {rows.map((r) => {

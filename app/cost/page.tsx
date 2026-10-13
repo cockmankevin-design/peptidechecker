@@ -60,7 +60,7 @@ export default function CostPage() {
       />
 
       <Section className="!pt-10 sm:!pt-14">
-        <Container>
+        <Container glass>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
             Prices checked 2026-09-23
           </p>

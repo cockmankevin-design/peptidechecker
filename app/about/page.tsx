@@ -23,7 +23,7 @@ export default function AboutPage() {
         lede="Twelve peptide medicines carry FDA approval today. Several more are in trials or under review. Almost nothing sold online under those names says which is which."
       />
       <Section>
-        <Container>
+        <Container glass>
           <Prose>
             <p>
               That confusion is the whole reason this site exists. A product page can say

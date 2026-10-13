@@ -47,7 +47,7 @@ export default async function VendorRecordPage({ params }: { params: Promise<{ s
       </PageHeader>
 
       <Section className="!pt-10 sm:!pt-14">
-        <Container>
+        <Container glass>
           <DemoNotice />
 
           <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
