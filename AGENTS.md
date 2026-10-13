@@ -23,24 +23,29 @@ If the deploy script aborts, read what it says and fix that. Do not work around
 it, and never `git push --force` to `gh-pages`: the thing you would be forcing
 past is someone else's deployment.
 
-# 3D build direction (added 2026-09-27, from Kevin)
+# 3D build direction (2026-09-27 brief, superseded in part by the built rework, 2026-10-09)
 
-When building or reworking visual sections of this site, the target is a cinematic 3D
-treatment:
+The site's background is a real-time **peptide molecule** (alpha-helix, ball-and-stick) behind every
+page. The approved look and every value come from
+`docs/superpowers/specs/assets/2026-10-09-molecule-prototype-b.html` ("B · Cinema"), and the spec is
+`docs/superpowers/specs/2026-10-09-peptidechecker-3d-rework-design.md`.
 
-- **Stack:** Three.js via `@react-three/fiber` and `@react-three/drei`, GSAP for scroll-bound
-  timelines, Tailwind for the UI overlaid on the canvas. This project is Next.js 16 static
-  export on Bun — use `bun add` / `bun run`, not npm. Any 3D component is a client component
-  (`"use client"`), and the static export means no server rendering of the canvas.
-- **Camera:** avoid static scenes. Scroll-triggered GSAP timelines move the camera through the
-  space.
-- **Palette:** abyssal dark (`#030303`), glowing accents, mesh gradients, custom shader
-  materials.
-- **UI:** glassmorphic floating nav and content cards — backdrop blur, thin borders, dark glass.
-- **Interaction:** raycast hover on meshes — scale, rotation, emissive glow shifts.
-- **Performance:** cap device pixel ratio, lazy-load the canvas below the fold, and provide a
-  reduced-motion fallback. A heavy hero that stutters on a phone costs more credibility than a
-  plain one.
+- **Stack: plain Three.js (r169, from npm). Not React Three Fiber, drei or GSAP.** Kevin chose this
+  on 2026-10-09 so the prototype's 60 fps tuning would carry over. The engine is
+  `components/site/three/molecule/` (typed modules with `bun test` coverage). It is mounted once in
+  `app/layout.tsx` through `MoleculeCanvasLoader` (`ssr:false`) → `MoleculeCanvas`, which wires scroll,
+  pointer and resize, and switches between `journey` (homepage) and `ambient` (all other pages,
+  under a 0.8 veil).
+- **Camera:** the homepage's 5-stop scroll journey is locked ("the movements is perfect").
+- **Image:** no depth of field, film grain or chromatic aberration. Kevin rejected blur.
+  Contact shading uses per-item neighbour lists (up to 16), never a loop over all atoms.
+- **UI:** content sits on dark glass (`GlassPanel`). No text ever sits on raw 3D, and the
+  `check3d.py` contrast gate enforces it.
+- **Performance and fallbacks:** at least 55 fps on Kevin's AMD integrated GPU is the gate.
+  - Phones (<760px) get a lighter scene.
+  - Reduced motion gets a true still frame.
+  - No WebGL, a lost context or a sustained slow device gets the WebP stills in
+    `public/molecule/` (regenerate them with `py -3 scripts/check3d.py --capture-stills`).
 
 Two things from the original brief deliberately NOT carried over:
 - It assigned a persona ("developer arm of the JARVIS fleet"). Identity comes from the global
