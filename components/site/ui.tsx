@@ -49,6 +49,44 @@ export function Section({
   );
 }
 
+/** The dark-glass card every homepage content block sits on (tokens in
+    globals.css, values from the molecule prototype). */
+export function GlassPanel({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return <div className={`glass p-6 sm:p-7 ${className}`}>{children}</div>;
+}
+
+/** One homepage stop: a viewport-tall band whose glass content sits left or
+    right, so each block lines up with its camera stop as in the prototype. */
+export function StopSection({
+  children,
+  side = "left",
+  id,
+  last = false,
+}: {
+  children: ReactNode;
+  side?: "left" | "right";
+  id?: string;
+  /** The final stop shares its viewport with the footer (--footer-h, measured
+      by MoleculeCanvas), so the page ends exactly one viewport after the last
+      stop begins and scroll fractions 0, .25 ... 1 land on the five stops. */
+  last?: boolean;
+}) {
+  return (
+    <section
+      id={id}
+      className={`flex items-center py-24 ${last ? "min-h-[calc(100vh-var(--footer-h,0px))]" : "min-h-[100vh]"}`}
+    >
+      <Container className={`flex ${side === "right" ? "sm:justify-end" : ""}`}>{children}</Container>
+    </section>
+  );
+}
+
 /* --------------------------------------------------------------------------
    Motion wrappers
    -------------------------------------------------------------------------- */

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { Container, Reveal, Section, SectionHeader } from "@/components/site/ui";
+import { GlassPanel, Reveal, SectionHeader, StopSection } from "@/components/site/ui";
 
 /* Why the unregulated sellers fail - the shrunk evidence section
    (2026-09-24 pivot build).
@@ -19,8 +19,8 @@ import { Container, Reveal, Section, SectionHeader } from "@/components/site/ui"
 
 export default function EvidenceSummary() {
   return (
-    <Section id="why-unregulated-sellers-fail" className="border-t border-line">
-      <Container>
+    <StopSection id="why-unregulated-sellers-fail" side="right">
+      <GlassPanel className="w-full max-w-[720px]">
         <SectionHeader
           eyebrow="Why the unregulated sellers fail"
           title="&ldquo;Third-party tested&rdquo; is not the same as approved."
@@ -51,7 +51,7 @@ export default function EvidenceSummary() {
             </svg>
           </Link>
         </Reveal>
-      </Container>
-    </Section>
+      </GlassPanel>
+    </StopSection>
   );
 }

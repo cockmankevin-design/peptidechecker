@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { Container, Reveal, RevealGroup, Section } from "@/components/site/ui";
+import { GlassPanel, Reveal, RevealGroup, StopSection } from "@/components/site/ui";
 
 /* The four money/reference pages, indexed right under the hero - the
    pivot's own "index-first" structure (2026-09-24): the page opens on
@@ -42,8 +42,8 @@ const CARDS = [
 
 export default function PivotIndex() {
   return (
-    <Section id="index">
-      <Container>
+    <StopSection id="index">
+      <GlassPanel className="w-full max-w-[760px]">
         <RevealGroup className="grid gap-4 sm:grid-cols-2">
           {CARDS.map((c) => (
             <Reveal key={c.href}>
@@ -64,7 +64,7 @@ export default function PivotIndex() {
             </Reveal>
           ))}
         </RevealGroup>
-      </Container>
-    </Section>
+      </GlassPanel>
+    </StopSection>
   );
 }

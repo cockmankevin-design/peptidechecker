@@ -46,7 +46,8 @@
      the same ~1.8-3.5:1+ presence bar the light theme required after its own
      "there's no background" correction - a border needs to be seen, not just
      pass a formula in isolation. */
-  --color-bg: #0a0a0c;
+  /* 2026-10 3D rework: the molecule prototype's deep navy-black, never flat #000. */
+  --color-bg: #02040a;
   --color-surface: #141418;
   --color-surface-2: #1c1c22;
   --color-line: #40404a;
@@ -102,12 +103,15 @@
 }
 
 @layer base {
+  /* html holds the dark ground so there is never a white flash; body stays
+     transparent so the fixed molecule canvas shows through. */
   html {
     -webkit-text-size-adjust: 100%;
+    background: var(--color-bg);
   }
 
   body {
-    background: var(--color-bg);
+    background: transparent;
     color: var(--color-text);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -146,6 +150,24 @@
   .tabular {
     font-variant-numeric: tabular-nums;
   }
+}
+
+/* Dark glass, from the molecule prototype. Every text block over the 3D scene
+   sits on this (GlassPanel in components/site/ui.tsx), never on raw WebGL. */
+:root {
+  --glass-bg: rgba(6, 10, 22, 0.5);
+  --glass-blur: 16px;
+  --glass-saturate: 1.2;
+  --glass-border: 1px solid rgba(120, 160, 255, 0.22);
+  --glass-radius: 14px;
+}
+
+.glass {
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--glass-radius);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 }
 
 /* A bordered surface card needs more than a 1px line to read as a raised

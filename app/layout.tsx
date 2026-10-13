@@ -4,6 +4,7 @@ import { Geist, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
+import MoleculeCanvas from "@/components/site/three/MoleculeCanvasLoader";
 
 /* Geist over Instrument Sans: sharper, less neutral, and not the default a
    template generator reaches for. IBM Plex Mono over JetBrains Mono for the
@@ -41,8 +42,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
+        <MoleculeCanvas />
         <Nav />
-        <main id="main">{children}</main>
+        <main id="main" className="relative z-[1]">{children}</main>
         <Footer />
       </body>
     </html>

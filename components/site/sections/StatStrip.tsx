@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, Pill, Reveal, StatTile } from "@/components/site/ui";
+import { GlassPanel, Pill, Reveal, StatTile, StopSection } from "@/components/site/ui";
 import { APPROVED_DRUGS, APPROVED_LAST_CHECKED, PIPELINE_DRUGS } from "@/lib/fda-registry";
 
 /* Stat strip, directly under the hero (2026-09-24 pivot build).
@@ -37,19 +37,19 @@ export default function StatStrip() {
   ];
 
   return (
-    <div className="border-y border-line bg-surface/40">
-      <Container>
-        <Reveal>
-          <div className="grid gap-4 py-8 sm:grid-cols-3">
+    <StopSection side="right">
+      <Reveal className="w-full max-w-[720px]">
+        <GlassPanel>
+          <div className="grid gap-4 sm:grid-cols-3">
             {stats.map((s) => (
               <StatTile key={s.label} value={s.value} label={s.label} pill={s.pill} />
             ))}
           </div>
-          <p className="pb-6 font-mono text-[11px] uppercase tracking-[0.1em] text-dim">
+          <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.1em] text-dim">
             Last checked {APPROVED_LAST_CHECKED} against Drugs@FDA
           </p>
-        </Reveal>
-      </Container>
-    </div>
+        </GlassPanel>
+      </Reveal>
+    </StopSection>
   );
 }

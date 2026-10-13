@@ -4,7 +4,7 @@ import Hero from "@/components/site/sections/Hero";
 import StatStrip from "@/components/site/sections/StatStrip";
 import PivotIndex from "@/components/site/sections/PivotIndex";
 import EvidenceSummary from "@/components/site/sections/EvidenceSummary";
-import { Container, Reveal, Section } from "@/components/site/ui";
+import { GlassPanel, Reveal, StopSection } from "@/components/site/ui";
 
 /* Homepage, rebuilt around the 2026-09-24 pivot.
 
@@ -36,8 +36,8 @@ export default function Home() {
       <PivotIndex />
       <EvidenceSummary />
 
-      <Section className="border-t border-line">
-        <Container>
+      <StopSection last>
+        <GlassPanel className="w-full max-w-[760px]">
           <Reveal className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-[1.35rem] font-semibold text-text">
@@ -55,8 +55,8 @@ export default function Home() {
               Open the directory
             </Link>
           </Reveal>
-        </Container>
-      </Section>
+        </GlassPanel>
+      </StopSection>
     </>
   );
 }
