@@ -32,13 +32,13 @@ export default function Hero() {
           label can&rsquo;t tell you.
         </h1>
 
-        <p className="mt-6 max-w-[46ch] text-[17px] leading-relaxed text-white/80">
+        <p className="mt-5 sm:mt-6 max-w-[46ch] text-[17px] leading-relaxed text-white/80">
           Twelve peptide medicines carry FDA approval today. Several more are waiting on a
           decision. Everything else being sold online is neither, whatever the label says —
           and we check every date and application number ourselves.
         </p>
 
-        <div className="mt-9 flex flex-wrap items-center gap-3">
+        <div className="mt-7 sm:mt-9 flex flex-wrap items-center gap-3">
           <CTA href="/approved">See what&rsquo;s approved</CTA>
           {/* Inline style, not the shared CTA "secondary" variant - that
               variant's classes are tuned for the token-driven page and
@@ -68,7 +68,7 @@ export default function Hero() {
         </div>
 
         {/* trust badges - real facts, not vendor-style purity/shipping claims */}
-        <div className="mt-10 flex flex-wrap gap-3">
+        <div className="mt-7 sm:mt-10 flex flex-wrap gap-3">
           {BADGES.map((b) => (
             <Pill key={b.label} tone="onVideo" size="md" icon={b.icon}>
               {b.label}

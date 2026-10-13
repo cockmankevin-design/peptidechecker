@@ -11,12 +11,24 @@ rendered behind it (see contrast_check) and fails anything under WCAG AA 4.5:1.
     py -3 scripts/check3d.py [--no-build] [--routes all|home] [--out DIR] [--min-fps N]
                              [--fps-at 0,0.25] [--stops 0,0.25,0.5,0.75,1]
                              [--reduced-motion] [--no-webgl] [--no-contrast] [--self-test]
+    py -3 scripts/check3d.py --capture-stills [--no-build]
+    py -3 scripts/check3d.py --context-lost [--no-build]
 
 Exit 0 = pass, 1 = fail. Results land in --out (default
 .superpowers/check3d/<YYYYmmdd-HHMMSS>/): screenshots plus summary.json.
 
 --self-test runs the same pipeline against scripts/check3d_fixture/ and proves
 the gate catches a broken page while ignoring Next's harmless prefetch 404s.
+
+--capture-stills renders stop 1 with the real engine at 1440x900 and 390x844
+(device scale 2), hides every DOM layer above the canvas, screenshots the canvas
+alone and writes public/molecule/still-1440.webp and still-390.webp: the image
+MoleculeCanvas shows when it cannot run the scene. Rebuild afterwards to ship them.
+
+--context-lost loads / on the real GPU at both viewports, first resizes across
+the 760px small-screen line and back (must not crash), then loses the site
+canvas's WebGL context (WEBGL_lose_context), waits 1 s and asserts the still
+image has replaced the canvas, with no page or console errors.
 
 The local server is stopped through its own Popen handle only. Never kill
 processes by name here: a previous agent did and took down unrelated services.
@@ -49,6 +61,11 @@ FIXTURE_DIR = Path(__file__).resolve().parent / "check3d_fixture"
 CHROMIUM_ARGS = ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"]
 VIEWPORTS = [("d", 1440, 900), ("m", 390, 844)]  # (tag, width, height)
 SETTLE_AFTER_LOAD_MS = 1500
+STILL_SETTLE_MS = 4000      # --capture-stills: stop 1 settled and supersampled
+STILLS = [("1440", 1440, 900, 1), ("390", 390, 844, 2)]  # (name, width, height, device scale)
+STILL_QUALITY = 82
+STILL_MAX_BYTES = 250 * 1024
+STILL_DIR = ROOT / "public" / "molecule"
 SCROLL_STEP_PX = 300
 SCROLL_PAUSE_MS = 100
 SETTLE_AFTER_SCROLL_MS = 800
@@ -153,8 +170,14 @@ SCROLL_THROUGH_JS = """async ([step, pause]) => {
   }
 }"""
 
+# A homepage fraction is of the journey, which ends at the last stop section's top
+# (data-stop-last; the same rule as MoleculeCanvas's scrollFraction). On desktop
+# that is the bottom of the page; on phones the taller footer comes after it.
 SCROLL_TO_FRACTION_JS = """(f) => {
-  const y = (document.documentElement.scrollHeight - window.innerHeight) * f;
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  const last = document.querySelector("[data-stop-last]");
+  const end = last ? Math.min(max, last.getBoundingClientRect().top + window.scrollY) : max;
+  const y = end * f;
   window.scrollTo({ top: y, left: 0, behavior: "instant" });
 }"""
 
@@ -199,6 +222,10 @@ def parse_args():
     p.add_argument("--no-contrast", dest="contrast", action="store_false",
                    help="skip the desktop text-contrast check (on by default)")
     p.add_argument("--self-test", action="store_true", help="prove the gate against scripts/check3d_fixture/")
+    p.add_argument("--capture-stills", action="store_true",
+                   help="write the fallback stills public/molecule/still-{1440,390}.webp from the real engine")
+    p.add_argument("--context-lost", action="store_true",
+                   help="lose the canvas's WebGL context on / and assert the still image takes over cleanly")
     return p.parse_args()
 
 
@@ -521,6 +548,127 @@ def run_browser(origin, routes, args, out, report, ignored):
             browser.close()
 
 
+# Hide every DOM layer except the canvas (and the elements that contain it), so
+# a screenshot of the canvas holds the scene alone.
+HIDE_ALL_BUT_CANVAS_JS = """() => {
+  const canvas = document.querySelector("canvas");
+  if (!canvas) return false;
+  for (const el of document.body.querySelectorAll("*"))
+    if (el !== canvas && !el.contains(canvas)) el.style.setProperty("visibility", "hidden", "important");
+  return true;
+}"""
+
+
+def capture_stills(origin, out, report):
+    STILL_DIR.mkdir(parents=True, exist_ok=True)
+    with sync_playwright() as p:
+        browser = p.chromium.launch(args=CHROMIUM_ARGS)
+        try:
+            for name, width, height, scale in STILLS:
+                context = browser.new_context(viewport={"width": width, "height": height},
+                                              device_scale_factor=scale, reduced_motion="no-preference")
+                page = context.new_page()
+                page.on("pageerror", lambda e, name=name: report["errors"].append(
+                    {"route": "/", "viewport": name, "kind": "pageerror", "text": e.message}))
+                page.goto(origin + "/", wait_until="load")
+                page.wait_for_timeout(STILL_SETTLE_MS)
+                if not page.evaluate(HIDE_ALL_BUT_CANVAS_JS):
+                    report["failures"].append(f"stills: no canvas on / at {width}x{height}")
+                    context.close()
+                    continue
+                png = page.locator("canvas").screenshot()
+                context.close()
+                (out / f"still-{name}.png").write_bytes(png)
+                target = STILL_DIR / f"still-{name}.webp"
+                Image.open(io.BytesIO(png)).convert("RGB").save(target, "WEBP", quality=STILL_QUALITY, method=6)
+                size = target.stat().st_size
+                w, h = Image.open(target).size
+                print(f"stills: {target.relative_to(ROOT)} {w}x{h} {size // 1024} KB (Pillow WebP q{STILL_QUALITY})")
+                report["screenshots"].append(f"still-{name}.png")
+                if size > STILL_MAX_BYTES:
+                    report["failures"].append(f"stills: {target.name} is {size // 1024} KB, over 250 KB")
+        finally:
+            browser.close()
+
+
+LOSE_CONTEXT_JS = """() => {
+  const canvas = document.querySelector("canvas");
+  if (!canvas) return "no canvas";
+  const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
+  const ext = gl && gl.getExtension("WEBGL_lose_context");
+  if (!ext) return "no WEBGL_lose_context";
+  ext.loseContext();
+  return "lost";
+}"""
+
+STILL_STATE_JS = """() => {
+  const img = document.querySelector("[data-molecule-still] img");
+  if (!img) return { shown: false, canvas: !!document.querySelector("canvas") };
+  const r = img.getBoundingClientRect();
+  return { shown: img.complete && img.naturalWidth > 0 && getComputedStyle(img).visibility === "visible",
+           src: img.currentSrc.replace(location.origin, ""), box: [r.width, r.height],
+           canvas: !!document.querySelector("canvas") };
+}"""
+
+
+def context_lost(origin, out, report):
+    with sync_playwright() as p:
+        browser = p.chromium.launch(args=CHROMIUM_ARGS)
+        try:
+            for tag, width, height in VIEWPORTS:
+                context = browser.new_context(viewport={"width": width, "height": height},
+                                              reduced_motion="no-preference")
+                page = context.new_page()
+
+                def add(kind, text, tag=tag):
+                    report["errors"].append({"route": "/", "viewport": tag, "kind": kind, "text": text})
+                page.on("pageerror", lambda e: add("pageerror", e.message))
+                # As in check_page: resource failures count through their response, which
+                # lets Next's harmless prefetch 404s (is_ignored_prefetch) be excluded.
+                page.on("console", lambda m: add("console", m.text)
+                        if m.type == "error" and not m.text.startswith("Failed to load resource") else None)
+                page.on("response", lambda r: add("http", f"{r.status} {r.url[len(origin):]}")
+                        if r.status >= 400 and not is_ignored_prefetch(r.url) else None)
+                page.goto(origin + "/", wait_until="load")
+                page.wait_for_timeout(SETTLE_AFTER_LOAD_MS)
+                # Across the 760px small-screen line and back: only a resize, never a crash.
+                page.set_viewport_size({"width": 390 if width >= 760 else 1440, "height": height})
+                page.wait_for_timeout(500)
+                page.set_viewport_size({"width": width, "height": height})
+                page.wait_for_timeout(500)
+                result = page.evaluate(LOSE_CONTEXT_JS)
+                page.wait_for_timeout(1000)
+                state = page.evaluate(STILL_STATE_JS)
+                name = f"context_lost_{tag}.png"
+                page.screenshot(path=str(out / name))
+                report["screenshots"].append(name)
+                context.close()
+                print(f"context-lost [{tag} {width}x{height}]: {result}; still {state}")
+                if result != "lost":
+                    report["failures"].append(f"context-lost [{tag}]: {result}")
+                if not state.get("shown") or state.get("canvas"):
+                    report["failures"].append(f"context-lost [{tag}]: the still has not replaced the canvas: {state}")
+        finally:
+            browser.close()
+
+
+def serve(serve_dir, out, fn):
+    """Serve serve_dir on a private port for fn(origin); the server is stopped by its own handle."""
+    port = free_port()
+    origin = f"http://127.0.0.1:{port}"
+    with open(out / "server.log", "w", encoding="utf-8") as log:
+        proc = subprocess.Popen(
+            [sys.executable, "-m", "http.server", str(port), "--bind", "127.0.0.1", "--directory", str(serve_dir)],
+            stdout=log, stderr=subprocess.STDOUT,
+        )
+        try:  # opened immediately: nothing may run between Popen and the guard that stops it
+            print(f"server: PID {proc.pid} serving {serve_dir} at {origin}/ (log: {out / 'server.log'})")
+            wait_until_answers(proc, origin + "/")
+            fn(origin)
+        finally:
+            stop_server(proc)
+
+
 def serve_and_check(serve_dir, routes, args, out, report, ignored):
     port = free_port()
     origin = f"http://127.0.0.1:{port}"
@@ -667,6 +815,12 @@ def main():
             failure = failure or check_root_build()
         if failure:
             report["failures"].append(failure)
+        elif args.capture_stills:
+            report["routes"] = ["/"]
+            serve(serve_dir, out, lambda origin: capture_stills(origin, out, report))
+        elif args.context_lost:
+            report["routes"] = ["/"]
+            serve(serve_dir, out, lambda origin: context_lost(origin, out, report))
         else:
             routes = discover_routes(serve_dir)
             if args.routes == "home" and not args.self_test:

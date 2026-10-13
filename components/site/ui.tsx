@@ -80,13 +80,17 @@ export function StopSection({
   id?: string;
   /** The final stop shares its viewport with the footer (--footer-h, measured
       by MoleculeCanvas), so the page ends exactly one viewport after the last
-      stop begins and scroll fractions 0, .25 ... 1 land on the five stops. */
+      stop begins and scroll fractions 0, .25 ... 1 land on the five stops.
+      On phones the footer is taller than that leaves room for, so the journey
+      ends at this section's top instead (data-stop-last, read by
+      MoleculeCanvas and check3d.py); on desktop the two are the same point. */
   last?: boolean;
 }) {
   return (
     <section
       id={id}
-      className={`flex items-center py-24 ${last ? "min-h-[calc(100vh-var(--footer-h,0px))]" : "min-h-[100vh]"}`}
+      data-stop-last={last ? "" : undefined}
+      className={`flex items-center py-12 sm:py-24 ${last ? "min-h-[calc(100vh-var(--footer-h,0px))]" : "min-h-[100vh]"}`}
     >
       <Container className={`flex ${side === "right" ? "sm:justify-end" : ""}`}>{children}</Container>
     </section>
