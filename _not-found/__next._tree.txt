@@ -1,2 +1,2 @@
-:HL["/peptidechecker/_next/static/chunks/0hv432gxg23ly.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":4112,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":4160,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"s4sWI62hELIhq2eZCdvbN"}
+:HL["/peptidechecker/_next/static/chunks/3w1u3y9-z47c3.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":4112,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":4160,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}},"staleTime":300,"buildId":"J7FUBwzD41b7Y247H37YE"}
