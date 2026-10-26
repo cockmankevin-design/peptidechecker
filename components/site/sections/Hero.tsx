@@ -39,6 +39,7 @@ export default function Hero() {
         </p>
 
         <div className="mt-7 sm:mt-9 flex flex-wrap items-center gap-3">
+          <CTA href="/quiz">Find your match</CTA>
           <CTA href="/approved">See what&rsquo;s approved</CTA>
           {/* Inline style, not the shared CTA "secondary" variant - that
               variant's classes are tuned for the token-driven page and

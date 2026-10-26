@@ -20,6 +20,7 @@ import { EASE_OUT_QUINT } from "@/lib/motion";
      56px bar is the definition of a shrunk desktop design. */
 
 const LINKS = [
+  { href: "/quiz", label: "Find your match" },
   { href: "/approved", label: "Approved" },
   { href: "/pipeline", label: "Pipeline" },
   { href: "/get-started", label: "How to get one" },
